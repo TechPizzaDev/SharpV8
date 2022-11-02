@@ -258,7 +258,8 @@ namespace Microsoft.ClearScript.Test
         [TestMethod, TestCategory("ExtendedHostFunctions")]
         public void ExtendedHostFunctions_type_NonSystem_PartialAssemblyName()
         {
-            var hostType = (HostType)host.type("Microsoft.ClearScript.ScriptEngine", "ClearScript.Core");
+            var asmName = typeof(ScriptEngine).Assembly.GetName().Name;
+            var hostType = (HostType)host.type("Microsoft.ClearScript.ScriptEngine", asmName);
             Assert.AreEqual(1, hostType.Types.Length);
             Assert.AreEqual(typeof(ScriptEngine), hostType.Type);
         }
@@ -266,7 +267,8 @@ namespace Microsoft.ClearScript.Test
         [TestMethod, TestCategory("ExtendedHostFunctions")]
         public void ExtendedHostFunctions_type_NonSystem_PartialAssemblyName_Generic()
         {
-            var hostType = (HostType)host.type("Microsoft.ClearScript.OutArg", "ClearScript.Core");
+            var asmName = typeof(OutArg<>).Assembly.GetName().Name;
+            var hostType = (HostType)host.type("Microsoft.ClearScript.OutArg", asmName);
             Assert.AreEqual(1, hostType.Types.Length);
             Assert.AreEqual(typeof(OutArg<>), hostType.Type);
         }
@@ -275,7 +277,8 @@ namespace Microsoft.ClearScript.Test
         public void ExtendedHostFunctions_type_NonSystem_PartialAssemblyName_GenericWithTypeArgs()
         {
             var stringHostType = host.type("System.String");
-            var hostType = (HostType)host.type("Microsoft.ClearScript.OutArg", "ClearScript.Core", stringHostType);
+            var asmName = typeof(OutArg<>).Assembly.GetName().Name;
+            var hostType = (HostType)host.type("Microsoft.ClearScript.OutArg", asmName, stringHostType);
             Assert.AreEqual(1, hostType.Types.Length);
             Assert.AreEqual(typeof(OutArg<string>), hostType.Type);
         }

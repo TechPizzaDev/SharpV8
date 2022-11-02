@@ -3820,7 +3820,7 @@ namespace Microsoft.ClearScript.Test
         @"
             System = clr.System;
 
-            TestObject = host.type('Microsoft.ClearScript.Test.GeneralTestObject', 'ClearScriptTest');
+            TestObject = host.type('Microsoft.ClearScript.Test.GeneralTestObject', 'SharpV8Test');
             tlist = host.newObj(System.Collections.Generic.List(TestObject));
             tlist.Add(host.newObj(TestObject, 'Eóin', 20));
             tlist.Add(host.newObj(TestObject, 'Shane', 16));
