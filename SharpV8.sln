@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpV8Test", "SharpV8Test\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpV8.ICUData", "SharpV8.ICUData\SharpV8.ICUData.csproj", "{CA2F0633-9C51-4D7C-BC5D-457C049B4059}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpV8.SunSpiderBench", "SharpV8.SunSpiderBench\SharpV8.SunSpiderBench.csproj", "{4D24F5CF-C13D-4B54-AD46-946859B7D3B7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SharpV8.Benchmarks", "SharpV8.Benchmarks\SharpV8.Benchmarks.csproj", "{44C2C03B-1A80-428F-839F-658DD1469CB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{CA2F0633-9C51-4D7C-BC5D-457C049B4059}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA2F0633-9C51-4D7C-BC5D-457C049B4059}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA2F0633-9C51-4D7C-BC5D-457C049B4059}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D24F5CF-C13D-4B54-AD46-946859B7D3B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D24F5CF-C13D-4B54-AD46-946859B7D3B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D24F5CF-C13D-4B54-AD46-946859B7D3B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D24F5CF-C13D-4B54-AD46-946859B7D3B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44C2C03B-1A80-428F-839F-658DD1469CB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44C2C03B-1A80-428F-839F-658DD1469CB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44C2C03B-1A80-428F-839F-658DD1469CB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44C2C03B-1A80-428F-839F-658DD1469CB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

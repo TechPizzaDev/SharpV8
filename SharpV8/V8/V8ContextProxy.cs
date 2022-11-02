@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using Microsoft.ClearScript.V8.SplitProxy;
 
 namespace Microsoft.ClearScript.V8
 {

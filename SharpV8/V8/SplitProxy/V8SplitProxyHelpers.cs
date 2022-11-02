@@ -872,7 +872,8 @@ namespace Microsoft.ClearScript.V8
             var doubleValue = 0D;
             var ptrOrHandle = IntPtr.Zero;
 
-            switch (InvokeNoThrow(() => V8Value_Decode(pV8Value, out intValue, out uintValue, out doubleValue, out ptrOrHandle)))
+            var valueType = InvokeNoThrow(() => V8Value_Decode(pV8Value, out intValue, out uintValue, out doubleValue, out ptrOrHandle));
+            switch (valueType)
             {
                 case V8ValueType.Nonexistent:
                     return Nonexistent.Value;

@@ -862,13 +862,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void WriteBytesToStream(IntPtr pStream, IntPtr pBytes, int count)
+        private static unsafe void WriteBytesToStream(IntPtr pStream, IntPtr pBytes, int count)
         {
             try
             {
-                var bytes = new byte[count];
-                Marshal.Copy(pBytes, bytes, 0, count);
-                V8ProxyHelpers.GetHostObject<Stream>(pStream).Write(bytes, 0, count);
+                Span<byte> span = new((void*)pBytes, count);
+                V8ProxyHelpers.GetHostObject<Stream>(pStream).Write(span);
             }
             catch (Exception exception)
             {

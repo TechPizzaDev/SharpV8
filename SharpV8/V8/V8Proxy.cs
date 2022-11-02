@@ -11,7 +11,7 @@ using Microsoft.ClearScript.V8.SplitProxy;
 
 namespace Microsoft.ClearScript.V8
 {
-    internal abstract partial class V8Proxy : IDisposable
+    public abstract partial class V8Proxy : IDisposable
     {
         static V8Proxy()
         {
