@@ -17,7 +17,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         public V8IsolateProxyImpl(string name, V8RuntimeConstraints constraints, V8RuntimeFlags flags, int debugPort)
         {
-            holder = new V8EntityHolder("V8 runtime", () => V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Isolate_Create(
+            holder = new V8EntityHolder("V8 runtime", V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Isolate_Create(
                 name,
                 constraints?.MaxNewSpaceSize ?? -1,
                 constraints?.MaxOldSpaceSize ?? -1,

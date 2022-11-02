@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.ClearScript.JavaScript;
+using Microsoft.ClearScript.Properties;
 using Microsoft.ClearScript.Util;
 
 namespace Microsoft.ClearScript.V8.SplitProxy
@@ -21,15 +22,26 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         private static IntPtr pFunctionPtrs;
         private static int methodCount;
 
-        [ThreadStatic] 
+        [ThreadStatic]
         public static Exception? ScheduledException;
 
-        public static void Initialize()
+        static V8SplitProxyManaged()
         {
+            Initialize();
+        }
+
+        private static void Initialize()
+        {
+            var nativeVersion = V8SplitProxyNative.GetVersion();
+            if (nativeVersion != ClearScriptVersion.Informational)
+            {
+                throw new InvalidOperationException($"V8 native assembly: loaded version {nativeVersion} does not match required version {ClearScriptVersion.Informational}");
+            }
+
             CreateMethodTable();
         }
 
-        public static void Teardown()
+        private static void Teardown()
         {
             DestroyMethodTable();
         }
@@ -68,8 +80,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [In] StdString.Ptr pEngineName,
             [In] StdString.Ptr pMessage,
             [In] StdString.Ptr pStackTrace,
-            [In] [MarshalAs(UnmanagedType.I1)] bool isFatal,
-            [In] [MarshalAs(UnmanagedType.I1)] bool executionStarted,
+            [In][MarshalAs(UnmanagedType.I1)] bool isFatal,
+            [In][MarshalAs(UnmanagedType.I1)] bool executionStarted,
             [In] V8Value.Ptr pScriptException,
             [In] V8Value.Ptr pInnerException
         );
@@ -79,8 +91,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [In] StdString.Ptr pEngineName,
             [In] StdString.Ptr pMessage,
             [In] StdString.Ptr pStackTrace,
-            [In] [MarshalAs(UnmanagedType.I1)] bool isFatal,
-            [In] [MarshalAs(UnmanagedType.I1)] bool executionStarted,
+            [In][MarshalAs(UnmanagedType.I1)] bool isFatal,
+            [In][MarshalAs(UnmanagedType.I1)] bool executionStarted,
             [In] V8Value.Ptr pScriptException,
             [In] V8Value.Ptr pInnerException
         );
@@ -136,7 +148,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [In] StdString.Ptr pName,
             [In] StdString.Ptr pVersion,
             [In] int port,
-            [In] [MarshalAs(UnmanagedType.I1)] bool remote,
+            [In][MarshalAs(UnmanagedType.I1)] bool remote,
             [In] V8DebugCallback.Handle hCallback
         );
 
@@ -184,7 +196,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [In] IntPtr pObject,
             [In] StdString.Ptr pName,
             [In] V8Value.Ptr pValue,
-            [Out] [MarshalAs(UnmanagedType.I1)] out bool isCacheable
+            [Out][MarshalAs(UnmanagedType.I1)] out bool isCacheable
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -237,7 +249,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawInvokeHostObject(
             [In] IntPtr pObject,
-            [In] [MarshalAs(UnmanagedType.I1)] bool asConstructor,
+            [In][MarshalAs(UnmanagedType.I1)] bool asConstructor,
             [In] StdV8ValueArray.Ptr pArgs,
             [In] V8Value.Ptr pResult
         );
@@ -294,7 +306,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [In] StdString.Ptr pResourceName,
             [In] StdString.Ptr pSourceMapUrl,
             [Out] out ulong uniqueId,
-            [Out] [MarshalAs(UnmanagedType.I1)] out bool isModule,
+            [Out][MarshalAs(UnmanagedType.I1)] out bool isModule,
             [In] StdString.Ptr pCode,
             [Out] out IntPtr pDocumentInfo
         );

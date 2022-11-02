@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Microsoft.ClearScript.Properties;
 using Microsoft.ClearScript.Util;
 using Microsoft.ClearScript.V8.SplitProxy;
 
@@ -14,41 +13,9 @@ namespace Microsoft.ClearScript.V8
 {
     internal abstract partial class V8Proxy : IDisposable
     {
-        private static readonly object dataLock = new object();
-
-        private static ulong splitImplCount;
-
         static V8Proxy()
         {
             V8SplitProxyNative.Imports.ResolveLibrary += LoadNativeLibrary;
-        }
-
-        internal static void OnEntityHolderCreated()
-        {
-            lock (dataLock)
-            {
-                if (++splitImplCount == 1)
-                {
-                    V8SplitProxyManaged.Initialize();
-                }
-
-                var nativeVersion = V8SplitProxyNative.GetVersion();
-                if (nativeVersion != ClearScriptVersion.Informational)
-                {
-                    throw new InvalidOperationException($"V8 native assembly: loaded version {nativeVersion} does not match required version {ClearScriptVersion.Informational}");
-                }
-            }
-        }
-
-        internal static void OnEntityHolderDestroyed()
-        {
-            lock (dataLock)
-            {
-                if (--splitImplCount < 1)
-                {
-                    V8SplitProxyManaged.Teardown();
-                }
-            }
         }
 
         private static IntPtr LoadNativeLibrary(string libraryName, System.Reflection.Assembly assembly, DllImportSearchPath? searchPath)

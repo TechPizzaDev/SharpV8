@@ -13,7 +13,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         public V8ObjectImpl(V8Object.Handle hObject, V8Value.Subtype subtype, V8Value.Flags flags)
         {
-            holder = new V8EntityHolder("V8 object", () => hObject);
+            holder = new V8EntityHolder("V8 object", hObject);
             Subtype = subtype;
             Flags = flags;
         }

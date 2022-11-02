@@ -13,7 +13,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         public V8DebugListenerImpl(V8DebugCallback.Handle hCallback)
         {
-            holder = new V8EntityHolder("V8 debug listener", () => hCallback);
+            holder = new V8EntityHolder("V8 debug listener", hCallback);
         }
 
         #region IV8DebugListener implementation

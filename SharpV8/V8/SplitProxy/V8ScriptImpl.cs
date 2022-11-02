@@ -14,7 +14,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         public V8ScriptImpl(UniqueDocumentInfo documentInfo, UIntPtr codeDigest, V8Script.Handle hScript)
             : base(documentInfo, codeDigest)
         {
-            holder = new V8EntityHolder("V8 compiled script", () => hScript);
+            holder = new V8EntityHolder("V8 compiled script", hScript);
         }
 
         #region disposal / finalization

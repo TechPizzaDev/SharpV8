@@ -14,7 +14,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         public NativeCallbackImpl(NativeCallback.Handle hCallback)
         {
-            holder = new V8EntityHolder("native callback", () => hCallback);
+            holder = new V8EntityHolder("native callback", hCallback);
         }
 
         #region INativeCallback implementation
