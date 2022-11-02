@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using Microsoft.ClearScript.Properties;
 using Microsoft.ClearScript.Util;
 using Microsoft.ClearScript.V8.SplitProxy;
@@ -17,10 +16,12 @@ namespace Microsoft.ClearScript.V8
     {
         private static readonly object dataLock = new object();
 
-        private static IntPtr hNativeAssembly;
         private static ulong splitImplCount;
-        private static bool triedToLoadNativeAssembly;
-        private static bool loadedNativeAssembly;
+
+        static V8Proxy()
+        {
+            V8SplitProxyNative.Imports.ResolveLibrary += LoadNativeLibrary;
+        }
 
         internal static void OnEntityHolderCreated()
         {
@@ -31,36 +32,10 @@ namespace Microsoft.ClearScript.V8
                     V8SplitProxyManaged.Initialize();
                 }
 
-                if (!triedToLoadNativeAssembly)
+                var nativeVersion = V8SplitProxyNative.GetVersion();
+                if (nativeVersion != ClearScriptVersion.Informational)
                 {
-                    triedToLoadNativeAssembly = true;
-
-                    var nativeVersion = string.Empty;
-                    var gotNativeVersion = false;
-
-                    try
-                    {
-                        hNativeAssembly = LoadNativeAssembly();
-                        loadedNativeAssembly = true;
-                    }
-                    catch
-                    {
-                        gotNativeVersion = MiscHelpers.Try(out nativeVersion, V8SplitProxyNative.GetVersion);
-                        if (!gotNativeVersion)
-                        {
-                            throw;
-                        }
-                    }
-
-                    if (!gotNativeVersion)
-                    {
-                        nativeVersion = V8SplitProxyNative.GetVersion();
-                    }
-
-                    if (nativeVersion != ClearScriptVersion.Informational)
-                    {
-                        throw new InvalidOperationException($"V8 native assembly: loaded version {nativeVersion} does not match required version {ClearScriptVersion.Informational}");
-                    }
+                    throw new InvalidOperationException($"V8 native assembly: loaded version {nativeVersion} does not match required version {ClearScriptVersion.Informational}");
                 }
             }
         }
@@ -72,86 +47,24 @@ namespace Microsoft.ClearScript.V8
                 if (--splitImplCount < 1)
                 {
                     V8SplitProxyManaged.Teardown();
-
-                    if (loadedNativeAssembly)
-                    {
-                        FreeLibrary(hNativeAssembly);
-                        hNativeAssembly = IntPtr.Zero;
-                        loadedNativeAssembly = false;
-                    }
                 }
             }
         }
 
-        private static IntPtr LoadNativeAssembly()
+        private static IntPtr LoadNativeLibrary(string libraryName, System.Reflection.Assembly assembly, DllImportSearchPath? searchPath)
         {
-            string platform;
-            string architecture;
-            string extension;
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                platform = "win";
-                extension = "dll";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                platform = "linux";
-                extension = "so";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                platform = "osx";
-                extension = "dylib";
-            }
-            else
-            {
-                throw new PlatformNotSupportedException("Unsupported OS platform");
-            }
-
-            if (RuntimeInformation.ProcessArchitecture == Architecture.X64)
-            {
-                architecture = "x64";
-            }
-            else if (RuntimeInformation.ProcessArchitecture == Architecture.X86)
-            {
-                architecture = "x86";
-            }
-            else if (RuntimeInformation.ProcessArchitecture == Architecture.Arm)
-            {
-                architecture = "arm";
-            }
-            else if (RuntimeInformation.ProcessArchitecture == Architecture.Arm64)
-            {
-                architecture = "arm64";
-            }
-            else
-            {
-                throw new PlatformNotSupportedException("Unsupported process architecture");
-            }
-
-            return LoadNativeLibrary("ClearScriptV8", platform, architecture, extension);
-        }
-
-        private static IntPtr LoadNativeLibrary(string baseName, string platform, string architecture, string extension)
-        {
-            var fileName = $"{baseName}.{platform}-{architecture}.{extension}";
-            var messageBuilder = new StringBuilder();
-
+            V8SplitProxyNative.Imports.GetRuntimeInfo(out string platform, out string architecture, out string extension);
+            var fileName = V8SplitProxyNative.Imports.GetDllName(platform, architecture, extension);
+            
             var paths = GetDirPaths(platform, architecture).Select(dirPath => Path.Combine(dirPath, fileName)).Distinct();
-            foreach (var path in paths)
+            foreach (string path in paths)
             {
-                var hLibrary = LoadLibrary(path);
-                if (hLibrary != IntPtr.Zero)
+                if (NativeLibrary.TryLoad(path, assembly, null, out IntPtr hLibrary))
                 {
                     return hLibrary;
                 }
-
-                messageBuilder.AppendInvariant("\n{0}: {1}", path, MiscHelpers.EnsureNonBlank(GetLoadLibraryErrorMessage(), "Unknown error"));
             }
-
-            var message = MiscHelpers.FormatInvariant("Cannot load ClearScript V8 library. Load failure information for {0}:{1}", fileName, messageBuilder);
-            throw new TypeLoadException(message);
+            return IntPtr.Zero;
         }
 
         public static unsafe void InitializeICU(ReadOnlySpan<byte> bytes)
@@ -160,7 +73,7 @@ namespace Microsoft.ClearScript.V8
             fixed (byte* pBytes = bytes)
             {
                 var pICUData = (IntPtr)pBytes;
-                V8SplitProxyNative.InvokeNoThrow(instance => instance.V8Environment_InitializeICU(pICUData, length));
+                V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.V8Environment_InitializeICU(pICUData, length));
             }
         }
 

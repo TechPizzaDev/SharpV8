@@ -21,7 +21,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         private static IntPtr pFunctionPtrs;
         private static int methodCount;
 
-        [ThreadStatic] public static Exception ScheduledException;
+        [ThreadStatic] 
+        public static Exception? ScheduledException;
 
         public static void Initialize()
         {
@@ -35,12 +36,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         private static void ScheduleHostException(IntPtr pObject, Exception exception)
         {
-            V8SplitProxyNative.InvokeNoThrow(instance => instance.HostException_Schedule(exception.GetBaseException().Message, V8ProxyHelpers.MarshalExceptionToScript(pObject, exception)));
+            V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.HostException_Schedule(exception.GetBaseException().Message, V8ProxyHelpers.MarshalExceptionToScript(pObject, exception)));
         }
 
         private static void ScheduleHostException(Exception exception)
         {
-            V8SplitProxyNative.InvokeNoThrow(instance => instance.HostException_Schedule(exception.GetBaseException().Message, ScriptEngine.Current?.MarshalToScript(exception)));
+            V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.HostException_Schedule(exception.GetBaseException().Message, ScriptEngine.Current?.MarshalToScript(exception)));
         }
 
         private static uint GetMaxCacheSizeForCategory(DocumentCategory category)

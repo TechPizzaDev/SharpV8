@@ -26,52 +26,52 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         public object GetProperty(string name)
         {
-            return V8SplitProxyNative.Invoke(instance => instance.V8Object_GetNamedProperty(Handle, name));
+            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_GetNamedProperty(Handle, name));
         }
 
         public void SetProperty(string name, object value)
         {
-            V8SplitProxyNative.Invoke(instance => instance.V8Object_SetNamedProperty(Handle, name, value));
+            V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_SetNamedProperty(Handle, name, value));
         }
 
         public bool DeleteProperty(string name)
         {
-            return V8SplitProxyNative.Invoke(instance => instance.V8Object_DeleteNamedProperty(Handle, name));
+            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_DeleteNamedProperty(Handle, name));
         }
 
         public string[] GetPropertyNames()
         {
-            return V8SplitProxyNative.Invoke(instance => instance.V8Object_GetPropertyNames(Handle));
+            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_GetPropertyNames(Handle));
         }
 
         public object GetProperty(int index)
         {
-            return V8SplitProxyNative.Invoke(instance => instance.V8Object_GetIndexedProperty(Handle, index));
+            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_GetIndexedProperty(Handle, index));
         }
 
         public void SetProperty(int index, object value)
         {
-            V8SplitProxyNative.Invoke(instance => instance.V8Object_SetIndexedProperty(Handle, index, value));
+            V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_SetIndexedProperty(Handle, index, value));
         }
 
         public bool DeleteProperty(int index)
         {
-            return V8SplitProxyNative.Invoke(instance => instance.V8Object_DeleteIndexedProperty(Handle, index));
+            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_DeleteIndexedProperty(Handle, index));
         }
 
         public int[] GetPropertyIndices()
         {
-            return V8SplitProxyNative.Invoke(instance => instance.V8Object_GetPropertyIndices(Handle));
+            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_GetPropertyIndices(Handle));
         }
 
         public object Invoke(bool asConstructor, object[] args)
         {
-            return V8SplitProxyNative.Invoke(instance => instance.V8Object_Invoke(Handle, asConstructor, args));
+            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_Invoke(Handle, asConstructor, args));
         }
 
         public object InvokeMethod(string name, object[] args)
         {
-            return V8SplitProxyNative.Invoke(instance => instance.V8Object_InvokeMethod(Handle, name, args));
+            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_InvokeMethod(Handle, name, args));
         }
 
         public bool IsPromise => Subtype == V8Value.Subtype.Promise;
@@ -150,7 +150,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 var offset = 0UL;
                 var size = 0UL;
                 var length = 0UL;
-                V8SplitProxyNative.Invoke(instance => instance.V8Object_GetArrayBufferOrViewInfo(Handle, out arrayBuffer, out offset, out size, out length));
+                V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_GetArrayBufferOrViewInfo(Handle, out arrayBuffer, out offset, out size, out length));
                 return new V8ArrayBufferOrViewInfo(kind, arrayBuffer, offset, size, length);
             }
 
@@ -162,7 +162,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             using (var actionScope = V8ProxyHelpers.CreateAddRefHostObjectScope(action))
             {
                 var pAction = actionScope.Value;
-                V8SplitProxyNative.Invoke(instance => instance.V8Object_InvokeWithArrayBufferOrViewData(Handle, pAction));
+                V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Object_InvokeWithArrayBufferOrViewData(Handle, pAction));
             }
         }
 
