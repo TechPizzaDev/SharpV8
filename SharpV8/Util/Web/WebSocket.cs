@@ -25,7 +25,7 @@ namespace Microsoft.ClearScript.Util.Web
         private readonly SemaphoreSlim receiveSemaphore = new SemaphoreSlim(1);
         private readonly SemaphoreSlim sendSemaphore = new SemaphoreSlim(1);
 
-        private readonly InterlockedOneWayFlag closedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag closedFlag = new InterlockedOneWayFlag();
 
         #endregion
 

@@ -27,7 +27,7 @@ namespace Microsoft.ClearScript.Util
         private sealed class ScopeImpl : IDisposable
         {
             private readonly Action exitAction;
-            private readonly OneWayFlag disposedFlag = new OneWayFlag();
+            private OneWayFlag disposedFlag = new OneWayFlag();
 
             public ScopeImpl(Action enterAction, Action exitAction)
             {
@@ -55,7 +55,7 @@ namespace Microsoft.ClearScript.Util
         private sealed class ScopeImpl<T> : IScope<T>
         {
             private readonly Action<T> exitAction;
-            private readonly OneWayFlag disposedFlag = new OneWayFlag();
+            private OneWayFlag disposedFlag = new OneWayFlag();
 
             public ScopeImpl(Func<T> enterFunc, Action<T> exitAction)
             {

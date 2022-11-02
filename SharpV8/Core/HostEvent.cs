@@ -100,7 +100,7 @@ namespace Microsoft.ClearScript
         private readonly object source;
         private readonly MethodInfo removeMethod;
         private readonly object[] parameters;
-        private readonly InterlockedOneWayFlag brokenFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag brokenFlag = new InterlockedOneWayFlag();
 
         internal EventConnection(ScriptEngine engine, object source, EventInfo eventInfo, Delegate handler)
         {

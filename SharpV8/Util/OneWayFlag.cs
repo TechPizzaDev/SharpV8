@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Microsoft.ClearScript.Util
 {
-    internal sealed class OneWayFlag
+    internal struct OneWayFlag
     {
         private bool isSet;
 
@@ -17,7 +17,7 @@ namespace Microsoft.ClearScript.Util
         }
     }
 
-    internal sealed class InterlockedOneWayFlag
+    internal struct InterlockedOneWayFlag
     {
         private int isSet;
 

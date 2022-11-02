@@ -40,7 +40,7 @@ namespace Microsoft.ClearScript.V8
         private readonly V8ScriptEngineFlags engineFlags;
         private readonly V8ContextProxy proxy;
         private readonly V8ScriptItem script;
-        private readonly InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
 
         private const int continuationInterval = 2000;
         private bool inContinuationTimerScope;

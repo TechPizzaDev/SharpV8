@@ -21,7 +21,7 @@ namespace Microsoft.ClearScript.V8
         private readonly DocumentSettings defaultDocumentSettings = new DocumentSettings();
 
         private readonly V8IsolateProxy proxy;
-        private readonly InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
 
         #endregion
 

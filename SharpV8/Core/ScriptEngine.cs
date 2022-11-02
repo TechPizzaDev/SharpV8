@@ -2094,7 +2094,7 @@ namespace Microsoft.ClearScript
         private sealed class EventConnectionMap : IDisposable
         {
             private readonly HashSet<EventConnection> map = new HashSet<EventConnection>();
-            private readonly InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+            private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
 
             internal EventConnection Create(ScriptEngine engine, Type handlerType, object source, EventInfo eventInfo, Delegate handler)
             {

@@ -23,7 +23,7 @@ namespace Microsoft.ClearScript.V8
         private readonly ConcurrentQueue<string> queue = new ConcurrentQueue<string>();
         private readonly SemaphoreSlim sendSemaphore = new SemaphoreSlim(1);
 
-        private readonly InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
 
         #endregion
 
