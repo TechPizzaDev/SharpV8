@@ -3,7 +3,7 @@
 
 namespace Microsoft.ClearScript.V8
 {
-    internal enum V8ArrayBufferOrViewKind
+    public enum V8ArrayBufferOrViewKind
     {
         None,
         ArrayBuffer,

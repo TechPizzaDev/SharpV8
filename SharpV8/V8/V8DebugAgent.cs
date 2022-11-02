@@ -24,7 +24,7 @@ namespace Microsoft.ClearScript.V8
         private readonly Guid targetId = Guid.NewGuid();
         private readonly string name;
         private readonly string version;
-        private readonly IV8DebugListener listener;
+        private readonly V8DebugListener listener;
 
         private TcpListener tcpListener;
         private V8DebugClient activeClient;
@@ -35,7 +35,7 @@ namespace Microsoft.ClearScript.V8
 
         #region constructors
 
-        public V8DebugAgent(string name, string version, int port, bool remote, IV8DebugListener listener)
+        public V8DebugAgent(string name, string version, int port, bool remote, V8DebugListener listener)
         {
             this.name = name;
             this.version = version;

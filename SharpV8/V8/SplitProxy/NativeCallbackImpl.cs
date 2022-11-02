@@ -2,17 +2,17 @@
 // Licensed under the MIT license.
 
 using System;
-using Microsoft.ClearScript.Util;
+using Microsoft.ClearScript.V8.SplitProxy;
 
-namespace Microsoft.ClearScript.V8.SplitProxy
+namespace Microsoft.ClearScript.V8
 {
-    internal sealed class NativeCallbackImpl : INativeCallback
+    internal sealed class NativeCallback : IDisposable
     {
         private V8EntityHolder holder;
 
-        private NativeCallback.Handle Handle => (NativeCallback.Handle)holder.Handle;
+        private NativeCallbackHandle Handle => (NativeCallbackHandle)holder.Handle;
 
-        public NativeCallbackImpl(NativeCallback.Handle hCallback)
+        public NativeCallback(NativeCallbackHandle hCallback)
         {
             holder = new V8EntityHolder("native callback", hCallback);
         }
@@ -34,11 +34,32 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             GC.KeepAlive(this);
         }
 
-        ~NativeCallbackImpl()
+        ~NativeCallback()
         {
             V8EntityHolder.Destroy(ref holder);
         }
 
         #endregion
+    }
+
+    public readonly struct NativeCallbackHandle
+    {
+        private readonly IntPtr guts;
+
+        private NativeCallbackHandle(IntPtr guts) => this.guts = guts;
+
+        public static readonly NativeCallbackHandle Empty = new(IntPtr.Zero);
+
+        public static bool operator ==(NativeCallbackHandle left, NativeCallbackHandle right) => left.guts == right.guts;
+        public static bool operator !=(NativeCallbackHandle left, NativeCallbackHandle right) => left.guts != right.guts;
+
+        public static explicit operator IntPtr(NativeCallbackHandle handle) => handle.guts;
+        public static explicit operator NativeCallbackHandle(IntPtr guts) => new(guts);
+
+        public static implicit operator V8Entity(NativeCallbackHandle handle) => (V8Entity)handle.guts;
+        public static explicit operator NativeCallbackHandle(V8Entity handle) => (NativeCallbackHandle)(IntPtr)handle;
+
+        public override bool Equals(object? obj) => obj is NativeCallbackHandle handle && this == handle;
+        public override int GetHashCode() => guts.GetHashCode();
     }
 }

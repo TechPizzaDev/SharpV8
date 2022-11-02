@@ -6,14 +6,15 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.ClearScript.JavaScript;
 using Microsoft.ClearScript.Util;
+using Microsoft.ClearScript.V8.SplitProxy;
 
-namespace Microsoft.ClearScript.V8.SplitProxy
+namespace Microsoft.ClearScript.V8
 {
     internal sealed class V8IsolateProxyImpl : V8IsolateProxy
     {
         private V8EntityHolder holder;
 
-        private V8Isolate.Handle Handle => (V8Isolate.Handle)holder.Handle;
+        private V8IsolateHandle Handle => (V8IsolateHandle)holder.Handle;
 
         public V8IsolateProxyImpl(string name, V8RuntimeConstraints constraints, V8RuntimeFlags flags, int debugPort)
         {
@@ -28,7 +29,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             )));
         }
 
-        public V8Context.Handle CreateContext(string name, V8ScriptEngineFlags flags, int debugPort)
+        public V8ContextHandle CreateContext(string name, V8ScriptEngineFlags flags, int debugPort)
         {
             return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Isolate_CreateContext(
                 Handle,
@@ -68,7 +69,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Isolate_CancelAwaitDebugger(Handle));
         }
 
-        public override V8.V8Script Compile(UniqueDocumentInfo documentInfo, string code)
+        public override V8Script Compile(UniqueDocumentInfo documentInfo, string code)
         {
             return new V8ScriptImpl(documentInfo, code.GetDigest(), V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Isolate_Compile(
                 Handle,
@@ -81,7 +82,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             )));
         }
 
-        public override V8.V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
+        public override V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
         {
             if (cacheKind == V8CacheKind.None)
             {
@@ -106,9 +107,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             return script;
         }
 
-        public override V8.V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
+        public override V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
         {
-            if ((cacheKind == V8CacheKind.None) || (cacheBytes == null) || (cacheBytes.Length < 1))
+            if (cacheKind == V8CacheKind.None || cacheBytes == null || cacheBytes.Length < 1)
             {
                 cacheAccepted = false;
                 return Compile(documentInfo, code);
@@ -190,11 +191,11 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Isolate_BeginCpuProfile(Handle, name, flags.HasFlag(V8CpuProfileFlags.EnableSampleCollection)));
         }
 
-        public override V8.V8CpuProfile EndCpuProfile(string name)
+        public override V8CpuProfile EndCpuProfile(string name)
         {
-            var profile = new V8.V8CpuProfile();
+            var profile = new V8CpuProfile();
 
-            Action<V8CpuProfile.Ptr> action = pProfile => V8CpuProfile.ProcessProfile(Handle, pProfile, profile);
+            Action<V8CpuProfilePtr> action = pProfile => V8CpuProfileImpl.ProcessProfile(Handle, pProfile, profile);
             using (var actionScope = V8ProxyHelpers.CreateAddRefHostObjectScope(action))
             {
                 var pAction = actionScope.Value;
@@ -240,5 +241,26 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         }
 
         #endregion
+    }
+
+    public readonly struct V8IsolateHandle
+    {
+        private readonly IntPtr guts;
+
+        private V8IsolateHandle(IntPtr guts) => this.guts = guts;
+
+        public static readonly V8IsolateHandle Empty = new(IntPtr.Zero);
+
+        public static bool operator ==(V8IsolateHandle left, V8IsolateHandle right) => left.guts == right.guts;
+        public static bool operator !=(V8IsolateHandle left, V8IsolateHandle right) => left.guts != right.guts;
+
+        public static explicit operator IntPtr(V8IsolateHandle handle) => handle.guts;
+        public static explicit operator V8IsolateHandle(IntPtr guts) => new(guts);
+
+        public static implicit operator V8Entity(V8IsolateHandle handle) => (V8Entity)handle.guts;
+        public static explicit operator V8IsolateHandle(V8Entity handle) => (V8IsolateHandle)(IntPtr)handle;
+
+        public override bool Equals(object? obj) => obj is V8IsolateHandle handle && this == handle;
+        public override int GetHashCode() => guts.GetHashCode();
     }
 }

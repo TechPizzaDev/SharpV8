@@ -32,23 +32,23 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region StdString methods
 
-        public static StdString.Ptr StdString_New(string value)
+        public static StdStringPtr StdString_New(string value)
         {
             return Imports.StdString_New(value, value.Length);
         }
 
-        public static string StdString_GetValue(StdString.Ptr pString)
+        public static string StdString_GetValue(StdStringPtr pString)
         {
             var pValue = Imports.StdString_GetValue(pString, out var length);
             return Marshal.PtrToStringUni(pValue, length);
         }
 
-        public static void StdString_SetValue(StdString.Ptr pString, string value)
+        public static void StdString_SetValue(StdStringPtr pString, string value)
         {
             Imports.StdString_SetValue(pString, value, value.Length);
         }
 
-        public static void StdString_Delete(StdString.Ptr pString)
+        public static void StdString_Delete(StdStringPtr pString)
         {
             Imports.StdString_Delete(pString);
         }
@@ -57,33 +57,33 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region StdStringArray methods
 
-        public static StdStringArray.Ptr StdStringArray_New(int elementCount)
+        public static StdStringArrayPtr StdStringArray_New(int elementCount)
         {
             return Imports.StdStringArray_New(elementCount);
         }
 
-        public static int StdStringArray_GetElementCount(StdStringArray.Ptr pArray)
+        public static int StdStringArray_GetElementCount(StdStringArrayPtr pArray)
         {
             return Imports.StdStringArray_GetElementCount(pArray);
         }
 
-        public static void StdStringArray_SetElementCount(StdStringArray.Ptr pArray, int elementCount)
+        public static void StdStringArray_SetElementCount(StdStringArrayPtr pArray, int elementCount)
         {
             Imports.StdStringArray_SetElementCount(pArray, elementCount);
         }
 
-        public static string StdStringArray_GetElement(StdStringArray.Ptr pArray, int index)
+        public static string StdStringArray_GetElement(StdStringArrayPtr pArray, int index)
         {
             var pValue = Imports.StdStringArray_GetElement(pArray, index, out var length);
             return Marshal.PtrToStringUni(pValue, length);
         }
 
-        public static void StdStringArray_SetElement(StdStringArray.Ptr pArray, int index, string value)
+        public static void StdStringArray_SetElement(StdStringArrayPtr pArray, int index, string value)
         {
             Imports.StdStringArray_SetElement(pArray, index, value, value.Length);
         }
 
-        public static void StdStringArray_Delete(StdStringArray.Ptr pArray)
+        public static void StdStringArray_Delete(StdStringArrayPtr pArray)
         {
             Imports.StdStringArray_Delete(pArray);
         }
@@ -92,27 +92,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region StdByteArray methods
 
-        public static StdByteArray.Ptr StdByteArray_New(int elementCount)
+        public static StdByteArrayPtr StdByteArray_New(int elementCount)
         {
             return Imports.StdByteArray_New(elementCount);
         }
 
-        public static int StdByteArray_GetElementCount(StdByteArray.Ptr pArray)
+        public static int StdByteArray_GetElementCount(StdByteArrayPtr pArray)
         {
             return Imports.StdByteArray_GetElementCount(pArray);
         }
 
-        public static void StdByteArray_SetElementCount(StdByteArray.Ptr pArray, int elementCount)
+        public static void StdByteArray_SetElementCount(StdByteArrayPtr pArray, int elementCount)
         {
             Imports.StdByteArray_SetElementCount(pArray, elementCount);
         }
 
-        public static IntPtr StdByteArray_GetData(StdByteArray.Ptr pArray)
+        public static IntPtr StdByteArray_GetData(StdByteArrayPtr pArray)
         {
             return Imports.StdByteArray_GetData(pArray);
         }
 
-        public static void StdByteArray_Delete(StdByteArray.Ptr pArray)
+        public static void StdByteArray_Delete(StdByteArrayPtr pArray)
         {
             Imports.StdByteArray_Delete(pArray);
         }
@@ -121,27 +121,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region StdInt32Array methods
 
-        public static StdInt32Array.Ptr StdInt32Array_New(int elementCount)
+        public static StdInt32ArrayPtr StdInt32Array_New(int elementCount)
         {
             return Imports.StdInt32Array_New(elementCount);
         }
 
-        public static int StdInt32Array_GetElementCount(StdInt32Array.Ptr pArray)
+        public static int StdInt32Array_GetElementCount(StdInt32ArrayPtr pArray)
         {
             return Imports.StdInt32Array_GetElementCount(pArray);
         }
 
-        public static void StdInt32Array_SetElementCount(StdInt32Array.Ptr pArray, int elementCount)
+        public static void StdInt32Array_SetElementCount(StdInt32ArrayPtr pArray, int elementCount)
         {
             Imports.StdInt32Array_SetElementCount(pArray, elementCount);
         }
 
-        public static IntPtr StdInt32Array_GetData(StdInt32Array.Ptr pArray)
+        public static IntPtr StdInt32Array_GetData(StdInt32ArrayPtr pArray)
         {
             return Imports.StdInt32Array_GetData(pArray);
         }
 
-        public static void StdInt32Array_Delete(StdInt32Array.Ptr pArray)
+        public static void StdInt32Array_Delete(StdInt32ArrayPtr pArray)
         {
             Imports.StdInt32Array_Delete(pArray);
         }
@@ -150,27 +150,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region StdUInt32Array methods
 
-        public static StdUInt32Array.Ptr StdUInt32Array_New(int elementCount)
+        public static StdUInt32ArrayPtr StdUInt32Array_New(int elementCount)
         {
             return Imports.StdUInt32Array_New(elementCount);
         }
 
-        public static int StdUInt32Array_GetElementCount(StdUInt32Array.Ptr pArray)
+        public static int StdUInt32Array_GetElementCount(StdUInt32ArrayPtr pArray)
         {
             return Imports.StdUInt32Array_GetElementCount(pArray);
         }
 
-        public static void StdUInt32Array_SetElementCount(StdUInt32Array.Ptr pArray, int elementCount)
+        public static void StdUInt32Array_SetElementCount(StdUInt32ArrayPtr pArray, int elementCount)
         {
             Imports.StdUInt32Array_SetElementCount(pArray, elementCount);
         }
 
-        public static IntPtr StdUInt32Array_GetData(StdUInt32Array.Ptr pArray)
+        public static IntPtr StdUInt32Array_GetData(StdUInt32ArrayPtr pArray)
         {
             return Imports.StdUInt32Array_GetData(pArray);
         }
 
-        public static void StdUInt32Array_Delete(StdUInt32Array.Ptr pArray)
+        public static void StdUInt32Array_Delete(StdUInt32ArrayPtr pArray)
         {
             Imports.StdUInt32Array_Delete(pArray);
         }
@@ -179,27 +179,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region StdUInt64Array methods
 
-        public static StdUInt64Array.Ptr StdUInt64Array_New(int elementCount)
+        public static StdUInt64ArrayPtr StdUInt64Array_New(int elementCount)
         {
             return Imports.StdUInt64Array_New(elementCount);
         }
 
-        public static int StdUInt64Array_GetElementCount(StdUInt64Array.Ptr pArray)
+        public static int StdUInt64Array_GetElementCount(StdUInt64ArrayPtr pArray)
         {
             return Imports.StdUInt64Array_GetElementCount(pArray);
         }
 
-        public static void StdUInt64Array_SetElementCount(StdUInt64Array.Ptr pArray, int elementCount)
+        public static void StdUInt64Array_SetElementCount(StdUInt64ArrayPtr pArray, int elementCount)
         {
             Imports.StdUInt64Array_SetElementCount(pArray, elementCount);
         }
 
-        public static IntPtr StdUInt64Array_GetData(StdUInt64Array.Ptr pArray)
+        public static IntPtr StdUInt64Array_GetData(StdUInt64ArrayPtr pArray)
         {
             return Imports.StdUInt64Array_GetData(pArray);
         }
 
-        public static void StdUInt64Array_Delete(StdUInt64Array.Ptr pArray)
+        public static void StdUInt64Array_Delete(StdUInt64ArrayPtr pArray)
         {
             Imports.StdUInt64Array_Delete(pArray);
         }
@@ -208,27 +208,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region StdPtrArray methods
 
-        public static StdPtrArray.Ptr StdPtrArray_New(int elementCount)
+        public static StdPtrArrayPtr StdPtrArray_New(int elementCount)
         {
             return Imports.StdPtrArray_New(elementCount);
         }
 
-        public static int StdPtrArray_GetElementCount(StdPtrArray.Ptr pArray)
+        public static int StdPtrArray_GetElementCount(StdPtrArrayPtr pArray)
         {
             return Imports.StdPtrArray_GetElementCount(pArray);
         }
 
-        public static void StdPtrArray_SetElementCount(StdPtrArray.Ptr pArray, int elementCount)
+        public static void StdPtrArray_SetElementCount(StdPtrArrayPtr pArray, int elementCount)
         {
             Imports.StdPtrArray_SetElementCount(pArray, elementCount);
         }
 
-        public static IntPtr StdPtrArray_GetData(StdPtrArray.Ptr pArray)
+        public static IntPtr StdPtrArray_GetData(StdPtrArrayPtr pArray)
         {
             return Imports.StdPtrArray_GetData(pArray);
         }
 
-        public static void StdPtrArray_Delete(StdPtrArray.Ptr pArray)
+        public static void StdPtrArray_Delete(StdPtrArrayPtr pArray)
         {
             Imports.StdPtrArray_Delete(pArray);
         }
@@ -237,27 +237,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region StdV8ValueArray methods
 
-        public static StdV8ValueArray.Ptr StdV8ValueArray_New(int elementCount)
+        public static StdV8ValueArrayPtr StdV8ValueArray_New(int elementCount)
         {
             return Imports.StdV8ValueArray_New(elementCount);
         }
 
-        public static int StdV8ValueArray_GetElementCount(StdV8ValueArray.Ptr pArray)
+        public static int StdV8ValueArray_GetElementCount(StdV8ValueArrayPtr pArray)
         {
             return Imports.StdV8ValueArray_GetElementCount(pArray);
         }
 
-        public static void StdV8ValueArray_SetElementCount(StdV8ValueArray.Ptr pArray, int elementCount)
+        public static void StdV8ValueArray_SetElementCount(StdV8ValueArrayPtr pArray, int elementCount)
         {
             Imports.StdV8ValueArray_SetElementCount(pArray, elementCount);
         }
 
-        public static V8Value.Ptr StdV8ValueArray_GetData(StdV8ValueArray.Ptr pArray)
+        public static V8ValuePtr StdV8ValueArray_GetData(StdV8ValueArrayPtr pArray)
         {
             return Imports.StdV8ValueArray_GetData(pArray);
         }
 
-        public static void StdV8ValueArray_Delete(StdV8ValueArray.Ptr pArray)
+        public static void StdV8ValueArray_Delete(StdV8ValueArrayPtr pArray)
         {
             Imports.StdV8ValueArray_Delete(pArray);
         }
@@ -266,77 +266,77 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8Value methods
 
-        public static V8Value.Ptr V8Value_New()
+        public static V8ValuePtr V8Value_New()
         {
             return Imports.V8Value_New();
         }
 
-        public static void V8Value_SetNonexistent(V8Value.Ptr pV8Value)
+        public static void V8Value_SetNonexistent(V8ValuePtr pV8Value)
         {
             Imports.V8Value_SetNonexistent(pV8Value);
         }
 
-        public static void V8Value_SetUndefined(V8Value.Ptr pV8Value)
+        public static void V8Value_SetUndefined(V8ValuePtr pV8Value)
         {
             Imports.V8Value_SetUndefined(pV8Value);
         }
 
-        public static void V8Value_SetNull(V8Value.Ptr pV8Value)
+        public static void V8Value_SetNull(V8ValuePtr pV8Value)
         {
             Imports.V8Value_SetNull(pV8Value);
         }
 
-        public static void V8Value_SetBoolean(V8Value.Ptr pV8Value, bool value)
+        public static void V8Value_SetBoolean(V8ValuePtr pV8Value, bool value)
         {
             Imports.V8Value_SetBoolean(pV8Value, value);
         }
 
-        public static void V8Value_SetNumber(V8Value.Ptr pV8Value, double value)
+        public static void V8Value_SetNumber(V8ValuePtr pV8Value, double value)
         {
             Imports.V8Value_SetNumber(pV8Value, value);
         }
 
-        public static void V8Value_SetInt32(V8Value.Ptr pV8Value, int value)
+        public static void V8Value_SetInt32(V8ValuePtr pV8Value, int value)
         {
             Imports.V8Value_SetInt32(pV8Value, value);
         }
 
-        public static void V8Value_SetUInt32(V8Value.Ptr pV8Value, uint value)
+        public static void V8Value_SetUInt32(V8ValuePtr pV8Value, uint value)
         {
             Imports.V8Value_SetUInt32(pV8Value, value);
         }
 
-        public static void V8Value_SetString(V8Value.Ptr pV8Value, string value)
+        public static void V8Value_SetString(V8ValuePtr pV8Value, string value)
         {
             Imports.V8Value_SetString(pV8Value, value, value.Length);
         }
 
-        public static void V8Value_SetDateTime(V8Value.Ptr pV8Value, double value)
+        public static void V8Value_SetDateTime(V8ValuePtr pV8Value, double value)
         {
             Imports.V8Value_SetDateTime(pV8Value, value);
         }
 
-        public static void V8Value_SetBigInt(V8Value.Ptr pV8Value, int signBit, byte[] bytes)
+        public static void V8Value_SetBigInt(V8ValuePtr pV8Value, int signBit, byte[] bytes)
         {
             Imports.V8Value_SetBigInt(pV8Value, signBit, bytes, bytes.Length);
         }
 
-        public static void V8Value_SetV8Object(V8Value.Ptr pV8Value, V8Object.Handle hObject, V8Value.Subtype subtype, V8Value.Flags flags)
+        public static void V8Value_SetV8Object(V8ValuePtr pV8Value, V8ObjectHandle hObject, V8ValueSubtype subtype, V8ValueFlags flags)
         {
             Imports.V8Value_SetV8Object(pV8Value, hObject, subtype, flags);
         }
 
-        public static void V8Value_SetHostObject(V8Value.Ptr pV8Value, IntPtr pObject)
+        public static void V8Value_SetHostObject(V8ValuePtr pV8Value, IntPtr pObject)
         {
             Imports.V8Value_SetHostObject(pV8Value, pObject);
         }
 
-        public static V8Value.Type V8Value_Decode(V8Value.Ptr pV8Value, out int intValue, out uint uintValue, out double doubleValue, out IntPtr ptrOrHandle)
+        public static V8ValueType V8Value_Decode(V8ValuePtr pV8Value, out int intValue, out uint uintValue, out double doubleValue, out IntPtr ptrOrHandle)
         {
             return Imports.V8Value_Decode(pV8Value, out intValue, out uintValue, out doubleValue, out ptrOrHandle);
         }
 
-        public static void V8Value_Delete(V8Value.Ptr pV8Value)
+        public static void V8Value_Delete(V8ValuePtr pV8Value)
         {
             Imports.V8Value_Delete(pV8Value);
         }
@@ -345,7 +345,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8CpuProfile methods
 
-        public static void V8CpuProfile_GetInfo(V8CpuProfile.Ptr pProfile, V8Entity.Handle hEntity, out string name, out ulong startTimestamp, out ulong endTimestamp, out int sampleCount, out V8CpuProfile.Node.Ptr pRootNode)
+        public static void V8CpuProfile_GetInfo(V8CpuProfilePtr pProfile, V8Entity hEntity, out string name, out ulong startTimestamp, out ulong endTimestamp, out int sampleCount, out V8CpuProfileImpl.NodePtr pRootNode)
         {
             using (var nameScope = StdString.CreateScope())
             {
@@ -354,12 +354,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static bool V8CpuProfile_GetSample(V8CpuProfile.Ptr pProfile, int index, out ulong nodeId, out ulong timestamp)
+        public static bool V8CpuProfile_GetSample(V8CpuProfilePtr pProfile, int index, out ulong nodeId, out ulong timestamp)
         {
             return Imports.V8CpuProfile_GetSample(pProfile, index, out nodeId, out timestamp);
         }
 
-        public static void V8CpuProfileNode_GetInfo(V8CpuProfile.Node.Ptr pNode, V8Entity.Handle hEntity, out ulong nodeId, out long scriptId, out string scriptName, out string functionName, out string bailoutReason, out long lineNumber, out long columnNumber, out ulong hitCount, out uint hitLineCount, out int childCount)
+        public static void V8CpuProfileNode_GetInfo(V8CpuProfileImpl.NodePtr pNode, V8Entity hEntity, out ulong nodeId, out long scriptId, out string scriptName, out string functionName, out string bailoutReason, out long lineNumber, out long columnNumber, out ulong hitCount, out uint hitLineCount, out int childCount)
         {
             using (var scriptNameScope = StdString.CreateScope())
             {
@@ -377,7 +377,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static bool V8CpuProfileNode_GetHitLines(V8CpuProfile.Node.Ptr pNode, out int[] lineNumbers, out uint[] hitCounts)
+        public static bool V8CpuProfileNode_GetHitLines(V8CpuProfileImpl.NodePtr pNode, out int[] lineNumbers, out uint[] hitCounts)
         {
             using (var lineNumbersScope = StdInt32Array.CreateScope())
             {
@@ -391,7 +391,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8CpuProfile.Node.Ptr V8CpuProfileNode_GetChildNode(V8CpuProfile.Node.Ptr pNode, int index)
+        public static V8CpuProfileImpl.NodePtr V8CpuProfileNode_GetChildNode(V8CpuProfileImpl.NodePtr pNode, int index)
         {
             return Imports.V8CpuProfileNode_GetChildNode(pNode, index);
         }
@@ -400,7 +400,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8 isolate methods
 
-        public static V8Isolate.Handle V8Isolate_Create(string name, int maxNewSpaceSize, int maxOldSpaceSize, double heapExpansionMultiplier, ulong maxArrayBufferAllocation, V8RuntimeFlags flags, int debugPort)
+        public static V8IsolateHandle V8Isolate_Create(string name, int maxNewSpaceSize, int maxOldSpaceSize, double heapExpansionMultiplier, ulong maxArrayBufferAllocation, V8RuntimeFlags flags, int debugPort)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -408,7 +408,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8Context.Handle V8Isolate_CreateContext(V8Isolate.Handle hIsolate, string name, V8ScriptEngineFlags flags, int debugPort)
+        public static V8ContextHandle V8Isolate_CreateContext(V8IsolateHandle hIsolate, string name, V8ScriptEngineFlags flags, int debugPort)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -416,47 +416,47 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static UIntPtr V8Isolate_GetMaxHeapSize(V8Isolate.Handle hIsolate)
+        public static UIntPtr V8Isolate_GetMaxHeapSize(V8IsolateHandle hIsolate)
         {
             return Imports.V8Isolate_GetMaxHeapSize(hIsolate);
         }
 
-        public static void V8Isolate_SetMaxHeapSize(V8Isolate.Handle hIsolate, UIntPtr size)
+        public static void V8Isolate_SetMaxHeapSize(V8IsolateHandle hIsolate, UIntPtr size)
         {
             Imports.V8Isolate_SetMaxHeapSize(hIsolate, size);
         }
 
-        public static double V8Isolate_GetHeapSizeSampleInterval(V8Isolate.Handle hIsolate)
+        public static double V8Isolate_GetHeapSizeSampleInterval(V8IsolateHandle hIsolate)
         {
             return Imports.V8Isolate_GetHeapSizeSampleInterval(hIsolate);
         }
 
-        public static void V8Isolate_SetHeapSizeSampleInterval(V8Isolate.Handle hIsolate, double milliseconds)
+        public static void V8Isolate_SetHeapSizeSampleInterval(V8IsolateHandle hIsolate, double milliseconds)
         {
             Imports.V8Isolate_SetHeapSizeSampleInterval(hIsolate, milliseconds);
         }
 
-        public static UIntPtr V8Isolate_GetMaxStackUsage(V8Isolate.Handle hIsolate)
+        public static UIntPtr V8Isolate_GetMaxStackUsage(V8IsolateHandle hIsolate)
         {
             return Imports.V8Isolate_GetMaxStackUsage(hIsolate);
         }
 
-        public static void V8Isolate_SetMaxStackUsage(V8Isolate.Handle hIsolate, UIntPtr size)
+        public static void V8Isolate_SetMaxStackUsage(V8IsolateHandle hIsolate, UIntPtr size)
         {
             Imports.V8Isolate_SetMaxStackUsage(hIsolate, size);
         }
 
-        public static void V8Isolate_AwaitDebuggerAndPause(V8Isolate.Handle hIsolate)
+        public static void V8Isolate_AwaitDebuggerAndPause(V8IsolateHandle hIsolate)
         {
             Imports.V8Isolate_AwaitDebuggerAndPause(hIsolate);
         }
 
-        public static void V8Isolate_CancelAwaitDebugger(V8Isolate.Handle hIsolate)
+        public static void V8Isolate_CancelAwaitDebugger(V8IsolateHandle hIsolate)
         {
             Imports.V8Isolate_CancelAwaitDebugger(hIsolate);
         }
 
-        public static V8Script.Handle V8Isolate_Compile(V8Isolate.Handle hIsolate, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code)
+        public static V8ScriptHandle V8Isolate_Compile(V8IsolateHandle hIsolate, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -470,7 +470,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8Script.Handle V8Isolate_CompileProducingCache(V8Isolate.Handle hIsolate, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
+        public static V8ScriptHandle V8Isolate_CompileProducingCache(V8IsolateHandle hIsolate, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -489,7 +489,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8Script.Handle V8Isolate_CompileConsumingCache(V8Isolate.Handle hIsolate, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
+        public static V8ScriptHandle V8Isolate_CompileConsumingCache(V8IsolateHandle hIsolate, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -506,32 +506,32 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static bool V8Isolate_GetEnableInterruptPropagation(V8Isolate.Handle hIsolate)
+        public static bool V8Isolate_GetEnableInterruptPropagation(V8IsolateHandle hIsolate)
         {
             return Imports.V8Isolate_GetEnableInterruptPropagation(hIsolate);
         }
 
-        public static void V8Isolate_SetEnableInterruptPropagation(V8Isolate.Handle hIsolate, bool value)
+        public static void V8Isolate_SetEnableInterruptPropagation(V8IsolateHandle hIsolate, bool value)
         {
             Imports.V8Isolate_SetEnableInterruptPropagation(hIsolate, value);
         }
 
-        public static bool V8Isolate_GetDisableHeapSizeViolationInterrupt(V8Isolate.Handle hIsolate)
+        public static bool V8Isolate_GetDisableHeapSizeViolationInterrupt(V8IsolateHandle hIsolate)
         {
             return Imports.V8Isolate_GetDisableHeapSizeViolationInterrupt(hIsolate);
         }
 
-        public static void V8Isolate_SetDisableHeapSizeViolationInterrupt(V8Isolate.Handle hIsolate, bool value)
+        public static void V8Isolate_SetDisableHeapSizeViolationInterrupt(V8IsolateHandle hIsolate, bool value)
         {
             Imports.V8Isolate_SetDisableHeapSizeViolationInterrupt(hIsolate, value);
         }
 
-        public static void V8Isolate_GetHeapStatistics(V8Isolate.Handle hIsolate, out ulong totalHeapSize, out ulong totalHeapSizeExecutable, out ulong totalPhysicalSize, out ulong totalAvailableSize, out ulong usedHeapSize, out ulong heapSizeLimit, out ulong totalExternalSize)
+        public static void V8Isolate_GetHeapStatistics(V8IsolateHandle hIsolate, out ulong totalHeapSize, out ulong totalHeapSizeExecutable, out ulong totalPhysicalSize, out ulong totalAvailableSize, out ulong usedHeapSize, out ulong heapSizeLimit, out ulong totalExternalSize)
         {
             Imports.V8Isolate_GetHeapStatistics(hIsolate, out totalHeapSize, out totalHeapSizeExecutable, out totalPhysicalSize, out totalAvailableSize, out usedHeapSize, out heapSizeLimit, out totalExternalSize);
         }
 
-        public static void V8Isolate_GetStatistics(V8Isolate.Handle hIsolate, out ulong scriptCount, out ulong scriptCacheSize, out ulong moduleCount, out ulong[] postedTaskCounts, out ulong[] invokedTaskCounts)
+        public static void V8Isolate_GetStatistics(V8IsolateHandle hIsolate, out ulong scriptCount, out ulong scriptCacheSize, out ulong moduleCount, out ulong[] postedTaskCounts, out ulong[] invokedTaskCounts)
         {
             using (var postedTaskCountsScope = StdUInt64Array.CreateScope())
             {
@@ -544,12 +544,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Isolate_CollectGarbage(V8Isolate.Handle hIsolate, bool exhaustive)
+        public static void V8Isolate_CollectGarbage(V8IsolateHandle hIsolate, bool exhaustive)
         {
             Imports.V8Isolate_CollectGarbage(hIsolate, exhaustive);
         }
 
-        public static bool V8Isolate_BeginCpuProfile(V8Isolate.Handle hIsolate, string name, bool recordSamples)
+        public static bool V8Isolate_BeginCpuProfile(V8IsolateHandle hIsolate, string name, bool recordSamples)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -557,7 +557,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Isolate_EndCpuProfile(V8Isolate.Handle hIsolate, string name, IntPtr pAction)
+        public static void V8Isolate_EndCpuProfile(V8IsolateHandle hIsolate, string name, IntPtr pAction)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -565,22 +565,22 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Isolate_CollectCpuProfileSample(V8Isolate.Handle hIsolate)
+        public static void V8Isolate_CollectCpuProfileSample(V8IsolateHandle hIsolate)
         {
             V8Isolate_CollectCpuProfileSample(hIsolate);
         }
 
-        public static uint V8Isolate_GetCpuProfileSampleInterval(V8Isolate.Handle hIsolate)
+        public static uint V8Isolate_GetCpuProfileSampleInterval(V8IsolateHandle hIsolate)
         {
             return Imports.V8Isolate_GetCpuProfileSampleInterval(hIsolate);
         }
 
-        public static void V8Isolate_SetCpuProfileSampleInterval(V8Isolate.Handle hIsolate, uint value)
+        public static void V8Isolate_SetCpuProfileSampleInterval(V8IsolateHandle hIsolate, uint value)
         {
             Imports.V8Isolate_SetCpuProfileSampleInterval(hIsolate, value);
         }
 
-        public static void V8Isolate_WriteHeapSnapshot(V8Isolate.Handle hIsolate, IntPtr pStream)
+        public static void V8Isolate_WriteHeapSnapshot(V8IsolateHandle hIsolate, IntPtr pStream)
         {
             Imports.V8Isolate_WriteHeapSnapshot(hIsolate, pStream);
         }
@@ -589,42 +589,42 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8 context methods
 
-        public static UIntPtr V8Context_GetMaxIsolateHeapSize(V8Context.Handle hContext)
+        public static UIntPtr V8Context_GetMaxIsolateHeapSize(V8ContextHandle hContext)
         {
             return Imports.V8Context_GetMaxIsolateHeapSize(hContext);
         }
 
-        public static void V8Context_SetMaxIsolateHeapSize(V8Context.Handle hContext, UIntPtr size)
+        public static void V8Context_SetMaxIsolateHeapSize(V8ContextHandle hContext, UIntPtr size)
         {
             Imports.V8Context_SetMaxIsolateHeapSize(hContext, size);
         }
 
-        public static double V8Context_GetIsolateHeapSizeSampleInterval(V8Context.Handle hContext)
+        public static double V8Context_GetIsolateHeapSizeSampleInterval(V8ContextHandle hContext)
         {
             return Imports.V8Context_GetIsolateHeapSizeSampleInterval(hContext);
         }
 
-        public static void V8Context_SetIsolateHeapSizeSampleInterval(V8Context.Handle hContext, double milliseconds)
+        public static void V8Context_SetIsolateHeapSizeSampleInterval(V8ContextHandle hContext, double milliseconds)
         {
             Imports.V8Context_SetIsolateHeapSizeSampleInterval(hContext, milliseconds);
         }
 
-        public static UIntPtr V8Context_GetMaxIsolateStackUsage(V8Context.Handle hContext)
+        public static UIntPtr V8Context_GetMaxIsolateStackUsage(V8ContextHandle hContext)
         {
             return Imports.V8Context_GetMaxIsolateStackUsage(hContext);
         }
 
-        public static void V8Context_SetMaxIsolateStackUsage(V8Context.Handle hContext, UIntPtr size)
+        public static void V8Context_SetMaxIsolateStackUsage(V8ContextHandle hContext, UIntPtr size)
         {
             Imports.V8Context_SetMaxIsolateStackUsage(hContext, size);
         }
 
-        public static void V8Context_InvokeWithLock(V8Context.Handle hContext, IntPtr pAction)
+        public static void V8Context_InvokeWithLock(V8ContextHandle hContext, IntPtr pAction)
         {
             Imports.V8Context_InvokeWithLock(hContext, pAction);
         }
 
-        public static object V8Context_GetRootItem(V8Context.Handle hContext)
+        public static object V8Context_GetRootItem(V8ContextHandle hContext)
         {
             using (var itemScope = V8Value.CreateScope())
             {
@@ -633,7 +633,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Context_AddGlobalItem(V8Context.Handle hContext, string name, object value, bool globalMembers)
+        public static void V8Context_AddGlobalItem(V8ContextHandle hContext, string name, object value, bool globalMembers)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -644,17 +644,17 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Context_AwaitDebuggerAndPause(V8Context.Handle hContext)
+        public static void V8Context_AwaitDebuggerAndPause(V8ContextHandle hContext)
         {
             Imports.V8Context_AwaitDebuggerAndPause(hContext);
         }
 
-        public static void V8Context_CancelAwaitDebugger(V8Context.Handle hContext)
+        public static void V8Context_CancelAwaitDebugger(V8ContextHandle hContext)
         {
             Imports.V8Context_CancelAwaitDebugger(hContext);
         }
 
-        public static object V8Context_ExecuteCode(V8Context.Handle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, bool evaluate)
+        public static object V8Context_ExecuteCode(V8ContextHandle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, bool evaluate)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -672,7 +672,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8Script.Handle V8Context_Compile(V8Context.Handle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code)
+        public static V8ScriptHandle V8Context_Compile(V8ContextHandle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -686,7 +686,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8Script.Handle V8Context_CompileProducingCache(V8Context.Handle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
+        public static V8ScriptHandle V8Context_CompileProducingCache(V8ContextHandle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -705,7 +705,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8Script.Handle V8Context_CompileConsumingCache(V8Context.Handle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
+        public static V8ScriptHandle V8Context_CompileConsumingCache(V8ContextHandle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -722,7 +722,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static object V8Context_ExecuteScript(V8Context.Handle hContext, V8Script.Handle hScript, bool evaluate)
+        public static object V8Context_ExecuteScript(V8ContextHandle hContext, V8ScriptHandle hScript, bool evaluate)
         {
             using (var resultScope = V8Value.CreateScope())
             {
@@ -731,42 +731,42 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Context_Interrupt(V8Context.Handle hContext)
+        public static void V8Context_Interrupt(V8ContextHandle hContext)
         {
             Imports.V8Context_Interrupt(hContext);
         }
 
-        public static void V8Context_CancelInterrupt(V8Context.Handle hContext)
+        public static void V8Context_CancelInterrupt(V8ContextHandle hContext)
         {
             Imports.V8Context_CancelInterrupt(hContext);
         }
 
-        public static bool V8Context_GetEnableIsolateInterruptPropagation(V8Context.Handle hContext)
+        public static bool V8Context_GetEnableIsolateInterruptPropagation(V8ContextHandle hContext)
         {
             return Imports.V8Context_GetEnableIsolateInterruptPropagation(hContext);
         }
 
-        public static void V8Context_SetEnableIsolateInterruptPropagation(V8Context.Handle hContext, bool value)
+        public static void V8Context_SetEnableIsolateInterruptPropagation(V8ContextHandle hContext, bool value)
         {
             Imports.V8Context_SetEnableIsolateInterruptPropagation(hContext, value);
         }
 
-        public static bool V8Context_GetDisableIsolateHeapSizeViolationInterrupt(V8Context.Handle hContext)
+        public static bool V8Context_GetDisableIsolateHeapSizeViolationInterrupt(V8ContextHandle hContext)
         {
             return Imports.V8Context_GetDisableIsolateHeapSizeViolationInterrupt(hContext);
         }
 
-        public static void V8Context_SetDisableIsolateHeapSizeViolationInterrupt(V8Context.Handle hContext, bool value)
+        public static void V8Context_SetDisableIsolateHeapSizeViolationInterrupt(V8ContextHandle hContext, bool value)
         {
             Imports.V8Context_SetDisableIsolateHeapSizeViolationInterrupt(hContext, value);
         }
 
-        public static void V8Context_GetIsolateHeapStatistics(V8Context.Handle hContext, out ulong totalHeapSize, out ulong totalHeapSizeExecutable, out ulong totalPhysicalSize, out ulong totalAvailableSize, out ulong usedHeapSize, out ulong heapSizeLimit, out ulong totalExternalSize)
+        public static void V8Context_GetIsolateHeapStatistics(V8ContextHandle hContext, out ulong totalHeapSize, out ulong totalHeapSizeExecutable, out ulong totalPhysicalSize, out ulong totalAvailableSize, out ulong usedHeapSize, out ulong heapSizeLimit, out ulong totalExternalSize)
         {
             Imports.V8Context_GetIsolateHeapStatistics(hContext, out totalHeapSize, out totalHeapSizeExecutable, out totalPhysicalSize, out totalAvailableSize, out usedHeapSize, out heapSizeLimit, out totalExternalSize);
         }
 
-        public static void V8Context_GetIsolateStatistics(V8Context.Handle hContext, out ulong scriptCount, out ulong scriptCacheSize, out ulong moduleCount, out ulong[] postedTaskCounts, out ulong[] invokedTaskCounts)
+        public static void V8Context_GetIsolateStatistics(V8ContextHandle hContext, out ulong scriptCount, out ulong scriptCacheSize, out ulong moduleCount, out ulong[] postedTaskCounts, out ulong[] invokedTaskCounts)
         {
             using (var postedTaskCountsScope = StdUInt64Array.CreateScope())
             {
@@ -779,22 +779,22 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Context_GetStatistics(V8Context.Handle hContext, out ulong scriptCount, out ulong moduleCount, out ulong moduleCacheSize)
+        public static void V8Context_GetStatistics(V8ContextHandle hContext, out ulong scriptCount, out ulong moduleCount, out ulong moduleCacheSize)
         {
             Imports.V8Context_GetStatistics(hContext, out scriptCount, out moduleCount, out moduleCacheSize);
         }
 
-        public static void V8Context_CollectGarbage(V8Context.Handle hContext, bool exhaustive)
+        public static void V8Context_CollectGarbage(V8ContextHandle hContext, bool exhaustive)
         {
             Imports.V8Context_CollectGarbage(hContext, exhaustive);
         }
 
-        public static void V8Context_OnAccessSettingsChanged(V8Context.Handle hContext)
+        public static void V8Context_OnAccessSettingsChanged(V8ContextHandle hContext)
         {
             Imports.V8Context_OnAccessSettingsChanged(hContext);
         }
 
-        public static bool V8Context_BeginCpuProfile(V8Context.Handle hContext, string name, bool recordSamples)
+        public static bool V8Context_BeginCpuProfile(V8ContextHandle hContext, string name, bool recordSamples)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -802,7 +802,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Context_EndCpuProfile(V8Context.Handle hContext, string name, IntPtr pAction)
+        public static void V8Context_EndCpuProfile(V8ContextHandle hContext, string name, IntPtr pAction)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -810,22 +810,22 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Context_CollectCpuProfileSample(V8Context.Handle hContext)
+        public static void V8Context_CollectCpuProfileSample(V8ContextHandle hContext)
         {
             Imports.V8Context_CollectCpuProfileSample(hContext);
         }
 
-        public static uint V8Context_GetCpuProfileSampleInterval(V8Context.Handle hContext)
+        public static uint V8Context_GetCpuProfileSampleInterval(V8ContextHandle hContext)
         {
             return Imports.V8Context_GetCpuProfileSampleInterval(hContext);
         }
 
-        public static void V8Context_SetCpuProfileSampleInterval(V8Context.Handle hContext, uint value)
+        public static void V8Context_SetCpuProfileSampleInterval(V8ContextHandle hContext, uint value)
         {
             Imports.V8Context_SetCpuProfileSampleInterval(hContext, value);
         }
 
-        public static void V8Context_WriteIsolateHeapSnapshot(V8Context.Handle hContext, IntPtr pStream)
+        public static void V8Context_WriteIsolateHeapSnapshot(V8ContextHandle hContext, IntPtr pStream)
         {
             Imports.V8Context_WriteIsolateHeapSnapshot(hContext, pStream);
         }
@@ -834,7 +834,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8 object methods
 
-        public static object V8Object_GetNamedProperty(V8Object.Handle hObject, string name)
+        public static object V8Object_GetNamedProperty(V8ObjectHandle hObject, string name)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -846,7 +846,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Object_SetNamedProperty(V8Object.Handle hObject, string name, object value)
+        public static void V8Object_SetNamedProperty(V8ObjectHandle hObject, string name, object value)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -857,7 +857,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static bool V8Object_DeleteNamedProperty(V8Object.Handle hObject, string name)
+        public static bool V8Object_DeleteNamedProperty(V8ObjectHandle hObject, string name)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -865,7 +865,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static string[] V8Object_GetPropertyNames(V8Object.Handle hObject)
+        public static string[] V8Object_GetPropertyNames(V8ObjectHandle hObject)
         {
             using (var namesScope = StdStringArray.CreateScope())
             {
@@ -874,7 +874,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static object V8Object_GetIndexedProperty(V8Object.Handle hObject, int index)
+        public static object V8Object_GetIndexedProperty(V8ObjectHandle hObject, int index)
         {
             using (var valueScope = V8Value.CreateScope())
             {
@@ -883,7 +883,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Object_SetIndexedProperty(V8Object.Handle hObject, int index, object value)
+        public static void V8Object_SetIndexedProperty(V8ObjectHandle hObject, int index, object value)
         {
             using (var valueScope = V8Value.CreateScope(value))
             {
@@ -891,12 +891,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static bool V8Object_DeleteIndexedProperty(V8Object.Handle hObject, int index)
+        public static bool V8Object_DeleteIndexedProperty(V8ObjectHandle hObject, int index)
         {
             return Imports.V8Object_DeleteIndexedProperty(hObject, index);
         }
 
-        public static int[] V8Object_GetPropertyIndices(V8Object.Handle hObject)
+        public static int[] V8Object_GetPropertyIndices(V8ObjectHandle hObject)
         {
             using (var indicesScope = StdInt32Array.CreateScope())
             {
@@ -905,7 +905,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static object V8Object_Invoke(V8Object.Handle hObject, bool asConstructor, object[] args)
+        public static object V8Object_Invoke(V8ObjectHandle hObject, bool asConstructor, object[] args)
         {
             using (var argsScope = StdV8ValueArray.CreateScope(args))
             {
@@ -917,7 +917,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static object V8Object_InvokeMethod(V8Object.Handle hObject, string name, object[] args)
+        public static object V8Object_InvokeMethod(V8ObjectHandle hObject, string name, object[] args)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -932,16 +932,16 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Object_GetArrayBufferOrViewInfo(V8Object.Handle hObject, out IV8Object arrayBuffer, out ulong offset, out ulong size, out ulong length)
+        public static void V8Object_GetArrayBufferOrViewInfo(V8ObjectHandle hObject, out V8Object arrayBuffer, out ulong offset, out ulong size, out ulong length)
         {
             using (var arrayBufferScope = V8Value.CreateScope())
             {
                 Imports.V8Object_GetArrayBufferOrViewInfo(hObject, arrayBufferScope.Value, out offset, out size, out length);
-                arrayBuffer = (IV8Object)V8Value.Get(arrayBufferScope.Value);
+                arrayBuffer = (V8Object)V8Value.Get(arrayBufferScope.Value);
             }
         }
 
-        public static void V8Object_InvokeWithArrayBufferOrViewData(V8Object.Handle hObject, IntPtr pAction)
+        public static void V8Object_InvokeWithArrayBufferOrViewData(V8ObjectHandle hObject, IntPtr pAction)
         {
             Imports.V8Object_InvokeWithArrayBufferOrViewData(hObject, pAction);
         }
@@ -950,12 +950,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8 debug callback methods
 
-        public static void V8DebugCallback_ConnectClient(V8DebugCallback.Handle hCallback)
+        public static void V8DebugCallback_ConnectClient(V8DebugCallbackHandle hCallback)
         {
             Imports.V8DebugCallback_ConnectClient(hCallback);
         }
 
-        public static void V8DebugCallback_SendCommand(V8DebugCallback.Handle hCallback, string command)
+        public static void V8DebugCallback_SendCommand(V8DebugCallbackHandle hCallback, string command)
         {
             using (var commandScope = StdString.CreateScope(command))
             {
@@ -963,7 +963,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8DebugCallback_DisconnectClient(V8DebugCallback.Handle hCallback)
+        public static void V8DebugCallback_DisconnectClient(V8DebugCallbackHandle hCallback)
         {
             Imports.V8DebugCallback_DisconnectClient(hCallback);
         }
@@ -972,7 +972,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region native callback methods
 
-        public static void NativeCallback_Invoke(NativeCallback.Handle hCallback)
+        public static void NativeCallback_Invoke(NativeCallbackHandle hCallback)
         {
             Imports.NativeCallback_Invoke(hCallback);
         }
@@ -981,12 +981,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8 entity cleanup
 
-        public static void V8Entity_Release(V8Entity.Handle hEntity)
+        public static void V8Entity_Release(V8Entity hEntity)
         {
             Imports.V8Entity_Release(hEntity);
         }
 
-        public static void V8Entity_DestroyHandle(V8Entity.Handle hEntity)
+        public static void V8Entity_DestroyHandle(V8Entity hEntity)
         {
             Imports.V8Entity_DestroyHandle(hEntity);
         }
@@ -1160,27 +1160,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region StdString methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdString.Ptr StdString_New(
+            public static extern StdStringPtr StdString_New(
                 [In][MarshalAs(UnmanagedType.LPWStr)] string value,
                 [In] int length
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern IntPtr StdString_GetValue(
-                [In] StdString.Ptr pString,
+                [In] StdStringPtr pString,
                 [Out] out int length
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdString_SetValue(
-                [In] StdString.Ptr pString,
+                [In] StdStringPtr pString,
                 [In][MarshalAs(UnmanagedType.LPWStr)] string value,
                 [In] int length
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdString_Delete(
-                [In] StdString.Ptr pString
+                [In] StdStringPtr pString
             );
 
             #endregion
@@ -1188,31 +1188,31 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region StdStringArray methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdStringArray.Ptr StdStringArray_New(
+            public static extern StdStringArrayPtr StdStringArray_New(
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern int StdStringArray_GetElementCount(
-                [In] StdStringArray.Ptr pArray
+                [In] StdStringArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdStringArray_SetElementCount(
-                [In] StdStringArray.Ptr pArray,
+                [In] StdStringArrayPtr pArray,
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern IntPtr StdStringArray_GetElement(
-                [In] StdStringArray.Ptr pArray,
+                [In] StdStringArrayPtr pArray,
                 [In] int index,
                 [Out] out int length
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdStringArray_SetElement(
-                [In] StdStringArray.Ptr pArray,
+                [In] StdStringArrayPtr pArray,
                 [In] int index,
                 [In][MarshalAs(UnmanagedType.LPWStr)] string value,
                 [In] int length
@@ -1220,7 +1220,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdStringArray_Delete(
-                [In] StdStringArray.Ptr pArray
+                [In] StdStringArrayPtr pArray
             );
 
             #endregion
@@ -1228,29 +1228,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region StdByteArray methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdByteArray.Ptr StdByteArray_New(
+            public static extern StdByteArrayPtr StdByteArray_New(
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern int StdByteArray_GetElementCount(
-                [In] StdByteArray.Ptr pArray
+                [In] StdByteArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdByteArray_SetElementCount(
-                [In] StdByteArray.Ptr pArray,
+                [In] StdByteArrayPtr pArray,
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern IntPtr StdByteArray_GetData(
-                [In] StdByteArray.Ptr pArray
+                [In] StdByteArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdByteArray_Delete(
-                [In] StdByteArray.Ptr pArray
+                [In] StdByteArrayPtr pArray
             );
 
             #endregion
@@ -1258,29 +1258,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region StdInt32Array methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdInt32Array.Ptr StdInt32Array_New(
+            public static extern StdInt32ArrayPtr StdInt32Array_New(
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern int StdInt32Array_GetElementCount(
-                [In] StdInt32Array.Ptr pArray
+                [In] StdInt32ArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdInt32Array_SetElementCount(
-                [In] StdInt32Array.Ptr pArray,
+                [In] StdInt32ArrayPtr pArray,
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern IntPtr StdInt32Array_GetData(
-                [In] StdInt32Array.Ptr pArray
+                [In] StdInt32ArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdInt32Array_Delete(
-                [In] StdInt32Array.Ptr pArray
+                [In] StdInt32ArrayPtr pArray
             );
 
             #endregion
@@ -1288,29 +1288,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region StdUInt32Array methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdUInt32Array.Ptr StdUInt32Array_New(
+            public static extern StdUInt32ArrayPtr StdUInt32Array_New(
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern int StdUInt32Array_GetElementCount(
-                [In] StdUInt32Array.Ptr pArray
+                [In] StdUInt32ArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdUInt32Array_SetElementCount(
-                [In] StdUInt32Array.Ptr pArray,
+                [In] StdUInt32ArrayPtr pArray,
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern IntPtr StdUInt32Array_GetData(
-                [In] StdUInt32Array.Ptr pArray
+                [In] StdUInt32ArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdUInt32Array_Delete(
-                [In] StdUInt32Array.Ptr pArray
+                [In] StdUInt32ArrayPtr pArray
             );
 
             #endregion
@@ -1318,29 +1318,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region StdUInt64Array methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdUInt64Array.Ptr StdUInt64Array_New(
+            public static extern StdUInt64ArrayPtr StdUInt64Array_New(
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern int StdUInt64Array_GetElementCount(
-                [In] StdUInt64Array.Ptr pArray
+                [In] StdUInt64ArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdUInt64Array_SetElementCount(
-                [In] StdUInt64Array.Ptr pArray,
+                [In] StdUInt64ArrayPtr pArray,
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern IntPtr StdUInt64Array_GetData(
-                [In] StdUInt64Array.Ptr pArray
+                [In] StdUInt64ArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdUInt64Array_Delete(
-                [In] StdUInt64Array.Ptr pArray
+                [In] StdUInt64ArrayPtr pArray
             );
 
             #endregion
@@ -1348,29 +1348,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region StdPtrArray methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdPtrArray.Ptr StdPtrArray_New(
+            public static extern StdPtrArrayPtr StdPtrArray_New(
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern int StdPtrArray_GetElementCount(
-                [In] StdPtrArray.Ptr pArray
+                [In] StdPtrArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdPtrArray_SetElementCount(
-                [In] StdPtrArray.Ptr pArray,
+                [In] StdPtrArrayPtr pArray,
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern IntPtr StdPtrArray_GetData(
-                [In] StdPtrArray.Ptr pArray
+                [In] StdPtrArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdPtrArray_Delete(
-                [In] StdPtrArray.Ptr pArray
+                [In] StdPtrArrayPtr pArray
             );
 
             #endregion
@@ -1378,29 +1378,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region StdV8ValueArray methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdV8ValueArray.Ptr StdV8ValueArray_New(
+            public static extern StdV8ValueArrayPtr StdV8ValueArray_New(
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern int StdV8ValueArray_GetElementCount(
-                [In] StdV8ValueArray.Ptr pArray
+                [In] StdV8ValueArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdV8ValueArray_SetElementCount(
-                [In] StdV8ValueArray.Ptr pArray,
+                [In] StdV8ValueArrayPtr pArray,
                 [In] int elementCount
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Value.Ptr StdV8ValueArray_GetData(
-                [In] StdV8ValueArray.Ptr pArray
+            public static extern V8ValuePtr StdV8ValueArray_GetData(
+                [In] StdV8ValueArrayPtr pArray
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void StdV8ValueArray_Delete(
-                [In] StdV8ValueArray.Ptr pArray
+                [In] StdV8ValueArrayPtr pArray
             );
 
             #endregion
@@ -1408,63 +1408,63 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region V8Value methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Value.Ptr V8Value_New();
+            public static extern V8ValuePtr V8Value_New();
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetNonexistent(
-                [In] V8Value.Ptr pV8Value
+                [In] V8ValuePtr pV8Value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetUndefined(
-                [In] V8Value.Ptr pV8Value
+                [In] V8ValuePtr pV8Value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetNull(
-                [In] V8Value.Ptr pV8Value
+                [In] V8ValuePtr pV8Value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetBoolean(
-                [In] V8Value.Ptr pV8Value,
+                [In] V8ValuePtr pV8Value,
                 [In][MarshalAs(UnmanagedType.I1)] bool value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetNumber(
-                [In] V8Value.Ptr pV8Value,
+                [In] V8ValuePtr pV8Value,
                 [In] double value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetInt32(
-                [In] V8Value.Ptr pV8Value,
+                [In] V8ValuePtr pV8Value,
                 [In] int value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetUInt32(
-                [In] V8Value.Ptr pV8Value,
+                [In] V8ValuePtr pV8Value,
                 [In] uint value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetString(
-                [In] V8Value.Ptr pV8Value,
+                [In] V8ValuePtr pV8Value,
                 [In][MarshalAs(UnmanagedType.LPWStr)] string value,
                 [In] int length
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetDateTime(
-                [In] V8Value.Ptr pV8Value,
+                [In] V8ValuePtr pV8Value,
                 [In] double value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetBigInt(
-                [In] V8Value.Ptr pV8Value,
+                [In] V8ValuePtr pV8Value,
                 [In] int signBit,
                 [In][MarshalAs(UnmanagedType.LPArray)] byte[] bytes,
                 [In] int length
@@ -1472,21 +1472,21 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetV8Object(
-                [In] V8Value.Ptr pV8Value,
-                [In] V8Object.Handle hObject,
-                [In] V8Value.Subtype subtype,
-                [In] V8Value.Flags flags
+                [In] V8ValuePtr pV8Value,
+                [In] V8ObjectHandle hObject,
+                [In] V8ValueSubtype subtype,
+                [In] V8ValueFlags flags
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_SetHostObject(
-                [In] V8Value.Ptr pV8Value,
+                [In] V8ValuePtr pV8Value,
                 [In] IntPtr pObject
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Value.Type V8Value_Decode(
-                [In] V8Value.Ptr pV8Value,
+            public static extern V8ValueType V8Value_Decode(
+                [In] V8ValuePtr pV8Value,
                 [Out] out int intValue,
                 [Out] out uint uintValue,
                 [Out] out double doubleValue,
@@ -1495,7 +1495,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Value_Delete(
-                [In] V8Value.Ptr pV8Value
+                [In] V8ValuePtr pV8Value
             );
 
             #endregion
@@ -1504,19 +1504,19 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8CpuProfile_GetInfo(
-                [In] V8CpuProfile.Ptr pProfile,
-                [In] V8Entity.Handle hEntity,
-                [In] StdString.Ptr pName,
+                [In] V8CpuProfilePtr pProfile,
+                [In] V8Entity hEntity,
+                [In] StdStringPtr pName,
                 [Out] out ulong startTimestamp,
                 [Out] out ulong endTimestamp,
                 [Out] out int sampleCount,
-                [Out] out V8CpuProfile.Node.Ptr pRootNode
+                [Out] out V8CpuProfileImpl.NodePtr pRootNode
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8CpuProfile_GetSample(
-                [In] V8CpuProfile.Ptr pProfile,
+                [In] V8CpuProfilePtr pProfile,
                 [In] int index,
                 [Out] out ulong nodeId,
                 [Out] out ulong timestamp
@@ -1524,13 +1524,13 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8CpuProfileNode_GetInfo(
-                [In] V8CpuProfile.Node.Ptr pNode,
-                [In] V8Entity.Handle hEntity,
+                [In] V8CpuProfileImpl.NodePtr pNode,
+                [In] V8Entity hEntity,
                 [Out] out ulong nodeId,
                 [Out] out long scriptId,
-                [In] StdString.Ptr pScriptName,
-                [In] StdString.Ptr pFunctionName,
-                [In] StdString.Ptr pBailoutReason,
+                [In] StdStringPtr pScriptName,
+                [In] StdStringPtr pFunctionName,
+                [In] StdStringPtr pBailoutReason,
                 [Out] out long lineNumber,
                 [Out] out long columnNumber,
                 [Out] out ulong hitCount,
@@ -1541,14 +1541,14 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8CpuProfileNode_GetHitLines(
-                [In] V8CpuProfile.Node.Ptr pNode,
-                [In] StdInt32Array.Ptr pLineNumbers,
-                [In] StdUInt32Array.Ptr pHitCounts
+                [In] V8CpuProfileImpl.NodePtr pNode,
+                [In] StdInt32ArrayPtr pLineNumbers,
+                [In] StdUInt32ArrayPtr pHitCounts
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8CpuProfile.Node.Ptr V8CpuProfileNode_GetChildNode(
-                [In] V8CpuProfile.Node.Ptr pNode,
+            public static extern V8CpuProfileImpl.NodePtr V8CpuProfileNode_GetChildNode(
+                [In] V8CpuProfileImpl.NodePtr pNode,
                 [In] int index
             );
 
@@ -1557,8 +1557,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             #region V8 isolate methods
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Isolate.Handle V8Isolate_Create(
-                [In] StdString.Ptr pName,
+            public static extern V8IsolateHandle V8Isolate_Create(
+                [In] StdStringPtr pName,
                 [In] int maxNewSpaceSize,
                 [In] int maxOldSpaceSize,
                 [In] double heapExpansionMultiplier,
@@ -1568,121 +1568,121 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Context.Handle V8Isolate_CreateContext(
-                [In] V8Isolate.Handle hIsolate,
-                [In] StdString.Ptr pName,
+            public static extern V8ContextHandle V8Isolate_CreateContext(
+                [In] V8IsolateHandle hIsolate,
+                [In] StdStringPtr pName,
                 [In] V8ScriptEngineFlags flags,
                 [In] int debugPort
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern UIntPtr V8Isolate_GetMaxHeapSize(
-                [In] V8Isolate.Handle hIsolate
+                [In] V8IsolateHandle hIsolate
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_SetMaxHeapSize(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [In] UIntPtr size
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern double V8Isolate_GetHeapSizeSampleInterval(
-                [In] V8Isolate.Handle hIsolate
+                [In] V8IsolateHandle hIsolate
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_SetHeapSizeSampleInterval(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [In] double milliseconds
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern UIntPtr V8Isolate_GetMaxStackUsage(
-                [In] V8Isolate.Handle hIsolate
+                [In] V8IsolateHandle hIsolate
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_SetMaxStackUsage(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [In] UIntPtr size
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_AwaitDebuggerAndPause(
-                [In] V8Isolate.Handle hIsolate
+                [In] V8IsolateHandle hIsolate
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_CancelAwaitDebugger(
-                [In] V8Isolate.Handle hIsolate
+                [In] V8IsolateHandle hIsolate
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Script.Handle V8Isolate_Compile(
-                [In] V8Isolate.Handle hIsolate,
-                [In] StdString.Ptr pResourceName,
-                [In] StdString.Ptr pSourceMapUrl,
+            public static extern V8ScriptHandle V8Isolate_Compile(
+                [In] V8IsolateHandle hIsolate,
+                [In] StdStringPtr pResourceName,
+                [In] StdStringPtr pSourceMapUrl,
                 [In] ulong uniqueId,
                 [In][MarshalAs(UnmanagedType.I1)] bool isModule,
                 [In] IntPtr pDocumentInfo,
-                [In] StdString.Ptr pCode
+                [In] StdStringPtr pCode
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Script.Handle V8Isolate_CompileProducingCache(
-                [In] V8Isolate.Handle hIsolate,
-                [In] StdString.Ptr pResourceName,
-                [In] StdString.Ptr pSourceMapUrl,
+            public static extern V8ScriptHandle V8Isolate_CompileProducingCache(
+                [In] V8IsolateHandle hIsolate,
+                [In] StdStringPtr pResourceName,
+                [In] StdStringPtr pSourceMapUrl,
                 [In] ulong uniqueId,
                 [In][MarshalAs(UnmanagedType.I1)] bool isModule,
                 [In] IntPtr pDocumentInfo,
-                [In] StdString.Ptr pCode,
+                [In] StdStringPtr pCode,
                 [In] V8CacheKind cacheKind,
-                [In] StdByteArray.Ptr pCacheBytes
+                [In] StdByteArrayPtr pCacheBytes
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Script.Handle V8Isolate_CompileConsumingCache(
-                [In] V8Isolate.Handle hIsolate,
-                [In] StdString.Ptr pResourceName,
-                [In] StdString.Ptr pSourceMapUrl,
+            public static extern V8ScriptHandle V8Isolate_CompileConsumingCache(
+                [In] V8IsolateHandle hIsolate,
+                [In] StdStringPtr pResourceName,
+                [In] StdStringPtr pSourceMapUrl,
                 [In] ulong uniqueId,
                 [In][MarshalAs(UnmanagedType.I1)] bool isModule,
                 [In] IntPtr pDocumentInfo,
-                [In] StdString.Ptr pCode,
+                [In] StdStringPtr pCode,
                 [In] V8CacheKind cacheKind,
-                [In] StdByteArray.Ptr pCacheBytes,
+                [In] StdByteArrayPtr pCacheBytes,
                 [Out][MarshalAs(UnmanagedType.I1)] out bool cacheAccepted
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8Isolate_GetEnableInterruptPropagation(
-                [In] V8Isolate.Handle hIsolate
+                [In] V8IsolateHandle hIsolate
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_SetEnableInterruptPropagation(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [In][MarshalAs(UnmanagedType.I1)] bool value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8Isolate_GetDisableHeapSizeViolationInterrupt(
-                [In] V8Isolate.Handle hIsolate
+                [In] V8IsolateHandle hIsolate
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_SetDisableHeapSizeViolationInterrupt(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [In][MarshalAs(UnmanagedType.I1)] bool value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_GetHeapStatistics(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [Out] out ulong totalHeapSize,
                 [Out] out ulong totalHeapSizeExecutable,
                 [Out] out ulong totalPhysicalSize,
@@ -1694,54 +1694,54 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_GetStatistics(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [Out] out ulong scriptCount,
                 [Out] out ulong scriptCacheSize,
                 [Out] out ulong moduleCount,
-                [In] StdUInt64Array.Ptr pPostedTaskCounts,
-                [In] StdUInt64Array.Ptr pInvokedTaskCounts
+                [In] StdUInt64ArrayPtr pPostedTaskCounts,
+                [In] StdUInt64ArrayPtr pInvokedTaskCounts
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_CollectGarbage(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [In][MarshalAs(UnmanagedType.I1)] bool exhaustive
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8Isolate_BeginCpuProfile(
-                [In] V8Isolate.Handle hIsolate,
-                [In] StdString.Ptr pName,
+                [In] V8IsolateHandle hIsolate,
+                [In] StdStringPtr pName,
                 [In][MarshalAs(UnmanagedType.I1)] bool recordSamples
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_EndCpuProfile(
-                [In] V8Isolate.Handle hIsolate,
-                [In] StdString.Ptr pName,
+                [In] V8IsolateHandle hIsolate,
+                [In] StdStringPtr pName,
                 [In] IntPtr pAction
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_CollectCpuProfileSample(
-                [In] V8Isolate.Handle hIsolate
+                [In] V8IsolateHandle hIsolate
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern uint V8Isolate_GetCpuProfileSampleInterval(
-                [In] V8Isolate.Handle hIsolate
+                [In] V8IsolateHandle hIsolate
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_SetCpuProfileSampleInterval(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [In] uint value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Isolate_WriteHeapSnapshot(
-                [In] V8Isolate.Handle hIsolate,
+                [In] V8IsolateHandle hIsolate,
                 [In] IntPtr pStream
             );
 
@@ -1751,163 +1751,163 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern UIntPtr V8Context_GetMaxIsolateHeapSize(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_SetMaxIsolateHeapSize(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [In] UIntPtr size
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern double V8Context_GetIsolateHeapSizeSampleInterval(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_SetIsolateHeapSizeSampleInterval(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [In] double milliseconds
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern UIntPtr V8Context_GetMaxIsolateStackUsage(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_SetMaxIsolateStackUsage(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [In] UIntPtr size
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_InvokeWithLock(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [In] IntPtr pAction
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_GetRootItem(
-                [In] V8Context.Handle hContext,
-                [In] V8Value.Ptr pItem
+                [In] V8ContextHandle hContext,
+                [In] V8ValuePtr pItem
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_AddGlobalItem(
-                [In] V8Context.Handle hContext,
-                [In] StdString.Ptr pName,
-                [In] V8Value.Ptr pValue,
+                [In] V8ContextHandle hContext,
+                [In] StdStringPtr pName,
+                [In] V8ValuePtr pValue,
                 [In][MarshalAs(UnmanagedType.I1)] bool globalMembers
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_AwaitDebuggerAndPause(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_CancelAwaitDebugger(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_ExecuteCode(
-                [In] V8Context.Handle hContext,
-                [In] StdString.Ptr pResourceName,
-                [In] StdString.Ptr pSourceMapUrl,
+                [In] V8ContextHandle hContext,
+                [In] StdStringPtr pResourceName,
+                [In] StdStringPtr pSourceMapUrl,
                 [In] ulong uniqueId,
                 [In][MarshalAs(UnmanagedType.I1)] bool isModule,
                 [In] IntPtr pDocumentInfo,
-                [In] StdString.Ptr pCode,
+                [In] StdStringPtr pCode,
                 [In][MarshalAs(UnmanagedType.I1)] bool evaluate,
-                [In] V8Value.Ptr pResult
+                [In] V8ValuePtr pResult
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Script.Handle V8Context_Compile(
-                [In] V8Context.Handle hContext,
-                [In] StdString.Ptr pResourceName,
-                [In] StdString.Ptr pSourceMapUrl,
+            public static extern V8ScriptHandle V8Context_Compile(
+                [In] V8ContextHandle hContext,
+                [In] StdStringPtr pResourceName,
+                [In] StdStringPtr pSourceMapUrl,
                 [In] ulong uniqueId,
                 [In][MarshalAs(UnmanagedType.I1)] bool isModule,
                 [In] IntPtr pDocumentInfo,
-                [In] StdString.Ptr pCode
+                [In] StdStringPtr pCode
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Script.Handle V8Context_CompileProducingCache(
-                [In] V8Context.Handle hContext,
-                [In] StdString.Ptr pResourceName,
-                [In] StdString.Ptr pSourceMapUrl,
+            public static extern V8ScriptHandle V8Context_CompileProducingCache(
+                [In] V8ContextHandle hContext,
+                [In] StdStringPtr pResourceName,
+                [In] StdStringPtr pSourceMapUrl,
                 [In] ulong uniqueId,
                 [In][MarshalAs(UnmanagedType.I1)] bool isModule,
                 [In] IntPtr pDocumentInfo,
-                [In] StdString.Ptr pCode,
+                [In] StdStringPtr pCode,
                 [In] V8CacheKind cacheKind,
-                [In] StdByteArray.Ptr pCacheBytes
+                [In] StdByteArrayPtr pCacheBytes
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8Script.Handle V8Context_CompileConsumingCache(
-                [In] V8Context.Handle hContext,
-                [In] StdString.Ptr pResourceName,
-                [In] StdString.Ptr pSourceMapUrl,
+            public static extern V8ScriptHandle V8Context_CompileConsumingCache(
+                [In] V8ContextHandle hContext,
+                [In] StdStringPtr pResourceName,
+                [In] StdStringPtr pSourceMapUrl,
                 [In] ulong uniqueId,
                 [In][MarshalAs(UnmanagedType.I1)] bool isModule,
                 [In] IntPtr pDocumentInfo,
-                [In] StdString.Ptr pCode,
+                [In] StdStringPtr pCode,
                 [In] V8CacheKind cacheKind,
-                [In] StdByteArray.Ptr pCacheBytes,
+                [In] StdByteArrayPtr pCacheBytes,
                 [Out][MarshalAs(UnmanagedType.I1)] out bool cacheAccepted
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_ExecuteScript(
-                [In] V8Context.Handle hContext,
-                [In] V8Script.Handle hScript,
+                [In] V8ContextHandle hContext,
+                [In] V8ScriptHandle hScript,
                 [In][MarshalAs(UnmanagedType.I1)] bool evaluate,
-                [In] V8Value.Ptr pResult
+                [In] V8ValuePtr pResult
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_Interrupt(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_CancelInterrupt(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8Context_GetEnableIsolateInterruptPropagation(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_SetEnableIsolateInterruptPropagation(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [In][MarshalAs(UnmanagedType.I1)] bool value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8Context_GetDisableIsolateHeapSizeViolationInterrupt(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_SetDisableIsolateHeapSizeViolationInterrupt(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [In][MarshalAs(UnmanagedType.I1)] bool value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_GetIsolateHeapStatistics(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [Out] out ulong totalHeapSize,
                 [Out] out ulong totalHeapSizeExecutable,
                 [Out] out ulong totalPhysicalSize,
@@ -1919,17 +1919,17 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_GetIsolateStatistics(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [Out] out ulong scriptCount,
                 [Out] out ulong scriptCacheSize,
                 [Out] out ulong moduleCount,
-                [In] StdUInt64Array.Ptr pPostedTaskCounts,
-                [In] StdUInt64Array.Ptr pInvokedTaskCounts
+                [In] StdUInt64ArrayPtr pPostedTaskCounts,
+                [In] StdUInt64ArrayPtr pInvokedTaskCounts
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_GetStatistics(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [Out] out ulong scriptCount,
                 [Out] out ulong moduleCount,
                 [Out] out ulong moduleCacheSize
@@ -1937,49 +1937,49 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_CollectGarbage(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [In][MarshalAs(UnmanagedType.I1)] bool exhaustive
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_OnAccessSettingsChanged(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8Context_BeginCpuProfile(
-                [In] V8Context.Handle hContext,
-                [In] StdString.Ptr pName,
+                [In] V8ContextHandle hContext,
+                [In] StdStringPtr pName,
                 [In][MarshalAs(UnmanagedType.I1)] bool recordSamples
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_EndCpuProfile(
-                [In] V8Context.Handle hContext,
-                [In] StdString.Ptr pName,
+                [In] V8ContextHandle hContext,
+                [In] StdStringPtr pName,
                 [In] IntPtr pAction
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_CollectCpuProfileSample(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern uint V8Context_GetCpuProfileSampleInterval(
-                [In] V8Context.Handle hContext
+                [In] V8ContextHandle hContext
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_SetCpuProfileSampleInterval(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [In] uint value
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Context_WriteIsolateHeapSnapshot(
-                [In] V8Context.Handle hContext,
+                [In] V8ContextHandle hContext,
                 [In] IntPtr pStream
             );
 
@@ -1989,78 +1989,78 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_GetNamedProperty(
-                [In] V8Object.Handle hObject,
-                [In] StdString.Ptr pName,
-                [In] V8Value.Ptr pValue
+                [In] V8ObjectHandle hObject,
+                [In] StdStringPtr pName,
+                [In] V8ValuePtr pValue
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_SetNamedProperty(
-                [In] V8Object.Handle hObject,
-                [In] StdString.Ptr pName,
-                [In] V8Value.Ptr pValue
+                [In] V8ObjectHandle hObject,
+                [In] StdStringPtr pName,
+                [In] V8ValuePtr pValue
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8Object_DeleteNamedProperty(
-                [In] V8Object.Handle hObject,
-                [In] StdString.Ptr pName
+                [In] V8ObjectHandle hObject,
+                [In] StdStringPtr pName
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_GetPropertyNames(
-                [In] V8Object.Handle hObject,
-                [In] StdStringArray.Ptr pNames
+                [In] V8ObjectHandle hObject,
+                [In] StdStringArrayPtr pNames
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_GetIndexedProperty(
-                [In] V8Object.Handle hObject,
+                [In] V8ObjectHandle hObject,
                 [In] int index,
-                [In] V8Value.Ptr pValue
+                [In] V8ValuePtr pValue
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_SetIndexedProperty(
-                [In] V8Object.Handle hObject,
+                [In] V8ObjectHandle hObject,
                 [In] int index,
-                [In] V8Value.Ptr pValue
+                [In] V8ValuePtr pValue
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             [return: MarshalAs(UnmanagedType.I1)]
             public static extern bool V8Object_DeleteIndexedProperty(
-                [In] V8Object.Handle hObject,
+                [In] V8ObjectHandle hObject,
                 [In] int index
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_GetPropertyIndices(
-                [In] V8Object.Handle hObject,
-                [In] StdInt32Array.Ptr pIndices
+                [In] V8ObjectHandle hObject,
+                [In] StdInt32ArrayPtr pIndices
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_Invoke(
-                [In] V8Object.Handle hObject,
+                [In] V8ObjectHandle hObject,
                 [In][MarshalAs(UnmanagedType.I1)] bool asConstructor,
-                [In] StdV8ValueArray.Ptr pArgs,
-                [In] V8Value.Ptr pResult
+                [In] StdV8ValueArrayPtr pArgs,
+                [In] V8ValuePtr pResult
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_InvokeMethod(
-                [In] V8Object.Handle hObject,
-                [In] StdString.Ptr pName,
-                [In] StdV8ValueArray.Ptr pArgs,
-                [In] V8Value.Ptr pResult
+                [In] V8ObjectHandle hObject,
+                [In] StdStringPtr pName,
+                [In] StdV8ValueArrayPtr pArgs,
+                [In] V8ValuePtr pResult
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_GetArrayBufferOrViewInfo(
-                [In] V8Object.Handle hObject,
-                [In] V8Value.Ptr pArrayBuffer,
+                [In] V8ObjectHandle hObject,
+                [In] V8ValuePtr pArrayBuffer,
                 [Out] out ulong offset,
                 [Out] out ulong size,
                 [Out] out ulong length
@@ -2068,7 +2068,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Object_InvokeWithArrayBufferOrViewData(
-                [In] V8Object.Handle hObject,
+                [In] V8ObjectHandle hObject,
                 [In] IntPtr pAction
             );
 
@@ -2078,18 +2078,18 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8DebugCallback_ConnectClient(
-                [In] V8DebugCallback.Handle hCallback
+                [In] V8DebugCallbackHandle hCallback
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8DebugCallback_SendCommand(
-                [In] V8DebugCallback.Handle hCallback,
-                [In] StdString.Ptr pCommand
+                [In] V8DebugCallbackHandle hCallback,
+                [In] StdStringPtr pCommand
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8DebugCallback_DisconnectClient(
-                [In] V8DebugCallback.Handle hCallback
+                [In] V8DebugCallbackHandle hCallback
             );
 
             #endregion
@@ -2098,7 +2098,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void NativeCallback_Invoke(
-                [In] NativeCallback.Handle hCallback
+                [In] NativeCallbackHandle hCallback
             );
 
             #endregion
@@ -2107,12 +2107,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Entity_Release(
-                [In] V8Entity.Handle hEntity
+                [In] V8Entity hEntity
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void V8Entity_DestroyHandle(
-                [In] V8Entity.Handle hEntity
+                [In] V8Entity hEntity
             );
 
             #endregion
@@ -2121,8 +2121,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern void HostException_Schedule(
-                [In] StdString.Ptr pMessage,
-                [In] V8Value.Ptr pException
+                [In] StdStringPtr pMessage,
+                [In] V8ValuePtr pException
             );
 
             #endregion
@@ -2131,7 +2131,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
             public static extern UIntPtr V8UnitTestSupport_GetTextDigest(
-                [In] StdString.Ptr pString
+                [In] StdStringPtr pString
             );
 
             [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]

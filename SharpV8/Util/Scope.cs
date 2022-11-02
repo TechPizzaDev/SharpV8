@@ -5,12 +5,12 @@ using System;
 
 namespace Microsoft.ClearScript.Util
 {
-    internal interface IScope<out T>: IDisposable
+    public interface IScope<out T> : IDisposable
     {
         T Value { get; }
     }
 
-    internal static class Scope
+    public static class Scope
     {
         public static IDisposable Create(Action enterAction, Action exitAction)
         {

@@ -3,16 +3,17 @@
 
 using System;
 using System.Threading;
+using Microsoft.ClearScript.V8;
 
 namespace Microsoft.ClearScript.Util
 {
     internal sealed class NativeCallbackTimer : IDisposable
     {
         private readonly Timer timer;
-        private readonly INativeCallback callback;
+        private readonly NativeCallback callback;
         private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
 
-        public NativeCallbackTimer(int dueTime, int period, INativeCallback callback)
+        public NativeCallbackTimer(int dueTime, int period, NativeCallback callback)
         {
             this.callback = callback;
             timer = new Timer(OnTimer, null, Timeout.Infinite, Timeout.Infinite);

@@ -8,81 +8,77 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Microsoft.ClearScript.Util;
 
-namespace Microsoft.ClearScript.V8.SplitProxy
+namespace Microsoft.ClearScript.V8
 {
-    using static V8SplitProxyNative;
+    using static SplitProxy.V8SplitProxyNative;
 
     #region native object helpers
 
     internal static class StdString
     {
-        public static IScope<Ptr> CreateScope(string value = null)
+        public static IScope<StdStringPtr> CreateScope(string value = null)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => StdString_New(value ?? string.Empty), StdString_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => StdString_New(value ?? string.Empty), StdString_Delete));
         }
 
-        public static string GetValue(Ptr pString)
+        public static string GetValue(StdStringPtr pString)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => StdString_GetValue(pString));
+            return InvokeNoThrow(() => StdString_GetValue(pString));
         }
 
-        public static void SetValue(Ptr pString, string value)
+        public static void SetValue(StdStringPtr pString, string value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => StdString_SetValue(pString, value));
+            InvokeNoThrow(() => StdString_SetValue(pString, value));
         }
-
-        #region Nested type: Ptr
-
-        public readonly struct Ptr
-        {
-            private readonly IntPtr bits;
-
-            private Ptr(IntPtr bits) => this.bits = bits;
-
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-            public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
     }
+
+    #region Type: StdStringPtr
+
+    public readonly struct StdStringPtr
+    {
+        private readonly IntPtr bits;
+
+        private StdStringPtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly StdStringPtr Null = new(IntPtr.Zero);
+
+        public static bool operator ==(StdStringPtr left, StdStringPtr right) => left.bits == right.bits;
+        public static bool operator !=(StdStringPtr left, StdStringPtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(StdStringPtr ptr) => ptr.bits;
+        public static explicit operator StdStringPtr(IntPtr bits) => new(bits);
+
+        public override bool Equals(object? obj) => obj is StdStringPtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
 
     internal static class StdStringArray
     {
-        public static IScope<Ptr> CreateScope(int elementCount = 0)
+        public static IScope<StdStringArrayPtr> CreateScope(int elementCount = 0)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => StdStringArray_New(elementCount), StdStringArray_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => StdStringArray_New(elementCount), StdStringArray_Delete));
         }
 
-        public static IScope<Ptr> CreateScope(string[] array)
+        public static IScope<StdStringArrayPtr> CreateScope(string[] array)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdStringArray_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdStringArray_Delete));
         }
 
-        public static int GetElementCount(Ptr pArray)
+        public static int GetElementCount(StdStringArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => StdStringArray_GetElementCount(pArray));
+            return InvokeNoThrow(() => StdStringArray_GetElementCount(pArray));
         }
 
-        public static void SetElementCount(Ptr pArray, int elementCount)
+        public static void SetElementCount(StdStringArrayPtr pArray, int elementCount)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => StdStringArray_SetElementCount(pArray, elementCount));
+            InvokeNoThrow(() => StdStringArray_SetElementCount(pArray, elementCount));
         }
 
-        public static string[] ToArray(Ptr pArray)
+        public static string[] ToArray(StdStringArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() =>
+            return InvokeNoThrow(() =>
             {
                 var elementCount = StdStringArray_GetElementCount(pArray);
                 var array = new string[elementCount];
@@ -99,9 +95,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        public static void CopyFromArray(Ptr pArray, string[] array)
+        public static void CopyFromArray(StdStringArrayPtr pArray, string[] array)
         {
-            V8SplitProxyNative.InvokeNoThrow(() =>
+            InvokeNoThrow(() =>
             {
                 var elementCount = array?.Length ?? 0;
                 StdStringArray_SetElementCount(pArray, elementCount);
@@ -113,7 +109,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        private static Ptr NewFromArray(string[] array)
+        private static StdStringArrayPtr NewFromArray(string[] array)
         {
             var elementCount = array?.Length ?? 0;
             var pArray = StdStringArray_New(elementCount);
@@ -128,59 +124,55 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             return pArray;
         }
-
-        #region Nested type: Ptr
-
-        public readonly struct Ptr
-        {
-            private readonly IntPtr bits;
-
-            private Ptr(IntPtr bits) => this.bits = bits;
-
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-            public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
     }
+
+    #region Type: StdStringArrayPtr
+
+    public readonly struct StdStringArrayPtr
+    {
+        private readonly IntPtr bits;
+
+        private StdStringArrayPtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly StdStringArrayPtr Null = new(IntPtr.Zero);
+
+        public static bool operator ==(StdStringArrayPtr left, StdStringArrayPtr right) => left.bits == right.bits;
+        public static bool operator !=(StdStringArrayPtr left, StdStringArrayPtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(StdStringArrayPtr ptr) => ptr.bits;
+        public static explicit operator StdStringArrayPtr(IntPtr bits) => new(bits);
+
+        public override bool Equals(object? obj) => obj is StdStringArrayPtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
 
     internal static class StdByteArray
     {
-        public static IScope<Ptr> CreateScope(int elementCount = 0)
+        public static IScope<StdByteArrayPtr> CreateScope(int elementCount = 0)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => StdByteArray_New(elementCount), StdByteArray_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => StdByteArray_New(elementCount), StdByteArray_Delete));
         }
 
-        public static IScope<Ptr> CreateScope(byte[] array)
+        public static IScope<StdByteArrayPtr> CreateScope(byte[] array)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdByteArray_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdByteArray_Delete));
         }
 
-        public static int GetElementCount(Ptr pArray)
+        public static int GetElementCount(StdByteArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => StdByteArray_GetElementCount(pArray));
+            return InvokeNoThrow(() => StdByteArray_GetElementCount(pArray));
         }
 
-        public static void SetElementCount(Ptr pArray, int elementCount)
+        public static void SetElementCount(StdByteArrayPtr pArray, int elementCount)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => StdByteArray_SetElementCount(pArray, elementCount));
+            InvokeNoThrow(() => StdByteArray_SetElementCount(pArray, elementCount));
         }
 
-        public static byte[] ToArray(Ptr pArray)
+        public static byte[] ToArray(StdByteArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() =>
+            return InvokeNoThrow(() =>
             {
                 var elementCount = StdByteArray_GetElementCount(pArray);
                 var array = new byte[elementCount];
@@ -194,9 +186,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        public static void CopyFromArray(Ptr pArray, byte[] array)
+        public static void CopyFromArray(StdByteArrayPtr pArray, byte[] array)
         {
-            V8SplitProxyNative.InvokeNoThrow(() =>
+            InvokeNoThrow(() =>
             {
                 var elementCount = array?.Length ?? 0;
                 StdByteArray_SetElementCount(pArray, elementCount);
@@ -208,7 +200,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        private static Ptr NewFromArray(byte[] array)
+        private static StdByteArrayPtr NewFromArray(byte[] array)
         {
             var elementCount = array?.Length ?? 0;
             var pArray = StdByteArray_New(elementCount);
@@ -220,59 +212,55 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             return pArray;
         }
-
-        #region Nested type: Ptr
-
-        public readonly struct Ptr
-        {
-            private readonly IntPtr bits;
-
-            private Ptr(IntPtr bits) => this.bits = bits;
-
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-            public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
     }
+
+    #region Type: StdByteArrayPtr
+
+    public readonly struct StdByteArrayPtr
+    {
+        private readonly IntPtr bits;
+
+        private StdByteArrayPtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly StdByteArrayPtr Null = new StdByteArrayPtr(IntPtr.Zero);
+
+        public static bool operator ==(StdByteArrayPtr left, StdByteArrayPtr right) => left.bits == right.bits;
+        public static bool operator !=(StdByteArrayPtr left, StdByteArrayPtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(StdByteArrayPtr ptr) => ptr.bits;
+        public static explicit operator StdByteArrayPtr(IntPtr bits) => new StdByteArrayPtr(bits);
+
+        public override bool Equals(object? obj) => obj is StdByteArrayPtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
 
     internal static class StdInt32Array
     {
-        public static IScope<Ptr> CreateScope(int elementCount = 0)
+        public static IScope<StdInt32ArrayPtr> CreateScope(int elementCount = 0)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => StdInt32Array_New(elementCount), StdInt32Array_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => StdInt32Array_New(elementCount), StdInt32Array_Delete));
         }
 
-        public static IScope<Ptr> CreateScope(int[] array)
+        public static IScope<StdInt32ArrayPtr> CreateScope(int[] array)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdInt32Array_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdInt32Array_Delete));
         }
 
-        public static int GetElementCount(Ptr pArray)
+        public static int GetElementCount(StdInt32ArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => StdInt32Array_GetElementCount(pArray));
+            return InvokeNoThrow(() => StdInt32Array_GetElementCount(pArray));
         }
 
-        public static void SetElementCount(Ptr pArray, int elementCount)
+        public static void SetElementCount(StdInt32ArrayPtr pArray, int elementCount)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => StdInt32Array_SetElementCount(pArray, elementCount));
+            InvokeNoThrow(() => StdInt32Array_SetElementCount(pArray, elementCount));
         }
 
-        public static int[] ToArray(Ptr pArray)
+        public static int[] ToArray(StdInt32ArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() =>
+            return InvokeNoThrow(() =>
             {
                 var elementCount = StdInt32Array_GetElementCount(pArray);
                 var array = new int[elementCount];
@@ -286,9 +274,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        public static void CopyFromArray(Ptr pArray, int[] array)
+        public static void CopyFromArray(StdInt32ArrayPtr pArray, int[] array)
         {
-            V8SplitProxyNative.InvokeNoThrow(() =>
+            InvokeNoThrow(() =>
             {
                 var elementCount = array?.Length ?? 0;
                 StdInt32Array_SetElementCount(pArray, elementCount);
@@ -300,7 +288,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        private static Ptr NewFromArray(int[] array)
+        private static StdInt32ArrayPtr NewFromArray(int[] array)
         {
             var elementCount = array?.Length ?? 0;
             var pArray = StdInt32Array_New(elementCount);
@@ -312,59 +300,55 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             return pArray;
         }
-
-        #region Nested type: Ptr
-
-        public readonly struct Ptr
-        {
-            private readonly IntPtr bits;
-
-            private Ptr(IntPtr bits) => this.bits = bits;
-
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-            public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
     }
+
+    #region Type: StdInt32ArrayPtr
+
+    public readonly struct StdInt32ArrayPtr
+    {
+        private readonly IntPtr bits;
+
+        private StdInt32ArrayPtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly StdInt32ArrayPtr Null = new(IntPtr.Zero);
+
+        public static bool operator ==(StdInt32ArrayPtr left, StdInt32ArrayPtr right) => left.bits == right.bits;
+        public static bool operator !=(StdInt32ArrayPtr left, StdInt32ArrayPtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(StdInt32ArrayPtr ptr) => ptr.bits;
+        public static explicit operator StdInt32ArrayPtr(IntPtr bits) => new(bits);
+
+        public override bool Equals(object? obj) => obj is StdInt32ArrayPtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
 
     internal static class StdUInt32Array
     {
-        public static IScope<Ptr> CreateScope(int elementCount = 0)
+        public static IScope<StdUInt32ArrayPtr> CreateScope(int elementCount = 0)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => StdUInt32Array_New(elementCount), StdUInt32Array_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => StdUInt32Array_New(elementCount), StdUInt32Array_Delete));
         }
 
-        public static IScope<Ptr> CreateScope(uint[] array)
+        public static IScope<StdUInt32ArrayPtr> CreateScope(uint[] array)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdUInt32Array_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdUInt32Array_Delete));
         }
 
-        public static int GetElementCount(Ptr pArray)
+        public static int GetElementCount(StdUInt32ArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => StdUInt32Array_GetElementCount(pArray));
+            return InvokeNoThrow(() => StdUInt32Array_GetElementCount(pArray));
         }
 
-        public static void SetElementCount(Ptr pArray, int elementCount)
+        public static void SetElementCount(StdUInt32ArrayPtr pArray, int elementCount)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => StdUInt32Array_SetElementCount(pArray, elementCount));
+            InvokeNoThrow(() => StdUInt32Array_SetElementCount(pArray, elementCount));
         }
 
-        public static uint[] ToArray(Ptr pArray)
+        public static uint[] ToArray(StdUInt32ArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() =>
+            return InvokeNoThrow(() =>
             {
                 var elementCount = StdUInt32Array_GetElementCount(pArray);
                 var array = new uint[elementCount];
@@ -378,9 +362,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        public static void CopyFromArray(Ptr pArray, uint[] array)
+        public static void CopyFromArray(StdUInt32ArrayPtr pArray, uint[] array)
         {
-            V8SplitProxyNative.InvokeNoThrow(() =>
+            InvokeNoThrow(() =>
             {
                 var elementCount = array?.Length ?? 0;
                 StdUInt32Array_SetElementCount(pArray, elementCount);
@@ -392,7 +376,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        private static Ptr NewFromArray(uint[] array)
+        private static StdUInt32ArrayPtr NewFromArray(uint[] array)
         {
             var elementCount = array?.Length ?? 0;
             var pArray = StdUInt32Array_New(elementCount);
@@ -404,59 +388,55 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             return pArray;
         }
-
-        #region Nested type: Ptr
-
-        public readonly struct Ptr
-        {
-            private readonly IntPtr bits;
-
-            private Ptr(IntPtr bits) => this.bits = bits;
-
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-            public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
     }
+
+    #region Type: StdUInt32ArrayPtr
+
+    public readonly struct StdUInt32ArrayPtr
+    {
+        private readonly IntPtr bits;
+
+        private StdUInt32ArrayPtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly StdUInt32ArrayPtr Null = new(IntPtr.Zero);
+
+        public static bool operator ==(StdUInt32ArrayPtr left, StdUInt32ArrayPtr right) => left.bits == right.bits;
+        public static bool operator !=(StdUInt32ArrayPtr left, StdUInt32ArrayPtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(StdUInt32ArrayPtr ptr) => ptr.bits;
+        public static explicit operator StdUInt32ArrayPtr(IntPtr bits) => new(bits);
+
+        public override bool Equals(object? obj) => obj is StdUInt32ArrayPtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
 
     internal static class StdUInt64Array
     {
-        public static IScope<Ptr> CreateScope(int elementCount = 0)
+        public static IScope<StdUInt64ArrayPtr> CreateScope(int elementCount = 0)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => StdUInt64Array_New(elementCount), StdUInt64Array_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => StdUInt64Array_New(elementCount), StdUInt64Array_Delete));
         }
 
-        public static IScope<Ptr> CreateScope(ulong[] array)
+        public static IScope<StdUInt64ArrayPtr> CreateScope(ulong[] array)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdUInt64Array_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdUInt64Array_Delete));
         }
 
-        public static int GetElementCount(Ptr pArray)
+        public static int GetElementCount(StdUInt64ArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => StdUInt64Array_GetElementCount(pArray));
+            return InvokeNoThrow(() => StdUInt64Array_GetElementCount(pArray));
         }
 
-        public static void SetElementCount(Ptr pArray, int elementCount)
+        public static void SetElementCount(StdUInt64ArrayPtr pArray, int elementCount)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => StdUInt64Array_SetElementCount(pArray, elementCount));
+            InvokeNoThrow(() => StdUInt64Array_SetElementCount(pArray, elementCount));
         }
 
-        public static ulong[] ToArray(Ptr pArray)
+        public static ulong[] ToArray(StdUInt64ArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() =>
+            return InvokeNoThrow(() =>
             {
                 var elementCount = StdUInt64Array_GetElementCount(pArray);
                 var array = new ulong[elementCount];
@@ -470,9 +450,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        public static void CopyFromArray(Ptr pArray, ulong[] array)
+        public static void CopyFromArray(StdUInt64ArrayPtr pArray, ulong[] array)
         {
-            V8SplitProxyNative.InvokeNoThrow(() =>
+            InvokeNoThrow(() =>
             {
                 var elementCount = array?.Length ?? 0;
                 StdUInt64Array_SetElementCount(pArray, elementCount);
@@ -484,7 +464,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        private static Ptr NewFromArray(ulong[] array)
+        private static StdUInt64ArrayPtr NewFromArray(ulong[] array)
         {
             var elementCount = array?.Length ?? 0;
             var pArray = StdUInt64Array_New(elementCount);
@@ -496,59 +476,55 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             return pArray;
         }
-
-        #region Nested type: Ptr
-
-        public readonly struct Ptr
-        {
-            private readonly IntPtr bits;
-
-            private Ptr(IntPtr bits) => this.bits = bits;
-
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-            public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
     }
+
+    #region Type: StdUInt64ArrayPtr
+
+    public readonly struct StdUInt64ArrayPtr
+    {
+        private readonly IntPtr bits;
+
+        private StdUInt64ArrayPtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly StdUInt64ArrayPtr Null = new(IntPtr.Zero);
+
+        public static bool operator ==(StdUInt64ArrayPtr left, StdUInt64ArrayPtr right) => left.bits == right.bits;
+        public static bool operator !=(StdUInt64ArrayPtr left, StdUInt64ArrayPtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(StdUInt64ArrayPtr ptr) => ptr.bits;
+        public static explicit operator StdUInt64ArrayPtr(IntPtr bits) => new(bits);
+
+        public override bool Equals(object? obj) => obj is StdUInt64ArrayPtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
 
     internal static class StdPtrArray
     {
-        public static IScope<Ptr> CreateScope(int elementCount = 0)
+        public static IScope<StdPtrArrayPtr> CreateScope(int elementCount = 0)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => StdPtrArray_New(elementCount), StdPtrArray_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => StdPtrArray_New(elementCount), StdPtrArray_Delete));
         }
 
-        public static IScope<Ptr> CreateScope(IntPtr[] array)
+        public static IScope<StdPtrArrayPtr> CreateScope(IntPtr[] array)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdPtrArray_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdPtrArray_Delete));
         }
 
-        public static int GetElementCount(Ptr pArray)
+        public static int GetElementCount(StdPtrArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => StdPtrArray_GetElementCount(pArray));
+            return InvokeNoThrow(() => StdPtrArray_GetElementCount(pArray));
         }
 
-        public static void SetElementCount(Ptr pArray, int elementCount)
+        public static void SetElementCount(StdPtrArrayPtr pArray, int elementCount)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => StdPtrArray_SetElementCount(pArray, elementCount));
+            InvokeNoThrow(() => StdPtrArray_SetElementCount(pArray, elementCount));
         }
 
-        public static IntPtr[] ToArray(Ptr pArray)
+        public static IntPtr[] ToArray(StdPtrArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() =>
+            return InvokeNoThrow(() =>
             {
                 var elementCount = StdPtrArray_GetElementCount(pArray);
                 var array = new IntPtr[elementCount];
@@ -562,9 +538,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        public static void CopyFromArray(Ptr pArray, IntPtr[] array)
+        public static void CopyFromArray(StdPtrArrayPtr pArray, IntPtr[] array)
         {
-            V8SplitProxyNative.InvokeNoThrow(() =>
+            InvokeNoThrow(() =>
             {
                 var elementCount = array?.Length ?? 0;
                 StdPtrArray_SetElementCount(pArray, elementCount);
@@ -576,7 +552,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        private static Ptr NewFromArray(IntPtr[] array)
+        private static StdPtrArrayPtr NewFromArray(IntPtr[] array)
         {
             var elementCount = array?.Length ?? 0;
             var pArray = StdPtrArray_New(elementCount);
@@ -588,59 +564,55 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             return pArray;
         }
-
-        #region Nested type: Ptr
-
-        public readonly struct Ptr
-        {
-            private readonly IntPtr bits;
-
-            private Ptr(IntPtr bits) => this.bits = bits;
-
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-            public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
     }
+
+    #region Type: StdPtrArrayPtr
+
+    public readonly struct StdPtrArrayPtr
+    {
+        private readonly IntPtr bits;
+
+        private StdPtrArrayPtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly StdPtrArrayPtr Null = new StdPtrArrayPtr(IntPtr.Zero);
+
+        public static bool operator ==(StdPtrArrayPtr left, StdPtrArrayPtr right) => left.bits == right.bits;
+        public static bool operator !=(StdPtrArrayPtr left, StdPtrArrayPtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(StdPtrArrayPtr ptr) => ptr.bits;
+        public static explicit operator StdPtrArrayPtr(IntPtr bits) => new StdPtrArrayPtr(bits);
+
+        public override bool Equals(object? obj) => obj is StdPtrArrayPtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
 
     internal static class StdV8ValueArray
     {
-        public static IScope<Ptr> CreateScope(int elementCount = 0)
+        public static IScope<StdV8ValueArrayPtr> CreateScope(int elementCount = 0)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => StdV8ValueArray_New(elementCount), StdV8ValueArray_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => StdV8ValueArray_New(elementCount), StdV8ValueArray_Delete));
         }
 
-        public static IScope<Ptr> CreateScope(object[] array)
+        public static IScope<StdV8ValueArrayPtr> CreateScope(object[] array)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdV8ValueArray_Delete));
+            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdV8ValueArray_Delete));
         }
 
-        public static int GetElementCount(Ptr pArray)
+        public static int GetElementCount(StdV8ValueArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => StdV8ValueArray_GetElementCount(pArray));
+            return InvokeNoThrow(() => StdV8ValueArray_GetElementCount(pArray));
         }
 
-        public static void SetElementCount(Ptr pArray, int elementCount)
+        public static void SetElementCount(StdV8ValueArrayPtr pArray, int elementCount)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => StdV8ValueArray_SetElementCount(pArray, elementCount));
+            InvokeNoThrow(() => StdV8ValueArray_SetElementCount(pArray, elementCount));
         }
 
-        public static object[] ToArray(Ptr pArray)
+        public static object[] ToArray(StdV8ValueArrayPtr pArray)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() =>
+            return InvokeNoThrow(() =>
             {
                 var elementCount = StdV8ValueArray_GetElementCount(pArray);
                 var array = new object[elementCount];
@@ -658,9 +630,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        public static void CopyFromArray(Ptr pArray, object[] array)
+        public static void CopyFromArray(StdV8ValueArrayPtr pArray, object[] array)
         {
-            V8SplitProxyNative.InvokeNoThrow(() =>
+            InvokeNoThrow(() =>
             {
                 var elementCount = array?.Length ?? 0;
                 StdV8ValueArray_SetElementCount(pArray, elementCount);
@@ -676,7 +648,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             });
         }
 
-        private static Ptr NewFromArray(object[] array)
+        private static StdV8ValueArrayPtr NewFromArray(object[] array)
         {
             var elementCount = array?.Length ?? 0;
             var pArray = StdV8ValueArray_New(elementCount);
@@ -690,55 +662,51 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             return pArray;
         }
 
-        public static V8Value.Ptr GetElementPtr(V8Value.Ptr pV8Value, int index)
+        public static V8ValuePtr GetElementPtr(V8ValuePtr pV8Value, int index)
         {
-            return (V8Value.Ptr)((IntPtr)pV8Value + index * V8Value.Size);
+            return (V8ValuePtr)((IntPtr)pV8Value + index * V8Value.Size);
         }
-
-        #region Nested type: Ptr
-
-        public readonly struct Ptr
-        {
-            private readonly IntPtr bits;
-
-            private Ptr(IntPtr bits) => this.bits = bits;
-
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-            public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
     }
 
-    internal static class V8Value
+    #region Type: StdV8ValueArrayPtr
+
+    public readonly struct StdV8ValueArrayPtr
+    {
+        private readonly IntPtr bits;
+
+        private StdV8ValueArrayPtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly StdV8ValueArrayPtr Null = new(IntPtr.Zero);
+
+        public static bool operator ==(StdV8ValueArrayPtr left, StdV8ValueArrayPtr right) => left.bits == right.bits;
+        public static bool operator !=(StdV8ValueArrayPtr left, StdV8ValueArrayPtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(StdV8ValueArrayPtr ptr) => ptr.bits;
+        public static explicit operator StdV8ValueArrayPtr(IntPtr bits) => new(bits);
+
+        public override bool Equals(object? obj) => obj is StdV8ValueArrayPtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
+
+    public static class V8Value
     {
         public const int Size = 16;
 
-        public static IScope<Ptr> CreateScope()
+        public static IScope<V8ValuePtr> CreateScope()
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => Scope.Create(V8Value_New, V8Value_Delete));
+            return InvokeNoThrow(() => Scope.Create(V8Value_New, V8Value_Delete));
         }
 
-        public static IScope<Ptr> CreateScope(object obj)
+        public static IScope<V8ValuePtr> CreateScope(object obj)
         {
             var scope = CreateScope();
             Set(scope.Value, obj);
             return scope;
         }
 
-        public static void Set(Ptr pV8Value, object obj)
+        public static void Set(V8ValuePtr pV8Value, object obj)
         {
             if (obj is Nonexistent)
             {
@@ -887,7 +855,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
 
             {
-                if (obj is V8ObjectImpl v8ObjectImpl)
+                if (obj is V8Object v8ObjectImpl)
                 {
                     SetV8Object(pV8Value, v8ObjectImpl);
                     return;
@@ -897,46 +865,46 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             SetHostObject(pV8Value, obj);
         }
 
-        public static object Get(Ptr pV8Value)
+        public static object Get(V8ValuePtr pV8Value)
         {
             var intValue = 0;
             var uintValue = 0U;
             var doubleValue = 0D;
             var ptrOrHandle = IntPtr.Zero;
 
-            switch (V8SplitProxyNative.InvokeNoThrow(() => V8Value_Decode(pV8Value, out intValue, out uintValue, out doubleValue, out ptrOrHandle)))
+            switch (InvokeNoThrow(() => V8Value_Decode(pV8Value, out intValue, out uintValue, out doubleValue, out ptrOrHandle)))
             {
-                case Type.Nonexistent:
+                case V8ValueType.Nonexistent:
                     return Nonexistent.Value;
 
-                case Type.Null:
+                case V8ValueType.Null:
                     return DBNull.Value;
 
-                case Type.Boolean:
+                case V8ValueType.Boolean:
                     return intValue != 0;
 
-                case Type.Number:
+                case V8ValueType.Number:
                     return doubleValue;
 
-                case Type.Int32:
+                case V8ValueType.Int32:
                     return intValue;
 
-                case Type.UInt32:
+                case V8ValueType.UInt32:
                     return uintValue;
 
-                case Type.String:
+                case V8ValueType.String:
                     return Marshal.PtrToStringUni(ptrOrHandle, intValue);
 
-                case Type.DateTime:
+                case V8ValueType.DateTime:
                     return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) + TimeSpan.FromMilliseconds(doubleValue);
 
-                case Type.BigInt:
-                    return TryGetBigInteger(intValue, (int)uintValue, ptrOrHandle, out var result) ? (object)result : null;
+                case V8ValueType.BigInt:
+                    return TryGetBigInteger(intValue, (int)uintValue, ptrOrHandle, out var result) ? result : null;
 
-                case Type.V8Object:
-                    return new V8ObjectImpl((V8Object.Handle)ptrOrHandle, (Subtype)uintValue, (Flags)intValue);
+                case V8ValueType.V8Object:
+                    return new V8Object((V8ObjectHandle)ptrOrHandle, (V8ValueSubtype)uintValue, (V8ValueFlags)intValue);
 
-                case Type.HostObject:
+                case V8ValueType.HostObject:
                     return V8ProxyHelpers.GetHostObject(ptrOrHandle);
 
                 default:
@@ -971,52 +939,52 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             return true;
         }
 
-        private static void SetNonexistent(Ptr pV8Value)
+        private static void SetNonexistent(V8ValuePtr pV8Value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetNonexistent(pV8Value));
+            InvokeNoThrow(() => V8Value_SetNonexistent(pV8Value));
         }
 
-        private static void SetUndefined(Ptr pV8Value)
+        private static void SetUndefined(V8ValuePtr pV8Value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetUndefined(pV8Value));
+            InvokeNoThrow(() => V8Value_SetUndefined(pV8Value));
         }
 
-        private static void SetNull(Ptr pV8Value)
+        private static void SetNull(V8ValuePtr pV8Value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetNull(pV8Value));
+            InvokeNoThrow(() => V8Value_SetNull(pV8Value));
         }
 
-        private static void SetBoolean(Ptr pV8Value, bool value)
+        private static void SetBoolean(V8ValuePtr pV8Value, bool value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetBoolean(pV8Value, value));
+            InvokeNoThrow(() => V8Value_SetBoolean(pV8Value, value));
         }
 
-        private static void SetNumeric(Ptr pV8Value, double value)
+        private static void SetNumeric(V8ValuePtr pV8Value, double value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetNumber(pV8Value, value));
+            InvokeNoThrow(() => V8Value_SetNumber(pV8Value, value));
         }
 
-        private static void SetNumeric(Ptr pV8Value, int value)
+        private static void SetNumeric(V8ValuePtr pV8Value, int value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetInt32(pV8Value, value));
+            InvokeNoThrow(() => V8Value_SetInt32(pV8Value, value));
         }
 
-        private static void SetNumeric(Ptr pV8Value, uint value)
+        private static void SetNumeric(V8ValuePtr pV8Value, uint value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetUInt32(pV8Value, value));
+            InvokeNoThrow(() => V8Value_SetUInt32(pV8Value, value));
         }
 
-        private static void SetString(Ptr pV8Value, string value)
+        private static void SetString(V8ValuePtr pV8Value, string value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetString(pV8Value, value));
+            InvokeNoThrow(() => V8Value_SetString(pV8Value, value));
         }
 
-        private static void SetDateTime(Ptr pV8Value, DateTime value)
+        private static void SetDateTime(V8ValuePtr pV8Value, DateTime value)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetDateTime(pV8Value, (value.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds));
+            InvokeNoThrow(() => V8Value_SetDateTime(pV8Value, (value.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds));
         }
 
-        private static void SetBigInt(Ptr pV8Value, BigInteger value)
+        private static void SetBigInt(V8ValuePtr pV8Value, BigInteger value)
         {
             var signBit = 0;
             if (value.Sign < 0)
@@ -1026,152 +994,148 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
 
             var bytes = value.ToByteArray();
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetBigInt(pV8Value, signBit, bytes));
+            InvokeNoThrow(() => V8Value_SetBigInt(pV8Value, signBit, bytes));
         }
 
-        private static void SetV8Object(Ptr pV8Value, V8ObjectImpl v8ObjectImpl)
+        private static void SetV8Object(V8ValuePtr pV8Value, V8Object v8ObjectImpl)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetV8Object(pV8Value, v8ObjectImpl.Handle, v8ObjectImpl.Subtype, v8ObjectImpl.Flags));
+            InvokeNoThrow(() => V8Value_SetV8Object(pV8Value, v8ObjectImpl.Handle, v8ObjectImpl.Subtype, v8ObjectImpl.Flags));
         }
 
-        private static void SetHostObject(Ptr pV8Value, object obj)
+        private static void SetHostObject(V8ValuePtr pV8Value, object obj)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8Value_SetHostObject(pV8Value, V8ProxyHelpers.AddRefHostObject(obj)));
+            InvokeNoThrow(() => V8Value_SetHostObject(pV8Value, V8ProxyHelpers.AddRefHostObject(obj)));
         }
-
-        #region Nested type: Type
-
-        public enum Type : ushort
-        {
-            // IMPORTANT: maintain bitwise equivalence with native enum V8Value::Type
-            Nonexistent,
-            Undefined,
-            Null,
-            Boolean,
-            Number,
-            Int32,
-            UInt32,
-            String,
-            DateTime,
-            BigInt,
-            V8Object,
-            HostObject
-        }
-
-        #endregion
-
-        #region Nested type: Subtype
-
-        public enum Subtype : ushort
-        {
-            // IMPORTANT: maintain bitwise equivalence with native enum V8Value::Subtype
-            None,
-            Promise,
-            Array,
-            ArrayBuffer,
-            DataView,
-            Uint8Array,
-            Uint8ClampedArray,
-            Int8Array,
-            Uint16Array,
-            Int16Array,
-            Uint32Array,
-            Int32Array,
-            BigUint64Array,
-            BigInt64Array,
-            Float32Array,
-            Float64Array
-        }
-
-        #endregion
-
-        #region Nested type: Flags
-
-        [Flags]
-        public enum Flags : ushort
-        {
-            // IMPORTANT: maintain bitwise equivalence with native enum V8Value::Flags
-            None = 0,
-            Shared = 0x0001
-        }
-
-        #endregion
-
-        #region Nested type: Ptr
-
-        internal readonly struct Ptr
-        {
-            private readonly IntPtr bits;
-
-            private Ptr(IntPtr bits) => this.bits = bits;
-
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-            public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
     }
 
-    internal static class V8CpuProfile
+    #region Enum: V8ValueType
+
+    public enum V8ValueType : ushort
     {
-        public static void ProcessProfile(V8Entity.Handle hEntity, Ptr pProfile, V8.V8CpuProfile profile)
+        // IMPORTANT: maintain bitwise equivalence with native enum V8Value::Type
+        Nonexistent,
+        Undefined,
+        Null,
+        Boolean,
+        Number,
+        Int32,
+        UInt32,
+        String,
+        DateTime,
+        BigInt,
+        V8Object,
+        HostObject
+    }
+
+    #endregion
+
+    #region Enum: V8ValueSubtype
+
+    public enum V8ValueSubtype : ushort
+    {
+        // IMPORTANT: maintain bitwise equivalence with native enum V8Value::Subtype
+        None,
+        Promise,
+        Array,
+        ArrayBuffer,
+        DataView,
+        Uint8Array,
+        Uint8ClampedArray,
+        Int8Array,
+        Uint16Array,
+        Int16Array,
+        Uint32Array,
+        Int32Array,
+        BigUint64Array,
+        BigInt64Array,
+        Float32Array,
+        Float64Array
+    }
+
+    #endregion
+
+    #region Enum: V8ValueFlags
+
+    [Flags]
+    public enum V8ValueFlags : ushort
+    {
+        // IMPORTANT: maintain bitwise equivalence with native enum V8Value::Flags
+        None = 0,
+        Shared = 0x0001
+    }
+
+    #endregion
+
+    #region Type: V8ValuePtr
+
+    public readonly struct V8ValuePtr
+    {
+        private readonly IntPtr bits;
+
+        private V8ValuePtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly V8ValuePtr Null = new(IntPtr.Zero);
+
+        public static bool operator ==(V8ValuePtr left, V8ValuePtr right) => left.bits == right.bits;
+        public static bool operator !=(V8ValuePtr left, V8ValuePtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(V8ValuePtr ptr) => ptr.bits;
+        public static explicit operator V8ValuePtr(IntPtr bits) => new(bits);
+
+        public override bool Equals(object? obj) => obj is V8ValuePtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
+
+    internal static class V8CpuProfileImpl
+    {
+        public static void ProcessProfile(V8Entity hEntity, V8CpuProfilePtr pProfile, V8CpuProfile profile)
         {
             string name = null;
             var startTimestamp = 0UL;
             var endTimestamp = 0UL;
             var sampleCount = 0;
-            var pRootNode = Node.Ptr.Null;
-            V8SplitProxyNative.InvokeNoThrow(() => V8CpuProfile_GetInfo(pProfile, hEntity, out name, out startTimestamp, out endTimestamp, out sampleCount, out pRootNode));
+            var pRootNode = NodePtr.Null;
+            InvokeNoThrow(() => V8CpuProfile_GetInfo(pProfile, hEntity, out name, out startTimestamp, out endTimestamp, out sampleCount, out pRootNode));
 
             profile.Name = name;
             profile.StartTimestamp = startTimestamp;
             profile.EndTimestamp = endTimestamp;
 
-            if (pRootNode != Node.Ptr.Null)
+            if (pRootNode != NodePtr.Null)
             {
                 profile.RootNode = CreateNode(hEntity, pRootNode);
             }
 
             if (sampleCount > 0)
             {
-                var samples = new List<V8.V8CpuProfile.Sample>(sampleCount);
+                var samples = new List<V8CpuProfile.Sample>(sampleCount);
 
                 for (var index = 0; index < sampleCount; index++)
                 {
                     var nodeId = 0UL;
                     var timestamp = 0UL;
                     var sampleIndex = index;
-                    var found = V8SplitProxyNative.InvokeNoThrow(() => V8CpuProfile_GetSample(pProfile, sampleIndex, out nodeId, out timestamp));
+                    var found = InvokeNoThrow(() => V8CpuProfile_GetSample(pProfile, sampleIndex, out nodeId, out timestamp));
                     if (found)
                     {
                         var node = profile.FindNode(nodeId);
                         if (node != null)
                         {
-                            samples.Add(new V8.V8CpuProfile.Sample { Node = node, Timestamp = timestamp });
+                            samples.Add(new V8CpuProfile.Sample { Node = node, Timestamp = timestamp });
                         }
                     }
                 }
 
                 if (samples.Count > 0)
                 {
-                    profile.Samples = new ReadOnlyCollection<V8.V8CpuProfile.Sample>(samples);
+                    profile.Samples = new ReadOnlyCollection<V8CpuProfile.Sample>(samples);
                 }
             }
         }
 
-        private static V8.V8CpuProfile.Node CreateNode(V8Entity.Handle hEntity, Node.Ptr pNode)
+        private static V8CpuProfile.Node CreateNode(V8Entity hEntity, NodePtr pNode)
         {
             var nodeId = 0UL;
             var scriptId = 0L;
@@ -1183,9 +1147,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             var hitCount = 0UL;
             var hitLineCount = 0U;
             var childCount = 0;
-            V8SplitProxyNative.InvokeNoThrow(() => V8CpuProfileNode_GetInfo(pNode, hEntity, out nodeId, out scriptId, out scriptName, out functionName, out bailoutReason, out lineNumber, out columnNumber, out hitCount, out hitLineCount, out childCount));
+            InvokeNoThrow(() => V8CpuProfileNode_GetInfo(pNode, hEntity, out nodeId, out scriptId, out scriptName, out functionName, out bailoutReason, out lineNumber, out columnNumber, out hitCount, out hitLineCount, out childCount));
 
-            var node = new V8.V8CpuProfile.Node
+            var node = new V8CpuProfile.Node
             {
                 NodeId = nodeId,
                 ScriptId = scriptId,
@@ -1201,12 +1165,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             {
                 int[] lineNumbers = null;
                 uint[] hitCounts = null;
-                if (V8SplitProxyNative.InvokeNoThrow(() => V8CpuProfileNode_GetHitLines(pNode, out lineNumbers, out hitCounts)))
+                if (InvokeNoThrow(() => V8CpuProfileNode_GetHitLines(pNode, out lineNumbers, out hitCounts)))
                 {
                     var actualHitLineCount = Math.Min(lineNumbers.Length, hitCounts.Length);
                     if (actualHitLineCount > 0)
                     {
-                        var hitLines = new V8.V8CpuProfile.Node.HitLine[actualHitLineCount];
+                        var hitLines = new V8CpuProfile.Node.HitLine[actualHitLineCount];
 
                         for (var index = 0; index < actualHitLineCount; index++)
                         {
@@ -1214,20 +1178,20 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                             hitLines[index].HitCount = hitCounts[index];
                         }
 
-                        node.HitLines = new ReadOnlyCollection<V8.V8CpuProfile.Node.HitLine>(hitLines);
+                        node.HitLines = new ReadOnlyCollection<V8CpuProfile.Node.HitLine>(hitLines);
                     }
                 }
             }
 
             if (childCount > 0)
             {
-                var childNodes = new List<V8.V8CpuProfile.Node>(childCount);
+                var childNodes = new List<V8CpuProfile.Node>(childCount);
 
                 for (var index = 0; index < childCount; index++)
                 {
                     var childIndex = index;
-                    var pChildNode = V8SplitProxyNative.InvokeNoThrow(() => V8CpuProfileNode_GetChildNode(pNode, childIndex));
-                    if (pChildNode != Node.Ptr.Null)
+                    var pChildNode = InvokeNoThrow(() => V8CpuProfileNode_GetChildNode(pNode, childIndex));
+                    if (pChildNode != NodePtr.Null)
                     {
                         childNodes.Add(CreateNode(hEntity, pChildNode));
                     }
@@ -1235,298 +1199,104 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
                 if (childNodes.Count > 0)
                 {
-                    node.ChildNodes = new ReadOnlyCollection<V8.V8CpuProfile.Node>(childNodes);
+                    node.ChildNodes = new ReadOnlyCollection<V8CpuProfile.Node>(childNodes);
                 }
             }
 
             return node;
         }
 
-        #region Nested type: Ptr
-
-        public readonly struct Ptr
+        public readonly struct NodePtr
         {
             private readonly IntPtr bits;
 
-            private Ptr(IntPtr bits) => this.bits = bits;
+            private NodePtr(IntPtr bits) => this.bits = bits;
 
-            public static readonly Ptr Null = new Ptr(IntPtr.Zero);
+            public static readonly NodePtr Null = new(IntPtr.Zero);
 
-            public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-            public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
+            public static bool operator ==(NodePtr left, NodePtr right) => left.bits == right.bits;
+            public static bool operator !=(NodePtr left, NodePtr right) => left.bits != right.bits;
 
-            public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-            public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
+            public static explicit operator IntPtr(NodePtr ptr) => ptr.bits;
+            public static explicit operator NodePtr(IntPtr bits) => new(bits);
 
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
+            public override bool Equals(object? obj) => obj is NodePtr ptr && this == ptr;
             public override int GetHashCode() => bits.GetHashCode();
-
-            #endregion
         }
-
-        #endregion
-
-        #region Nested type: Node
-
-        internal static class Node
-        {
-            #region Nested type: Ptr
-
-            // ReSharper disable once MemberHidesStaticFromOuterClass
-            public readonly struct Ptr
-            {
-                private readonly IntPtr bits;
-
-                private Ptr(IntPtr bits) => this.bits = bits;
-
-                public static readonly Ptr Null = new Ptr(IntPtr.Zero);
-
-                public static bool operator ==(Ptr left, Ptr right) => left.bits == right.bits;
-                public static bool operator !=(Ptr left, Ptr right) => left.bits != right.bits;
-
-                public static explicit operator IntPtr(Ptr ptr) => ptr.bits;
-                public static explicit operator Ptr(IntPtr bits) => new Ptr(bits);
-
-                #region Object overrides
-
-                public override bool Equals(object obj) => (obj is Ptr ptr) && (this == ptr);
-                public override int GetHashCode() => bits.GetHashCode();
-
-                #endregion
-            }
-
-            #endregion
-        }
-
-        #endregion
     }
+
+    #region Type: V8CpuProfilePtr
+
+    public readonly struct V8CpuProfilePtr
+    {
+        private readonly IntPtr bits;
+
+        private V8CpuProfilePtr(IntPtr bits) => this.bits = bits;
+
+        public static readonly V8CpuProfilePtr Null = new(IntPtr.Zero);
+
+        public static bool operator ==(V8CpuProfilePtr left, V8CpuProfilePtr right) => left.bits == right.bits;
+        public static bool operator !=(V8CpuProfilePtr left, V8CpuProfilePtr right) => left.bits != right.bits;
+
+        public static explicit operator IntPtr(V8CpuProfilePtr ptr) => ptr.bits;
+        public static explicit operator V8CpuProfilePtr(IntPtr bits) => new(bits);
+
+        public override bool Equals(object obj) => obj is V8CpuProfilePtr ptr && this == ptr;
+        public override int GetHashCode() => bits.GetHashCode();
+    }
+
+    #endregion
 
     #endregion
 
     #region V8 entity helpers
 
-    internal static class V8Entity
+    #region Nested type: V8Entity
+
+    public readonly struct V8Entity
     {
-        #region Nested type: Handle
+        private readonly IntPtr guts;
 
-        public readonly struct Handle
-        {
-            private readonly IntPtr guts;
+        private V8Entity(IntPtr guts) => this.guts = guts;
 
-            private Handle(IntPtr guts) => this.guts = guts;
+        public static readonly V8Entity Empty = new(IntPtr.Zero);
 
-            public static readonly Handle Empty = new Handle(IntPtr.Zero);
+        public static bool operator ==(V8Entity left, V8Entity right) => left.guts == right.guts;
+        public static bool operator !=(V8Entity left, V8Entity right) => left.guts != right.guts;
 
-            public static bool operator ==(Handle left, Handle right) => left.guts == right.guts;
-            public static bool operator !=(Handle left, Handle right) => left.guts != right.guts;
+        public static explicit operator IntPtr(V8Entity handle) => handle.guts;
+        public static explicit operator V8Entity(IntPtr guts) => new(guts);
 
-            public static explicit operator IntPtr(Handle handle) => handle.guts;
-            public static explicit operator Handle(IntPtr guts) => new Handle(guts);
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Handle handle) && (this == handle);
-            public override int GetHashCode() => guts.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
+        public override bool Equals(object? obj) => obj is V8Entity handle && this == handle;
+        public override int GetHashCode() => guts.GetHashCode();
     }
 
-    internal static class V8Isolate
+    #endregion
+
+    #region Nested type: V8DebugCallbackHandle
+
+    public readonly struct V8DebugCallbackHandle
     {
-        #region Nested type: Handle
+        private readonly IntPtr guts;
 
-        public readonly struct Handle
-        {
-            private readonly IntPtr guts;
+        private V8DebugCallbackHandle(IntPtr guts) => this.guts = guts;
 
-            private Handle(IntPtr guts) => this.guts = guts;
+        public static readonly V8DebugCallbackHandle Empty = new(IntPtr.Zero);
 
-            public static readonly Handle Empty = new Handle(IntPtr.Zero);
+        public static bool operator ==(V8DebugCallbackHandle left, V8DebugCallbackHandle right) => left.guts == right.guts;
+        public static bool operator !=(V8DebugCallbackHandle left, V8DebugCallbackHandle right) => left.guts != right.guts;
 
-            public static bool operator ==(Handle left, Handle right) => left.guts == right.guts;
-            public static bool operator !=(Handle left, Handle right) => left.guts != right.guts;
+        public static explicit operator IntPtr(V8DebugCallbackHandle handle) => handle.guts;
+        public static explicit operator V8DebugCallbackHandle(IntPtr guts) => new(guts);
 
-            public static explicit operator IntPtr(Handle handle) => handle.guts;
-            public static explicit operator Handle(IntPtr guts) => new Handle(guts);
+        public static implicit operator V8Entity(V8DebugCallbackHandle handle) => (V8Entity)handle.guts;
+        public static explicit operator V8DebugCallbackHandle(V8Entity handle) => (V8DebugCallbackHandle)(IntPtr)handle;
 
-            public static implicit operator V8Entity.Handle(Handle handle) => (V8Entity.Handle)handle.guts;
-            public static explicit operator Handle(V8Entity.Handle handle) => (Handle)(IntPtr)handle;
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Handle handle) && (this == handle);
-            public override int GetHashCode() => guts.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
+        public override bool Equals(object? obj) => obj is V8DebugCallbackHandle handle && this == handle;
+        public override int GetHashCode() => guts.GetHashCode();
     }
 
-    internal static class V8Context
-    {
-        #region Nested type: Handle
-
-        public readonly struct Handle
-        {
-            private readonly IntPtr guts;
-
-            private Handle(IntPtr guts) => this.guts = guts;
-
-            public static readonly Handle Empty = new Handle(IntPtr.Zero);
-
-            public static bool operator ==(Handle left, Handle right) => left.guts == right.guts;
-            public static bool operator !=(Handle left, Handle right) => left.guts != right.guts;
-
-            public static explicit operator IntPtr(Handle handle) => handle.guts;
-            public static explicit operator Handle(IntPtr guts) => new Handle(guts);
-
-            public static implicit operator V8Entity.Handle(Handle handle) => (V8Entity.Handle)handle.guts;
-            public static explicit operator Handle(V8Entity.Handle handle) => (Handle)(IntPtr)handle;
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Handle handle) && (this == handle);
-            public override int GetHashCode() => guts.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
-    }
-
-    internal static class V8Object
-    {
-        #region Nested type: Handle
-
-        public readonly struct Handle
-        {
-            private readonly IntPtr guts;
-
-            private Handle(IntPtr guts) => this.guts = guts;
-
-            public static readonly Handle Empty = new Handle(IntPtr.Zero);
-
-            public static bool operator ==(Handle left, Handle right) => left.guts == right.guts;
-            public static bool operator !=(Handle left, Handle right) => left.guts != right.guts;
-
-            public static explicit operator IntPtr(Handle handle) => handle.guts;
-            public static explicit operator Handle(IntPtr guts) => new Handle(guts);
-
-            public static implicit operator V8Entity.Handle(Handle handle) => (V8Entity.Handle)handle.guts;
-            public static explicit operator Handle(V8Entity.Handle handle) => (Handle)(IntPtr)handle;
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Handle handle) && (this == handle);
-            public override int GetHashCode() => guts.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
-    }
-
-    internal static class V8Script
-    {
-        #region Nested type: Handle
-
-        public readonly struct Handle
-        {
-            private readonly IntPtr guts;
-
-            private Handle(IntPtr guts) => this.guts = guts;
-
-            public static readonly Handle Empty = new Handle(IntPtr.Zero);
-
-            public static bool operator ==(Handle left, Handle right) => left.guts == right.guts;
-            public static bool operator !=(Handle left, Handle right) => left.guts != right.guts;
-
-            public static explicit operator IntPtr(Handle handle) => handle.guts;
-            public static explicit operator Handle(IntPtr guts) => new Handle(guts);
-
-            public static implicit operator V8Entity.Handle(Handle handle) => (V8Entity.Handle)handle.guts;
-            public static explicit operator Handle(V8Entity.Handle handle) => (Handle)(IntPtr)handle;
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Handle handle) && (this == handle);
-            public override int GetHashCode() => guts.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
-    }
-
-    internal static class V8DebugCallback
-    {
-        #region Nested type: Handle
-
-        public readonly struct Handle
-        {
-            private readonly IntPtr guts;
-
-            private Handle(IntPtr guts) => this.guts = guts;
-
-            public static readonly Handle Empty = new Handle(IntPtr.Zero);
-
-            public static bool operator ==(Handle left, Handle right) => left.guts == right.guts;
-            public static bool operator !=(Handle left, Handle right) => left.guts != right.guts;
-
-            public static explicit operator IntPtr(Handle handle) => handle.guts;
-            public static explicit operator Handle(IntPtr guts) => new Handle(guts);
-
-            public static implicit operator V8Entity.Handle(Handle handle) => (V8Entity.Handle)handle.guts;
-            public static explicit operator Handle(V8Entity.Handle handle) => (Handle)(IntPtr)handle;
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Handle handle) && (this == handle);
-            public override int GetHashCode() => guts.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
-    }
-
-    internal static class NativeCallback
-    {
-        #region Nested type: Handle
-
-        public readonly struct Handle
-        {
-            private readonly IntPtr guts;
-
-            private Handle(IntPtr guts) => this.guts = guts;
-
-            public static readonly Handle Empty = new Handle(IntPtr.Zero);
-
-            public static bool operator ==(Handle left, Handle right) => left.guts == right.guts;
-            public static bool operator !=(Handle left, Handle right) => left.guts != right.guts;
-
-            public static explicit operator IntPtr(Handle handle) => handle.guts;
-            public static explicit operator Handle(IntPtr guts) => new Handle(guts);
-
-            public static implicit operator V8Entity.Handle(Handle handle) => (V8Entity.Handle)handle.guts;
-            public static explicit operator Handle(V8Entity.Handle handle) => (Handle)(IntPtr)handle;
-
-            #region Object overrides
-
-            public override bool Equals(object obj) => (obj is Handle handle) && (this == handle);
-            public override int GetHashCode() => guts.GetHashCode();
-
-            #endregion
-        }
-
-        #endregion
-    }
+    #endregion
 
     #endregion
 }

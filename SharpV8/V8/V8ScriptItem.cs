@@ -14,11 +14,11 @@ namespace Microsoft.ClearScript.V8
     internal class V8ScriptItem : ScriptItem, IDisposable
     {
         private readonly V8ScriptEngine engine;
-        private readonly IV8Object target;
+        private readonly V8Object target;
         private V8ScriptItem holder;
         private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
 
-        private V8ScriptItem(V8ScriptEngine engine, IV8Object target)
+        private V8ScriptItem(V8ScriptEngine engine, V8Object target)
         {
             this.engine = engine;
             this.target = target;
@@ -33,7 +33,7 @@ namespace Microsoft.ClearScript.V8
                 return null;
             }
 
-            if (obj is IV8Object target)
+            if (obj is V8Object target)
             {
                 if (target.IsArray)
                 {
@@ -309,7 +309,7 @@ namespace Microsoft.ClearScript.V8
 
         private sealed class V8Array : V8ScriptItem, IList
         {
-            public V8Array(V8ScriptEngine engine, IV8Object target)
+            public V8Array(V8ScriptEngine engine, V8Object target)
                 : base(engine, target)
             {
             }
@@ -443,7 +443,7 @@ namespace Microsoft.ClearScript.V8
             private V8ArrayBufferOrViewInfo info;
             private IArrayBuffer arrayBuffer;
 
-            protected V8ArrayBufferOrView(V8ScriptEngine engine, IV8Object target)
+            protected V8ArrayBufferOrView(V8ScriptEngine engine, V8Object target)
                 : base(engine, target)
             {
             }
@@ -505,11 +505,11 @@ namespace Microsoft.ClearScript.V8
             {
                 VerifyNotDisposed();
 
-                if (info == null)
+                if (info.ArrayBuffer == null)
                 {
                     engine.ScriptInvoke(() =>
                     {
-                        if (info == null)
+                        if (info.ArrayBuffer == null)
                         {
                             info = target.GetArrayBufferOrViewInfo();
                         }
@@ -521,7 +521,7 @@ namespace Microsoft.ClearScript.V8
 
             private IArrayBuffer GetArrayBuffer()
             {
-                return arrayBuffer ?? (arrayBuffer = (IArrayBuffer)engine.MarshalToHost(GetInfo().ArrayBuffer, false));
+                return arrayBuffer ??= (IArrayBuffer)engine.MarshalToHost(GetInfo().ArrayBuffer, false);
             }
 
             private static IntPtr GetPtrWithOffset(IntPtr pData, ulong offset)
@@ -537,7 +537,7 @@ namespace Microsoft.ClearScript.V8
 
         private sealed class V8ArrayBuffer : V8ArrayBufferOrView, IArrayBuffer
         {
-            public V8ArrayBuffer(V8ScriptEngine engine, IV8Object target)
+            public V8ArrayBuffer(V8ScriptEngine engine, V8Object target)
                 : base(engine, target)
             {
             }
@@ -582,7 +582,7 @@ namespace Microsoft.ClearScript.V8
 
         private abstract class V8ArrayBufferView : V8ArrayBufferOrView, IArrayBufferView
         {
-            protected V8ArrayBufferView(V8ScriptEngine engine, IV8Object target)
+            protected V8ArrayBufferView(V8ScriptEngine engine, V8Object target)
                 : base(engine, target)
             {
             }
@@ -631,7 +631,7 @@ namespace Microsoft.ClearScript.V8
 
         private sealed class V8DataView : V8ArrayBufferView, IDataView
         {
-            public V8DataView(V8ScriptEngine engine, IV8Object target)
+            public V8DataView(V8ScriptEngine engine, V8Object target)
                 : base(engine, target)
             {
             }
@@ -643,7 +643,7 @@ namespace Microsoft.ClearScript.V8
 
         private class V8TypedArray : V8ArrayBufferView, ITypedArray
         {
-            protected V8TypedArray(V8ScriptEngine engine, IV8Object target)
+            protected V8TypedArray(V8ScriptEngine engine, V8Object target)
                 : base(engine, target)
             {
             }
@@ -667,7 +667,7 @@ namespace Microsoft.ClearScript.V8
 
         private class V8TypedArray<T> : V8TypedArray, ITypedArray<T>
         {
-            public V8TypedArray(V8ScriptEngine engine, IV8Object target)
+            public V8TypedArray(V8ScriptEngine engine, V8Object target)
                 : base(engine, target)
             {
             }
@@ -715,7 +715,7 @@ namespace Microsoft.ClearScript.V8
 
         private sealed class V8UInt16Array : V8TypedArray<ushort>, ITypedArray<char>
         {
-            public V8UInt16Array(V8ScriptEngine engine, IV8Object target)
+            public V8UInt16Array(V8ScriptEngine engine, V8Object target)
                 : base(engine, target)
             {
             }

@@ -2,16 +2,17 @@
 // Licensed under the MIT license.
 
 using System;
+using Microsoft.ClearScript.V8.SplitProxy;
 
-namespace Microsoft.ClearScript.V8.SplitProxy
+namespace Microsoft.ClearScript.V8
 {
-    internal sealed class V8DebugListenerImpl : IV8DebugListener
+    internal sealed class V8DebugListener
     {
         private V8EntityHolder holder;
 
-        private V8DebugCallback.Handle Handle => (V8DebugCallback.Handle)holder.Handle;
+        private V8DebugCallbackHandle Handle => (V8DebugCallbackHandle)holder.Handle;
 
-        public V8DebugListenerImpl(V8DebugCallback.Handle hCallback)
+        public V8DebugListener(V8DebugCallbackHandle hCallback)
         {
             holder = new V8EntityHolder("V8 debug listener", hCallback);
         }
@@ -43,7 +44,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             GC.KeepAlive(this);
         }
 
-        ~V8DebugListenerImpl()
+        ~V8DebugListener()
         {
             V8EntityHolder.Destroy(ref holder);
         }

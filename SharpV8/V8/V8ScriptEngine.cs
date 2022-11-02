@@ -1453,7 +1453,7 @@ namespace Microsoft.ClearScript.V8
             }
 
             var scriptItem = V8ScriptItem.Wrap(this, obj);
-            if (engineFlags.HasFlag(V8ScriptEngineFlags.EnableTaskPromiseConversion) && (obj is IV8Object v8Object) && v8Object.IsPromise)
+            if (engineFlags.HasFlag(V8ScriptEngineFlags.EnableTaskPromiseConversion) && (obj is V8Object v8Object) && v8Object.IsPromise)
             {
                 return scriptItem.ToTask();
             }

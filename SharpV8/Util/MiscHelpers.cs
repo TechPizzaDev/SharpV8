@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ClearScript.Properties;
+using Microsoft.ClearScript.V8;
 
 namespace Microsoft.ClearScript.Util
 {
@@ -457,7 +458,7 @@ namespace Microsoft.ClearScript.Util
             return oldValue;
         }
 
-        public static void QueueNativeCallback(INativeCallback callback)
+        public static void QueueNativeCallback(NativeCallback callback)
         {
             ThreadPool.QueueUserWorkItem(state =>
             {

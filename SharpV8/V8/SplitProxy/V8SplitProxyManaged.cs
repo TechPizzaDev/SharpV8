@@ -67,34 +67,34 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawScheduleForwardingException(
-            [In] V8Value.Ptr pException
+            [In] V8ValuePtr pException
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawScheduleInvalidOperationException(
-            [In] StdString.Ptr pMessage
+            [In] StdStringPtr pMessage
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawScheduleScriptEngineException(
-            [In] StdString.Ptr pEngineName,
-            [In] StdString.Ptr pMessage,
-            [In] StdString.Ptr pStackTrace,
+            [In] StdStringPtr pEngineName,
+            [In] StdStringPtr pMessage,
+            [In] StdStringPtr pStackTrace,
             [In][MarshalAs(UnmanagedType.I1)] bool isFatal,
             [In][MarshalAs(UnmanagedType.I1)] bool executionStarted,
-            [In] V8Value.Ptr pScriptException,
-            [In] V8Value.Ptr pInnerException
+            [In] V8ValuePtr pScriptException,
+            [In] V8ValuePtr pInnerException
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawScheduleScriptInterruptedException(
-            [In] StdString.Ptr pEngineName,
-            [In] StdString.Ptr pMessage,
-            [In] StdString.Ptr pStackTrace,
+            [In] StdStringPtr pEngineName,
+            [In] StdStringPtr pMessage,
+            [In] StdStringPtr pStackTrace,
             [In][MarshalAs(UnmanagedType.I1)] bool isFatal,
             [In][MarshalAs(UnmanagedType.I1)] bool executionStarted,
-            [In] V8Value.Ptr pScriptException,
-            [In] V8Value.Ptr pInnerException
+            [In] V8ValuePtr pScriptException,
+            [In] V8ValuePtr pInnerException
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -110,7 +110,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawProcessCpuProfile(
-            [In] V8CpuProfile.Ptr pProfile,
+            [In] V8CpuProfilePtr pProfile,
             [In] IntPtr pAction
         );
 
@@ -133,7 +133,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawGetAllCachedV8Objects(
             [In] IntPtr pCache,
-            [In] StdPtrArray.Ptr pV8ObjectPtrs
+            [In] StdPtrArrayPtr pV8ObjectPtrs
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -145,17 +145,17 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate IntPtr RawCreateDebugAgent(
-            [In] StdString.Ptr pName,
-            [In] StdString.Ptr pVersion,
+            [In] StdStringPtr pName,
+            [In] StdStringPtr pVersion,
             [In] int port,
             [In][MarshalAs(UnmanagedType.I1)] bool remote,
-            [In] V8DebugCallback.Handle hCallback
+            [In] V8DebugCallbackHandle hCallback
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawSendDebugMessage(
             [In] IntPtr pAgent,
-            [In] StdString.Ptr pContent
+            [In] StdStringPtr pContent
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -187,50 +187,50 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawGetHostObjectNamedProperty(
             [In] IntPtr pObject,
-            [In] StdString.Ptr pName,
-            [In] V8Value.Ptr pValue
+            [In] StdStringPtr pName,
+            [In] V8ValuePtr pValue
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawGetHostObjectNamedPropertyWithCacheability(
             [In] IntPtr pObject,
-            [In] StdString.Ptr pName,
-            [In] V8Value.Ptr pValue,
+            [In] StdStringPtr pName,
+            [In] V8ValuePtr pValue,
             [Out][MarshalAs(UnmanagedType.I1)] out bool isCacheable
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawSetHostObjectNamedProperty(
             [In] IntPtr pObject,
-            [In] StdString.Ptr pName,
-            [In] V8Value.Ptr pValue
+            [In] StdStringPtr pName,
+            [In] V8ValuePtr pValue
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         [return: MarshalAs(UnmanagedType.I1)]
         private delegate bool RawDeleteHostObjectNamedProperty(
             [In] IntPtr pObject,
-            [In] StdString.Ptr pName
+            [In] StdStringPtr pName
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawGetHostObjectPropertyNames(
             [In] IntPtr pObject,
-            [In] StdStringArray.Ptr pNames
+            [In] StdStringArrayPtr pNames
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawGetHostObjectIndexedProperty(
             [In] IntPtr pObject,
             [In] int index,
-            [In] V8Value.Ptr pValue
+            [In] V8ValuePtr pValue
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawSetHostObjectIndexedProperty(
             [In] IntPtr pObject,
             [In] int index,
-            [In] V8Value.Ptr pValue
+            [In] V8ValuePtr pValue
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -243,47 +243,47 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawGetHostObjectPropertyIndices(
             [In] IntPtr pObject,
-            [In] StdInt32Array.Ptr pIndices
+            [In] StdInt32ArrayPtr pIndices
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawInvokeHostObject(
             [In] IntPtr pObject,
             [In][MarshalAs(UnmanagedType.I1)] bool asConstructor,
-            [In] StdV8ValueArray.Ptr pArgs,
-            [In] V8Value.Ptr pResult
+            [In] StdV8ValueArrayPtr pArgs,
+            [In] V8ValuePtr pResult
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawInvokeHostObjectMethod(
             [In] IntPtr pObject,
-            [In] StdString.Ptr pName,
-            [In] StdV8ValueArray.Ptr pArgs,
-            [In] V8Value.Ptr pResult
+            [In] StdStringPtr pName,
+            [In] StdV8ValueArrayPtr pArgs,
+            [In] V8ValuePtr pResult
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawGetHostObjectEnumerator(
             [In] IntPtr pObject,
-            [In] V8Value.Ptr pResult
+            [In] V8ValuePtr pResult
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawGetHostObjectAsyncEnumerator(
             [In] IntPtr pObject,
-            [In] V8Value.Ptr pResult
+            [In] V8ValuePtr pResult
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawQueueNativeCallback(
-            [In] NativeCallback.Handle hCallback
+            [In] NativeCallbackHandle hCallback
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate IntPtr RawCreateNativeCallbackTimer(
             [In] int dueTime,
             [In] int period,
-            [In] NativeCallback.Handle hCallback
+            [In] NativeCallbackHandle hCallback
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -302,20 +302,20 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawLoadModule(
             [In] IntPtr pSourceDocumentInfo,
-            [In] StdString.Ptr pSpecifier,
-            [In] StdString.Ptr pResourceName,
-            [In] StdString.Ptr pSourceMapUrl,
+            [In] StdStringPtr pSpecifier,
+            [In] StdStringPtr pResourceName,
+            [In] StdStringPtr pSourceMapUrl,
             [Out] out ulong uniqueId,
             [Out][MarshalAs(UnmanagedType.I1)] out bool isModule,
-            [In] StdString.Ptr pCode,
+            [In] StdStringPtr pCode,
             [Out] out IntPtr pDocumentInfo
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         private delegate void RawCreateModuleContext(
             [In] IntPtr pDocumentInfo,
-            [In] StdStringArray.Ptr pNames,
-            [In] StdV8ValueArray.Ptr pValues
+            [In] StdStringArrayPtr pNames,
+            [In] StdV8ValueArrayPtr pValues
         );
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
@@ -471,7 +471,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region method table implementation
 
-        private static void ScheduleForwardingException(V8Value.Ptr pException)
+        private static void ScheduleForwardingException(V8ValuePtr pException)
         {
             Debug.Assert(ScheduledException == null);
 
@@ -490,13 +490,13 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void ScheduleInvalidOperationException(StdString.Ptr pMessage)
+        private static void ScheduleInvalidOperationException(StdStringPtr pMessage)
         {
             Debug.Assert(ScheduledException == null);
             ScheduledException = new InvalidOperationException(StdString.GetValue(pMessage));
         }
 
-        private static void ScheduleScriptEngineException(StdString.Ptr pEngineName, StdString.Ptr pMessage, StdString.Ptr pStackTrace, bool isFatal, bool executionStarted, V8Value.Ptr pScriptException, V8Value.Ptr pInnerException)
+        private static void ScheduleScriptEngineException(StdStringPtr pEngineName, StdStringPtr pMessage, StdStringPtr pStackTrace, bool isFatal, bool executionStarted, V8ValuePtr pScriptException, V8ValuePtr pInnerException)
         {
             Debug.Assert(ScheduledException == null);
             var scriptException = ScriptEngine.Current?.MarshalToHost(V8Value.Get(pScriptException), false);
@@ -504,7 +504,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             ScheduledException = new ScriptEngineException(StdString.GetValue(pEngineName), StdString.GetValue(pMessage), StdString.GetValue(pStackTrace), 0, isFatal, executionStarted, scriptException, innerException);
         }
 
-        private static void ScheduleScriptInterruptedException(StdString.Ptr pEngineName, StdString.Ptr pMessage, StdString.Ptr pStackTrace, bool isFatal, bool executionStarted, V8Value.Ptr pScriptException, V8Value.Ptr pInnerException)
+        private static void ScheduleScriptInterruptedException(StdStringPtr pEngineName, StdStringPtr pMessage, StdStringPtr pStackTrace, bool isFatal, bool executionStarted, V8ValuePtr pScriptException, V8ValuePtr pInnerException)
         {
             Debug.Assert(ScheduledException == null);
             var scriptException = ScriptEngine.Current?.MarshalToHost(V8Value.Get(pScriptException), false);
@@ -536,11 +536,11 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void ProcessCpuProfile(V8CpuProfile.Ptr pProfile, IntPtr pAction)
+        private static void ProcessCpuProfile(V8CpuProfilePtr pProfile, IntPtr pAction)
         {
             try
             {
-                V8ProxyHelpers.GetHostObject<Action<V8CpuProfile.Ptr>>(pAction)(pProfile);
+                V8ProxyHelpers.GetHostObject<Action<V8CpuProfilePtr>>(pAction)(pProfile);
             }
             catch (Exception exception)
             {
@@ -563,7 +563,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             return V8ProxyHelpers.GetHostObject<Dictionary<object, IntPtr>>(pCache).TryGetValue(V8ProxyHelpers.GetHostObject(pObject), out IntPtr pV8Object) ? pV8Object : IntPtr.Zero;
         }
 
-        private static void GetAllCachedV8Objects(IntPtr pCache, StdPtrArray.Ptr pV8ObjectPtrs)
+        private static void GetAllCachedV8Objects(IntPtr pCache, StdPtrArrayPtr pV8ObjectPtrs)
         {
             var cache = V8ProxyHelpers.GetHostObject<Dictionary<object, IntPtr>>(pCache);
             StdPtrArray.CopyFromArray(pV8ObjectPtrs, cache.Values.ToArray());
@@ -574,12 +574,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             return V8ProxyHelpers.GetHostObject<Dictionary<object, IntPtr>>(pCache).Remove(V8ProxyHelpers.GetHostObject(pObject));
         }
 
-        private static IntPtr CreateDebugAgent(StdString.Ptr pName, StdString.Ptr pVersion, int port, bool remote, V8DebugCallback.Handle hCallback)
+        private static IntPtr CreateDebugAgent(StdStringPtr pName, StdStringPtr pVersion, int port, bool remote, V8DebugCallbackHandle hCallback)
         {
-            return V8ProxyHelpers.AddRefHostObject(new V8DebugAgent(StdString.GetValue(pName), StdString.GetValue(pVersion), port, remote, new V8DebugListenerImpl(hCallback)));
+            return V8ProxyHelpers.AddRefHostObject(new V8DebugAgent(StdString.GetValue(pName), StdString.GetValue(pVersion), port, remote, new V8DebugListener(hCallback)));
         }
 
-        private static void SendDebugMessage(IntPtr pAgent, StdString.Ptr pContent)
+        private static void SendDebugMessage(IntPtr pAgent, StdStringPtr pContent)
         {
             V8ProxyHelpers.GetHostObject<V8DebugAgent>(pAgent).SendMessage(StdString.GetValue(pContent));
         }
@@ -623,7 +623,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void GetHostObjectNamedProperty(IntPtr pObject, StdString.Ptr pName, V8Value.Ptr pValue)
+        private static void GetHostObjectNamedProperty(IntPtr pObject, StdStringPtr pName, V8ValuePtr pValue)
         {
             try
             {
@@ -635,7 +635,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void GetHostObjectNamedPropertyWithCacheability(IntPtr pObject, StdString.Ptr pName, V8Value.Ptr pValue, out bool isCacheable)
+        private static void GetHostObjectNamedPropertyWithCacheability(IntPtr pObject, StdStringPtr pName, V8ValuePtr pValue, out bool isCacheable)
         {
             try
             {
@@ -648,7 +648,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void SetHostObjectNamedProperty(IntPtr pObject, StdString.Ptr pName, V8Value.Ptr pValue)
+        private static void SetHostObjectNamedProperty(IntPtr pObject, StdStringPtr pName, V8ValuePtr pValue)
         {
             try
             {
@@ -660,7 +660,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static bool DeleteHostObjectNamedProperty(IntPtr pObject, StdString.Ptr pName)
+        private static bool DeleteHostObjectNamedProperty(IntPtr pObject, StdStringPtr pName)
         {
             try
             {
@@ -673,7 +673,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void GetHostObjectPropertyNames(IntPtr pObject, StdStringArray.Ptr pNames)
+        private static void GetHostObjectPropertyNames(IntPtr pObject, StdStringArrayPtr pNames)
         {
             string[] names;
             try
@@ -689,7 +689,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             StdStringArray.CopyFromArray(pNames, names);
         }
 
-        private static void GetHostObjectIndexedProperty(IntPtr pObject, int index, V8Value.Ptr pValue)
+        private static void GetHostObjectIndexedProperty(IntPtr pObject, int index, V8ValuePtr pValue)
         {
             try
             {
@@ -701,7 +701,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void SetHostObjectIndexedProperty(IntPtr pObject, int index, V8Value.Ptr pValue)
+        private static void SetHostObjectIndexedProperty(IntPtr pObject, int index, V8ValuePtr pValue)
         {
             try
             {
@@ -726,7 +726,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void GetHostObjectPropertyIndices(IntPtr pObject, StdInt32Array.Ptr pIndices)
+        private static void GetHostObjectPropertyIndices(IntPtr pObject, StdInt32ArrayPtr pIndices)
         {
             int[] indices;
             try
@@ -742,7 +742,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             StdInt32Array.CopyFromArray(pIndices, indices);
         }
 
-        private static void InvokeHostObject(IntPtr pObject, bool asConstructor, StdV8ValueArray.Ptr pArgs, V8Value.Ptr pResult)
+        private static void InvokeHostObject(IntPtr pObject, bool asConstructor, StdV8ValueArrayPtr pArgs, V8ValuePtr pResult)
         {
             try
             {
@@ -754,7 +754,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void InvokeHostObjectMethod(IntPtr pObject, StdString.Ptr pName, StdV8ValueArray.Ptr pArgs, V8Value.Ptr pResult)
+        private static void InvokeHostObjectMethod(IntPtr pObject, StdStringPtr pName, StdV8ValueArrayPtr pArgs, V8ValuePtr pResult)
         {
             try
             {
@@ -766,7 +766,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void GetHostObjectEnumerator(IntPtr pObject, V8Value.Ptr pResult)
+        private static void GetHostObjectEnumerator(IntPtr pObject, V8ValuePtr pResult)
         {
             try
             {
@@ -778,7 +778,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void GetHostObjectAsyncEnumerator(IntPtr pObject, V8Value.Ptr pResult)
+        private static void GetHostObjectAsyncEnumerator(IntPtr pObject, V8ValuePtr pResult)
         {
             try
             {
@@ -790,14 +790,14 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        private static void QueueNativeCallback(NativeCallback.Handle hCallback)
+        private static void QueueNativeCallback(NativeCallbackHandle hCallback)
         {
-            MiscHelpers.QueueNativeCallback(new NativeCallbackImpl(hCallback));
+            MiscHelpers.QueueNativeCallback(new NativeCallback(hCallback));
         }
 
-        private static IntPtr CreateNativeCallbackTimer(int dueTime, int period, NativeCallback.Handle hCallback)
+        private static IntPtr CreateNativeCallbackTimer(int dueTime, int period, NativeCallbackHandle hCallback)
         {
-            return V8ProxyHelpers.AddRefHostObject(new NativeCallbackTimer(dueTime, period, new NativeCallbackImpl(hCallback)));
+            return V8ProxyHelpers.AddRefHostObject(new NativeCallbackTimer(dueTime, period, new NativeCallback(hCallback)));
         }
 
         private static bool ChangeNativeCallbackTimer(IntPtr pTimer, int dueTime, int period)
@@ -811,7 +811,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             V8ProxyHelpers.ReleaseHostObject(pTimer);
         }
 
-        private static void LoadModule(IntPtr pSourceDocumentInfo, StdString.Ptr pSpecifier, StdString.Ptr pResourceName, StdString.Ptr pSourceMapUrl, out ulong uniqueId, out bool isModule, StdString.Ptr pCode, out IntPtr pDocumentInfo)
+        private static void LoadModule(IntPtr pSourceDocumentInfo, StdStringPtr pSpecifier, StdStringPtr pResourceName, StdStringPtr pSourceMapUrl, out ulong uniqueId, out bool isModule, StdStringPtr pCode, out IntPtr pDocumentInfo)
         {
             string code;
             UniqueDocumentInfo documentInfo;
@@ -837,7 +837,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             pDocumentInfo = V8ProxyHelpers.AddRefHostObject(documentInfo);
         }
 
-        private static void CreateModuleContext(IntPtr pDocumentInfo, StdStringArray.Ptr pNames, StdV8ValueArray.Ptr pValues)
+        private static void CreateModuleContext(IntPtr pDocumentInfo, StdStringArrayPtr pNames, StdV8ValueArrayPtr pValues)
         {
             IDictionary<string, object> context;
             try

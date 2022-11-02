@@ -122,12 +122,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             get
             {
                 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-                static void Thunk(IntPtr pObject, StdString.Ptr pName, V8Value.Ptr pValue)
+                static void Thunk(IntPtr pObject, StdStringPtr pName, V8ValuePtr pValue)
                 {
                     GetHostObjectNamedProperty(pObject, pName, pValue);
                 }
 
-                delegate* unmanaged[Stdcall]<IntPtr, StdString.Ptr, V8Value.Ptr, void> pThunk = &Thunk;
+                delegate* unmanaged[Stdcall]<IntPtr, StdStringPtr, V8ValuePtr, void> pThunk = &Thunk;
                 return (IntPtr)pThunk;
             }
         }
@@ -137,13 +137,13 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             get
             {
                 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-                static void Thunk(IntPtr pObject, StdString.Ptr pName, V8Value.Ptr pValue, IntPtr pIsCacheable)
+                static void Thunk(IntPtr pObject, StdStringPtr pName, V8ValuePtr pValue, IntPtr pIsCacheable)
                 {
                     GetHostObjectNamedPropertyWithCacheability(pObject, pName, pValue, out var isCacheable);
                     StdBool.Write(pIsCacheable, isCacheable);
                 }
 
-                delegate* unmanaged[Stdcall]<IntPtr, StdString.Ptr, V8Value.Ptr, IntPtr, void> pThunk = &Thunk;
+                delegate* unmanaged[Stdcall]<IntPtr, StdStringPtr, V8ValuePtr, IntPtr, void> pThunk = &Thunk;
                 return (IntPtr)pThunk;
             }
         }
@@ -153,12 +153,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             get
             {
                 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-                static void Thunk(IntPtr pObject, StdString.Ptr pName, V8Value.Ptr pValue)
+                static void Thunk(IntPtr pObject, StdStringPtr pName, V8ValuePtr pValue)
                 {
                     SetHostObjectNamedProperty(pObject, pName, pValue);
                 }
 
-                delegate* unmanaged[Stdcall]<IntPtr, StdString.Ptr, V8Value.Ptr, void> pThunk = &Thunk;
+                delegate* unmanaged[Stdcall]<IntPtr, StdStringPtr, V8ValuePtr, void> pThunk = &Thunk;
                 return (IntPtr)pThunk;
             }
         }
@@ -168,12 +168,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             get
             {
                 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-                static void Thunk(IntPtr pObject, int index, V8Value.Ptr pValue)
+                static void Thunk(IntPtr pObject, int index, V8ValuePtr pValue)
                 {
                     GetHostObjectIndexedProperty(pObject, index, pValue);
                 }
 
-                delegate* unmanaged[Stdcall]<IntPtr, int, V8Value.Ptr, void> pThunk = &Thunk;
+                delegate* unmanaged[Stdcall]<IntPtr, int, V8ValuePtr, void> pThunk = &Thunk;
                 return (IntPtr)pThunk;
             }
         }
@@ -183,12 +183,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             get
             {
                 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-                static void Thunk(IntPtr pObject, int index, V8Value.Ptr pValue)
+                static void Thunk(IntPtr pObject, int index, V8ValuePtr pValue)
                 {
                     SetHostObjectIndexedProperty(pObject, index, pValue);
                 }
 
-                delegate* unmanaged[Stdcall]<IntPtr, int, V8Value.Ptr, void> pThunk = &Thunk;
+                delegate* unmanaged[Stdcall]<IntPtr, int, V8ValuePtr, void> pThunk = &Thunk;
                 return (IntPtr)pThunk;
             }
         }
@@ -198,12 +198,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             get
             {
                 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-                static void Thunk(IntPtr pObject, StdBool asConstructor, StdV8ValueArray.Ptr pArgs, V8Value.Ptr pResult)
+                static void Thunk(IntPtr pObject, StdBool asConstructor, StdV8ValueArrayPtr pArgs, V8ValuePtr pResult)
                 {
                     InvokeHostObject(pObject, asConstructor, pArgs, pResult);
                 }
 
-                delegate* unmanaged[Stdcall]<IntPtr, StdBool, StdV8ValueArray.Ptr, V8Value.Ptr, void> pThunk = &Thunk;
+                delegate* unmanaged[Stdcall]<IntPtr, StdBool, StdV8ValueArrayPtr, V8ValuePtr, void> pThunk = &Thunk;
                 return (IntPtr)pThunk;
             }
         }
@@ -213,12 +213,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             get
             {
                 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-                static void Thunk(IntPtr pObject, StdString.Ptr pName, StdV8ValueArray.Ptr pArgs, V8Value.Ptr pResult)
+                static void Thunk(IntPtr pObject, StdStringPtr pName, StdV8ValueArrayPtr pArgs, V8ValuePtr pResult)
                 {
                     InvokeHostObjectMethod(pObject, pName, pArgs, pResult);
                 }
 
-                delegate* unmanaged[Stdcall]<IntPtr, StdString.Ptr, StdV8ValueArray.Ptr, V8Value.Ptr, void> pThunk = &Thunk;
+                delegate* unmanaged[Stdcall]<IntPtr, StdStringPtr, StdV8ValueArrayPtr, V8ValuePtr, void> pThunk = &Thunk;
                 return (IntPtr)pThunk;
             }
         }

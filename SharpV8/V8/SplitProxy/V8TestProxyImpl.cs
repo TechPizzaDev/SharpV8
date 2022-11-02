@@ -2,8 +2,9 @@
 // Licensed under the MIT license.
 
 using System;
+using Microsoft.ClearScript.V8.SplitProxy;
 
-namespace Microsoft.ClearScript.V8.SplitProxy
+namespace Microsoft.ClearScript.V8
 {
     internal sealed class V8TestProxyImpl : V8TestProxy
     {
