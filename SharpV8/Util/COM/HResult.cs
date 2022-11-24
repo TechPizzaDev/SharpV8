@@ -3,7 +3,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace Microsoft.ClearScript.Util.COM
+namespace Microsoft.ClearScript.Util
 {
     internal static class HResult
     {
@@ -97,7 +97,7 @@ namespace Microsoft.ClearScript.Util.COM
 
         public static int GetSeverity(int result)
         {
-            return (result >> 31) & 0x1;
+            return result >> 31 & 0x1;
         }
 
         public static int GetFacility(uint result)
@@ -107,7 +107,7 @@ namespace Microsoft.ClearScript.Util.COM
 
         public static int GetFacility(int result)
         {
-            return (result >> 16) & 0x1FFF;
+            return result >> 16 & 0x1FFF;
         }
 
         public static int GetCode(uint result)
@@ -122,7 +122,7 @@ namespace Microsoft.ClearScript.Util.COM
 
         public static int MakeResult(int severity, int facility, int code)
         {
-            return ((uint)(code & 0xFFFF) | ((uint)(facility & 0x1FFF) << 16) | ((uint)(severity & 0x1) << 31)).ToSigned();
+            return ((uint)(code & 0xFFFF) | (uint)(facility & 0x1FFF) << 16 | (uint)(severity & 0x1) << 31).ToSigned();
         }
     }
 }

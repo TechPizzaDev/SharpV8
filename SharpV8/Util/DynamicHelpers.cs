@@ -11,7 +11,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.Expando;
-using Microsoft.ClearScript.Util.COM;
 
 namespace Microsoft.ClearScript.Util
 {
@@ -185,18 +184,6 @@ namespace Microsoft.ClearScript.Util
 
         private static bool TryGetProperty(IReflect target, string name, bool ignoreCase, object[] args, out object result)
         {
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            if (target is IDispatchEx dispatchEx)
-            {
-                // Standard IExpando-over-IDispatchEx support appears to leak the variants it
-                // creates for the invocation arguments. This issue has been reported. In the
-                // meantime we'll bypass this facility and interface with IDispatchEx directly.
-
-                var value = dispatchEx.GetProperty(name, ignoreCase, args);
-                result = (value is Nonexistent) ? Undefined.Value : value;
-                return true;
-            }
-
             var flags = BindingFlags.Public;
             if (ignoreCase)
             {
@@ -218,18 +205,6 @@ namespace Microsoft.ClearScript.Util
         {
             if ((args != null) && (args.Length > 0))
             {
-                // ReSharper disable once SuspiciousTypeConversion.Global
-                if (target is IDispatchEx dispatchEx)
-                {
-                    // Standard IExpando-over-IDispatchEx support appears to leak the variants it
-                    // creates for the invocation arguments. This issue has been reported. In the
-                    // meantime we'll bypass this facility and interface with IDispatchEx directly.
-
-                    dispatchEx.SetProperty(name, ignoreCase, args);
-                    result = args[args.Length - 1];
-                    return true;
-                }
-
                 var flags = BindingFlags.Public;
                 if (ignoreCase)
                 {
@@ -259,17 +234,6 @@ namespace Microsoft.ClearScript.Util
 
         private static bool TryCreateInstance(IReflect target, object[] args, out object result)
         {
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            if (target is IDispatchEx dispatchEx)
-            {
-                // Standard IExpando-over-IDispatchEx support appears to leak the variants it
-                // creates for the invocation arguments. This issue has been reported. In the
-                // meantime we'll bypass this facility and interface with IDispatchEx directly.
-
-                result = dispatchEx.Invoke(true, args);
-                return true;
-            }
-
             try
             {
                 result = target.InvokeMember(SpecialMemberNames.Default, BindingFlags.CreateInstance, null, target, args, null, CultureInfo.InvariantCulture, null);
@@ -288,17 +252,6 @@ namespace Microsoft.ClearScript.Util
 
         private static bool TryInvoke(IReflect target, object[] args, out object result)
         {
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            if (target is IDispatchEx dispatchEx)
-            {
-                // Standard IExpando-over-IDispatchEx support appears to leak the variants it
-                // creates for the invocation arguments. This issue has been reported. In the
-                // meantime we'll bypass this facility and interface with IDispatchEx directly.
-
-                result = dispatchEx.Invoke(false, args);
-                return true;
-            }
-
             try
             {
                 result = target.InvokeMember(SpecialMemberNames.Default, BindingFlags.InvokeMethod, null, target, args, null, CultureInfo.InvariantCulture, null);
@@ -317,17 +270,6 @@ namespace Microsoft.ClearScript.Util
 
         private static bool TryInvokeMethod(IReflect target, string name, bool ignoreCase, object[] args, out object result)
         {
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            if (target is IDispatchEx dispatchEx)
-            {
-                // Standard IExpando-over-IDispatchEx support appears to leak the variants it
-                // creates for the invocation arguments. This issue has been reported. In the
-                // meantime we'll bypass this facility and interface with IDispatchEx directly.
-
-                result = dispatchEx.InvokeMethod(name, ignoreCase, args);
-                return true;
-            }
-
             var flags = BindingFlags.Public;
             if (ignoreCase)
             {

@@ -10,15 +10,12 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.InteropServices.Expando;
 using Microsoft.ClearScript.Util;
-using Microsoft.ClearScript.Util.COM;
 
 namespace Microsoft.ClearScript
 {
-    internal partial class HostItem : DynamicObject, IReflect, IDynamic, IEnumVARIANT, ICustomQueryInterface, IScriptMarshalWrapper, IHostInvokeContext
+    internal partial class HostItem : DynamicObject, IReflect, IDynamic, IScriptMarshalWrapper, IHostInvokeContext
     {
         #region data
 
@@ -404,21 +401,6 @@ namespace Microsoft.ClearScript
                 return true;
             }
 
-            if (target is IHostVariable)
-            {
-                if (target.Type.IsImport)
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                if ((target.InvokeTarget is IDispatchEx dispatchEx) && dispatchEx.GetType().IsCOMObject)
-                {
-                    return true;
-                }
-            }
-
             if (typeof(IPropertyBag).IsAssignableFrom(target.Type))
             {
                 return true;
@@ -499,23 +481,7 @@ namespace Microsoft.ClearScript
                 return false;
             }
 
-            if (typeof(T) == typeof(IDynamic))
-            {
-                // provide fully dynamic behavior for exposed IDispatch[Ex] implementations
-
-                if ((Target.InvokeTarget is IDispatchEx dispatchEx) && Target.Type.IsUnknownCOMObject())
-                {
-                    specialTarget = (T)(object)(new DynamicDispatchExWrapper(this, dispatchEx));
-                    return true;
-                }
-
-                if ((Target.InvokeTarget is IDispatch dispatch) && Target.Type.IsUnknownCOMObject())
-                {
-                    specialTarget = (T)(object)(new DynamicDispatchWrapper(this, dispatch));
-                    return true;
-                }
-            }
-            else if (typeof(T) == typeof(IHostList))
+            if (typeof(T) == typeof(IHostList))
             {
                 // generic list support
 
@@ -2131,105 +2097,6 @@ namespace Microsoft.ClearScript
         object IDynamic.InvokeMethod(string name, params object[] args)
         {
             return ThisReflect.InvokeMember(name, BindingFlags.InvokeMethod, null, ThisReflect, args, null, CultureInfo.InvariantCulture, null);
-        }
-
-        #endregion
-
-        #region IEnumVARIANT implementation
-
-        int IEnumVARIANT.Next(int count, object[] elements, IntPtr pCountFetched)
-        {
-            return HostInvoke(() =>
-            {
-                var index = 0;
-                if (elements != null)
-                {
-                    var maxCount = Math.Min(count, elements.Length);
-                    while ((index < maxCount) && TargetEnumerator.MoveNext())
-                    {
-                        elements[index++] = ThisDynamic.GetProperty("Current");
-                    }
-                }
-
-                if (pCountFetched != IntPtr.Zero)
-                {
-                    Marshal.WriteInt32(pCountFetched, index);
-                }
-
-                return (index == count) ? HResult.S_OK : HResult.S_FALSE;
-            });
-        }
-
-        int IEnumVARIANT.Skip(int count)
-        {
-            return HostInvoke(() =>
-            {
-                var index = 0;
-                while ((index < count) && TargetEnumerator.MoveNext())
-                {
-                    index++;
-                }
-
-                return (index == count) ? HResult.S_OK : HResult.S_FALSE;
-            });
-        }
-
-        int IEnumVARIANT.Reset()
-        {
-            return HostInvoke(() =>
-            {
-                TargetEnumerator.Reset();
-                return HResult.S_OK;
-            });
-        }
-
-        IEnumVARIANT IEnumVARIANT.Clone()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region ICustomQueryInterface implementation
-
-        public CustomQueryInterfaceResult GetInterface(ref Guid iid, out IntPtr pInterface)
-        {
-            if (!MiscHelpers.PlatformIsWindows())
-            {
-                pInterface = IntPtr.Zero;
-                return CustomQueryInterfaceResult.NotHandled;
-            }
-
-            if (iid == typeof(IEnumVARIANT).GUID)
-            {
-                if ((Target is HostObject) || (Target is IHostVariable) || (Target is IByRefArg))
-                {
-                    pInterface = IntPtr.Zero;
-                    return BindSpecialTarget(Collateral.TargetEnumerator) ? CustomQueryInterfaceResult.NotHandled : CustomQueryInterfaceResult.Failed;
-                }
-            }
-            else if (iid == typeof(IDispatchEx).GUID)
-            {
-                if (EnableVTablePatching && !bypassVTablePatching)
-                {
-                    var pUnknown = Marshal.GetIUnknownForObject(this);
-
-                    bypassVTablePatching = true;
-                    pInterface = UnknownHelpers.QueryInterfaceNoThrow<IDispatchEx>(pUnknown);
-                    bypassVTablePatching = false;
-
-                    Marshal.Release(pUnknown);
-
-                    if (pInterface != IntPtr.Zero)
-                    {
-                        VTablePatcher.GetInstance().PatchDispatchEx(pInterface);
-                        return CustomQueryInterfaceResult.Handled;
-                    }
-                }
-            }
-
-            pInterface = IntPtr.Zero;
-            return CustomQueryInterfaceResult.NotHandled;
         }
 
         #endregion

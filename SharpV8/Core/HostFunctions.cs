@@ -9,7 +9,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.InteropServices;
 using Microsoft.ClearScript.Util;
-using Microsoft.ClearScript.Util.COM;
 
 namespace Microsoft.ClearScript
 {
@@ -1574,103 +1573,6 @@ namespace Microsoft.ClearScript
             var target = collection ?? new HostTypeCollection();
             Array.ForEach(assemblyNames, target.AddAssembly);
             return target;
-        }
-
-        /// <summary>
-        /// Imports a COM/ActiveX type.
-        /// </summary>
-        /// <param name="progID">The programmatic identifier (ProgID) of the registered class to import.</param>
-        /// <param name="serverName">An optional name that specifies the server from which to import the type.</param>
-        /// <returns>The imported COM/ActiveX type.</returns>
-        /// <remarks>
-        /// The <paramref name="progID"/> argument can be a class identifier (CLSID) in standard
-        /// GUID format with braces (e.g., "{0D43FE01-F093-11CF-8940-00A0C9054228}").
-        /// </remarks>
-        /// <example>
-        /// The following code imports the
-        /// <c><see href="https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/x4k5wbx4(v=vs.84)">Scripting.Dictionary</see></c>
-        /// class and uses it to create and populate an instance.
-        /// It assumes that an instance of <c><see cref="ExtendedHostFunctions"/></c> is exposed under
-        /// the name "host"
-        /// (see <c><see cref="ScriptEngine.AddHostObject(string, object)">AddHostObject</see></c>).
-        /// <code lang="JavaScript">
-        /// var DictT = host.comType('Scripting.Dictionary');
-        /// var dict = host.newObj(DictT);
-        /// dict.Add('foo', 123);
-        /// dict.Add('bar', 456.789);
-        /// dict.Add('baz', 'abc');
-        /// </code>
-        /// </example>
-        public object comType(string progID, string serverName = null)
-        {
-            return HostType.Wrap(MiscHelpers.GetCOMType(progID, serverName));
-        }
-
-        /// <summary>
-        /// Creates a COM/ActiveX object of the specified type.
-        /// </summary>
-        /// <param name="progID">The programmatic identifier (ProgID) of the registered class to instantiate.</param>
-        /// <param name="serverName">An optional name that specifies the server on which to create the object.</param>
-        /// <returns>A new COM/ActiveX object of the specified type.</returns>
-        /// <remarks>
-        /// The <paramref name="progID"/> argument can be a class identifier (CLSID) in standard
-        /// GUID format with braces (e.g., "{0D43FE01-F093-11CF-8940-00A0C9054228}").
-        /// </remarks>
-        /// <example>
-        /// The following code creates a 
-        /// <c><see href="https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/windows-scripting/6kxy1a51(v=vs.84)">Scripting.FileSystemObject</see></c>
-        /// instance and uses it to list the drives on the local machine.
-        /// It assumes that an instance of <c><see cref="ExtendedHostFunctions"/></c> is exposed under
-        /// the name "host"
-        /// (see <c><see cref="ScriptEngine.AddHostObject(string, object)">AddHostObject</see></c>).
-        /// <code lang="JavaScript">
-        /// var fso = host.newComObj('Scripting.FileSystemObject');
-        /// var ConsoleT = host.type('System.Console');
-        /// for (en = fso.Drives.GetEnumerator(); en.MoveNext();) {
-        ///     ConsoleT.WriteLine(en.Current.Path);
-        /// }
-        /// </code>
-        /// </example>
-        public object newComObj(string progID, string serverName = null)
-        {
-            return MiscHelpers.CreateCOMObject(progID, serverName);
-        }
-
-        /// <summary>
-        /// Imports enumerations defined within or referenced from a COM/ActiveX type library.
-        /// </summary>
-        /// <typeparam name="T">The imported type whose parent library is to be searched for relevant enumerations.</typeparam>
-        /// <param name="obj">An instance of the representative type.</param>
-        /// <param name="collection">An optional host type collection with which to merge the imported enumerations.</param>
-        /// <returns>A host type collection: <paramref name="collection"/> if it is not <c>null</c>, a new host type collection otherwise.</returns>
-        public HostTypeCollection typeLibEnums<T>(T obj, HostTypeCollection collection = null) where T : class
-        {
-            MiscHelpers.VerifyNonNullArgument(obj, nameof(obj));
-            if (collection == null)
-            {
-                collection = new HostTypeCollection();
-            }
-
-            var type = typeof(T);
-            if (type.IsUnknownCOMObject())
-            {
-                if (obj is IDispatch dispatch)
-                {
-                    var typeInfo = dispatch.GetTypeInfo();
-                    if (typeInfo != null)
-                    {
-                        typeInfo.GetContainingTypeLib().GetReferencedEnums().ForEach(collection.AddEnumTypeInfo);
-                        return collection;
-                    }
-                }
-            }
-            else if (type.IsImport && (type.Assembly.GetOrLoadCustomAttribute<ImportedFromTypeLibAttribute>(false) != null))
-            {
-                type.Assembly.GetReferencedEnums().ForEach(collection.AddType);
-                return collection;
-            }
-
-            throw new ArgumentException("The object type is not of an imported (COM/ActiveX) type", nameof(obj));
         }
 
         // ReSharper restore InconsistentNaming

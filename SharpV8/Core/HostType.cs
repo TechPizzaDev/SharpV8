@@ -94,7 +94,7 @@ namespace Microsoft.ClearScript
         public Type GetTypeArgNoThrow()
         {
             var type = GetSpecificTypeNoThrow();
-            return ((type == null) || type.IsStatic() || type.IsUnknownCOMObject()) ? null : type;
+            return ((type == null) || type.IsStatic()) ? null : type;
         }
 
         private Type GetSpecificTypeNoThrow()

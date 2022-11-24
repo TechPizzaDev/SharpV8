@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Dynamic;
 using Microsoft.ClearScript.JavaScript;
 using Microsoft.ClearScript.Util;
-using Microsoft.ClearScript.Util.COM;
 
 namespace Microsoft.ClearScript.V8
 {

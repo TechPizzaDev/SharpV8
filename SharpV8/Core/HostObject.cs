@@ -28,15 +28,6 @@ namespace Microsoft.ClearScript
                 type = target.GetType();
             }
 
-            if (type.IsUnknownCOMObject())
-            {
-                if (target is IEnumVARIANT enumVariant)
-                {
-                    target = new DisposableEnumeratorOnEnumVariant(enumVariant);
-                    type = typeof(IDisposableEnumerator);
-                }
-            }
-
             this.target = target;
             this.type = type;
         }

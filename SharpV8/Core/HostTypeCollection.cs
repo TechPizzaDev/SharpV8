@@ -5,10 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices.ComTypes;
 using Microsoft.ClearScript.Util;
-using Microsoft.ClearScript.Util.COM;
-using TYPEKIND = System.Runtime.InteropServices.ComTypes.TYPEKIND;
 
 namespace Microsoft.ClearScript
 {
@@ -186,97 +183,6 @@ namespace Microsoft.ClearScript
             }
 
             return namespaceNode;
-        }
-
-        internal void AddEnumTypeInfo(ITypeInfo typeInfo)
-        {
-            AddEnumTypeInfoInternal(typeInfo);
-        }
-
-        private PropertyBag AddEnumTypeInfoInternal(ITypeInfo typeInfo)
-        {
-            using (var attrScope = typeInfo.CreateAttrScope())
-            {
-                if (attrScope.Value.typekind == TYPEKIND.TKIND_ALIAS)
-                {
-                    typeInfo.GetRefTypeInfo(unchecked((int)attrScope.Value.tdescAlias.lpValue.ToInt64()), out var refTypeInfo);
-
-                    var node = AddEnumTypeInfoInternal(refTypeInfo);
-                    if (node != null)
-                    {
-                        var locator = typeInfo.GetManagedName();
-
-                        var segments = locator.Split('.');
-                        if (segments.Length > 0)
-                        {
-                            var namespaceNode = GetOrCreateNamespaceNode(locator);
-                            if (namespaceNode != null)
-                            {
-                                namespaceNode.SetPropertyNoCheck(segments.Last(), node);
-                                return node;
-                            }
-                        }
-                    }
-                }
-                else if (attrScope.Value.typekind == TYPEKIND.TKIND_ENUM)
-                {
-                    var node = GetOrCreateEnumTypeInfoNode(typeInfo);
-                    if (node != null)
-                    {
-                        var count = attrScope.Value.cVars;
-                        for (var index = 0; index < count; index++)
-                        {
-                            using (var varDescScope = typeInfo.CreateVarDescScope(index))
-                            {
-                                if (varDescScope.Value.varkind == VARKIND.VAR_CONST)
-                                {
-                                    var name = typeInfo.GetMemberName(varDescScope.Value.memid);
-                                    node.SetPropertyNoCheck(name, MiscHelpers.GetObjectForVariant(varDescScope.Value.desc.lpvarValue));
-                                }
-                            }
-                        }
-
-                        return node;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private PropertyBag GetOrCreateEnumTypeInfoNode(ITypeInfo typeInfo)
-        {
-            var locator = typeInfo.GetManagedName();
-
-            var segments = locator.Split('.');
-            if (segments.Length < 1)
-            {
-                return null;
-            }
-
-            PropertyBag enumTypeInfoNode = this;
-            foreach (var segment in segments)
-            {
-                PropertyBag innerNode;
-
-                if (!enumTypeInfoNode.TryGetValue(segment, out var node))
-                {
-                    innerNode = new PropertyBag(true);
-                    enumTypeInfoNode.SetPropertyNoCheck(segment, innerNode);
-                }
-                else
-                {
-                    innerNode = node as PropertyBag;
-                    if (innerNode == null)
-                    {
-                        throw new OperationCanceledException(MiscHelpers.FormatInvariant("Enumeration conflicts with '{0}' at '{1}'", node.GetFriendlyName(), locator));
-                    }
-                }
-
-                enumTypeInfoNode = innerNode;
-            }
-
-            return enumTypeInfoNode;
         }
 
         private void AddType(HostType hostType)

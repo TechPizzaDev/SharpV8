@@ -6,8 +6,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using Microsoft.ClearScript.Util.COM;
 
 namespace Microsoft.ClearScript.Util
 {
@@ -127,39 +125,6 @@ namespace Microsoft.ClearScript.Util
         public void Dispose()
         {
             (enumerator as IDisposable)?.Dispose();
-        }
-    }
-
-    internal sealed class DisposableEnumeratorOnEnumVariant : IDisposableEnumerator
-    {
-        private readonly IEnumVARIANT enumVariant;
-
-        public DisposableEnumeratorOnEnumVariant(IEnumVARIANT enumVariant)
-        {
-            this.enumVariant = enumVariant;
-        }
-
-        public bool MoveNext()
-        {
-            var items = new object[1];
-            if (enumVariant.Next(1, items, IntPtr.Zero) == HResult.S_OK)
-            {
-                Current = items[0];
-                return true;
-            }
-
-            return false;
-        }
-
-        public void Reset()
-        {
-            enumVariant.Reset();
-        }
-
-        public object Current { get; private set; }
-
-        public void Dispose()
-        {
         }
     }
 }

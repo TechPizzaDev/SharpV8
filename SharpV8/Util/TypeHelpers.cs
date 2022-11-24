@@ -11,8 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using Microsoft.ClearScript.Util.COM;
 
 namespace Microsoft.ClearScript.Util
 {
@@ -258,23 +256,6 @@ namespace Microsoft.ClearScript.Util
             return type.Assembly.IsFriendOf(thatType.Assembly);
         }
 
-        public static bool IsCOMVisible(this Type type)
-        {
-            var attribute = type.GetOrLoadCustomAttribute<ComVisibleAttribute>(false);
-            if (attribute != null)
-            {
-                return attribute.Value;
-            }
-
-            attribute = type.Assembly.GetOrLoadCustomAttribute<ComVisibleAttribute>(false);
-            if (attribute != null)
-            {
-                return attribute.Value;
-            }
-
-            return false;
-        }
-
         public static string GetRootName(this Type type)
         {
             return StripGenericSuffix(type.Name);
@@ -287,29 +268,11 @@ namespace Microsoft.ClearScript.Util
 
         public static string GetFriendlyName(this Type type)
         {
-            if (type.IsUnknownCOMObject())
-            {
-                var clsid = type.GUID;
-                if (HResult.Succeeded(NativeMethods.ProgIDFromCLSID(ref clsid, out var progID)))
-                {
-                    return progID;
-                }
-            }
-
             return type.GetFriendlyName(GetRootName);
         }
 
         public static string GetFullFriendlyName(this Type type)
         {
-            if (type.IsUnknownCOMObject())
-            {
-                var clsid = type.GUID;
-                if (HResult.Succeeded(NativeMethods.ProgIDFromCLSID(ref clsid, out var progID)))
-                {
-                    return progID;
-                }
-            }
-
             return type.GetFriendlyName(GetFullRootName);
         }
 
@@ -487,7 +450,7 @@ namespace Microsoft.ClearScript.Util
 
         public static object CreateInstance(this Type type, IHostInvokeContext invokeContext, Type accessContext, ScriptAccess defaultAccess, object[] args, object[] bindArgs)
         {
-            if (type.IsCOMObject || (type.IsValueType && (args.Length < 1)))
+            if (type.IsValueType && (args.Length < 1))
             {
                 return type.CreateInstance(args);
             }
@@ -847,30 +810,6 @@ namespace Microsoft.ClearScript.Util
                     }
 
                     return true;
-                }
-
-                return false;
-            }
-
-            if (!type.IsValueType)
-            {
-                if (type.IsInterface && type.IsImport && valueType.IsCOMObject)
-                {
-                    var result = false;
-                    var pUnknown = Marshal.GetIUnknownForObject(value);
-
-                    var iid = type.GUID;
-                    if (iid != Guid.Empty)
-                    {
-                        if (HResult.Succeeded(Marshal.QueryInterface(pUnknown, ref iid, out var pInterface)))
-                        {
-                            Marshal.Release(pInterface);
-                            result = true;
-                        }
-                    }
-
-                    Marshal.Release(pUnknown);
-                    return result;
                 }
 
                 return false;

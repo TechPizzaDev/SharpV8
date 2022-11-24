@@ -4,12 +4,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Microsoft.ClearScript.Util;
-using Microsoft.ClearScript.Util.COM;
 using Microsoft.CSharp.RuntimeBinder;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -237,20 +235,6 @@ namespace Microsoft.ClearScript.Test
 
                 exception = exception.InnerException;
             }
-        }
-
-        public static string GetCOMObjectTypeName(object obj)
-        {
-            if (obj is IDispatch dispatch)
-            {
-                var typeInfo = dispatch.GetTypeInfo();
-                if (typeInfo != null)
-                {
-                    return typeInfo.GetName();
-                }
-            }
-
-            return null;
         }
     }
 }
