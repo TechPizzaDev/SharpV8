@@ -3,7 +3,6 @@
 
 using System.Numerics;
 using BenchmarkDotNet.Attributes;
-using Microsoft.ClearScript.V8;
 
 namespace SharpV8.Benchmarks
 {

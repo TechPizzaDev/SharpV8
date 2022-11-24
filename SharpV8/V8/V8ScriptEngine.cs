@@ -1320,11 +1320,6 @@ namespace Microsoft.ClearScript.V8
                 return obj;
             }
 
-            if (obj is INothingTag)
-            {
-                return null;
-            }
-
             if (obj is BigInteger)
             {
                 return obj;

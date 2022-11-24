@@ -1320,7 +1320,7 @@ namespace Microsoft.ClearScript
                         catch
                         {
                         }
-                        
+
                         throw;
 
                         // ReSharper restore EmptyGeneralCatchClause
@@ -1552,7 +1552,7 @@ namespace Microsoft.ClearScript
                 var defaultProperty = Target.Type.GetScriptableDefaultProperty(invokeFlags, args.Take(args.Length - 1).ToArray(), bindArgs.Take(bindArgs.Length - 1).ToArray(), AccessContext, DefaultAccess);
                 if (defaultProperty != null)
                 {
-                    return SetHostProperty(defaultProperty, args, bindArgs);
+                    return SetHostProperty(defaultProperty, args);
                 }
 
                 if (args.Length < 2)
@@ -1607,7 +1607,7 @@ namespace Microsoft.ClearScript
             var property = Target.Type.GetScriptableProperty(name, invokeFlags, args.Take(args.Length - 1).ToArray(), bindArgs.Take(bindArgs.Length - 1).ToArray(), AccessContext, DefaultAccess);
             if (property != null)
             {
-                return SetHostProperty(property, args, bindArgs);
+                return SetHostProperty(property, args);
             }
 
             var field = Target.Type.GetScriptableField(name, invokeFlags, AccessContext, DefaultAccess);
@@ -1636,7 +1636,7 @@ namespace Microsoft.ClearScript
             throw new MissingMemberException(MiscHelpers.FormatInvariant("The object has no suitable property or field named '{0}'", name));
         }
 
-        private object SetHostProperty(PropertyInfo property, object[] args, object[] bindArgs)
+        private object SetHostProperty(PropertyInfo property, object[] args)
         {
             if (property.IsReadOnlyForScript(DefaultAccess))
             {
@@ -1657,32 +1657,6 @@ namespace Microsoft.ClearScript
             {
                 var missingArgs = Enumerable.Repeat(Missing.Value, paramCount - argCount).ToArray();
                 args = args.Take(argCount).Concat(missingArgs).Concat(value.ToEnumerable()).ToArray();
-                bindArgs = bindArgs.Take(argCount).Concat(missingArgs).Concat(bindArgs[bindArgs.Length - 1].ToEnumerable()).ToArray();
-            }
-
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            if ((value != null) && (Engine is IVBScriptEngineTag))
-            {
-                // special case to emulate VBScript's default property handling
-
-                if (value is IWindowsScriptItemTag)
-                {
-                    var defaultValue = ((IDynamic)value).GetProperty(SpecialMemberNames.Default);
-                    if (!(defaultValue is Undefined))
-                    {
-                        value = defaultValue;
-                    }
-                }
-                else
-                {
-                    if (Wrap(Engine, bindArgs[bindArgs.Length - 1]) is HostItem hostItem)
-                    {
-                        if (MiscHelpers.Try(out var defaultValue, () => ((IDynamic)hostItem).GetProperty(SpecialMemberNames.Default)) && (defaultValue != null))
-                        {
-                            value = defaultValue;
-                        }
-                    }
-                }
             }
 
             if (property.PropertyType.IsAssignableFromValue(ref value))

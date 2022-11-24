@@ -33,14 +33,5 @@ namespace Microsoft.ClearScript
         /// applies only to objects that implement <c><see cref="IDynamicMetaObjectProvider"/></c>.
         /// </summary>
         HideDynamicMembers = 0x00000004,
-
-        /// <summary>
-        /// Specifies that the script engine is to be given direct access to the exposed object if
-        /// possible. This option, when supported, suppresses marshaling and hands off the object
-        /// for script access without the host's involvement. It is currently supported only for
-        /// COM and <see href="https://docs.microsoft.com/en-us/dotnet/api/system.runtime.interopservices.comvisibleattribute">COM-visible</see>
-        /// objects exposed in Windows Script engines.
-        /// </summary>
-        DirectAccess = 0x00000008
     }
 }

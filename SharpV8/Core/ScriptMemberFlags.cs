@@ -27,8 +27,6 @@ namespace Microsoft.ClearScript
         /// .NET type information even if it is <c>null</c>. Note that such a value will always
         /// fail equality comparison with JavaScript's
         /// <c><see href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null">null</see></c>,
-        /// VBScript's
-        /// <c><see href="https://docs.microsoft.com/en-us/previous-versions//f8tbc79x(v=vs.85)">Nothing</see></c>,
         /// and other similar values. Instead, use <c><see cref="HostFunctions.isNull"/></c> or
         /// <c><see cref="object.Equals(object, object)"/></c> to perform such a comparison.
         /// </summary>

@@ -480,59 +480,6 @@ namespace Microsoft.ClearScript.Util
             return path;
         }
 
-        public static bool PlatformIsWindows()
-        {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-        }
-
-        public static bool PlatformIsLinux()
-        {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-        }
-
-        public static bool PlatformIsOSX()
-        {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-        }
-
-        public static bool ProcessorArchitectureIsIntel()
-        {
-            switch (RuntimeInformation.ProcessArchitecture)
-            {
-                case Architecture.X64:
-                case Architecture.X86:
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
-
-        public static bool ProcessorArchitectureIsArm()
-        {
-            switch (RuntimeInformation.ProcessArchitecture)
-            {
-                case Architecture.Arm:
-                case Architecture.Arm64:
-                    return true;
-
-                default:
-                    return false;
-            }
-        }
-
-        public static object GetObjectForVariant(IntPtr pVariant)
-        {
-            var result = Marshal.GetObjectForNativeVariant(pVariant);
-
-            if ((result == null) && (Marshal.ReadInt16(pVariant) == (short)VarEnum.VT_BSTR))
-            {
-                return string.Empty;
-            }
-
-            return result;
-        }
-
         #endregion
     }
 }
