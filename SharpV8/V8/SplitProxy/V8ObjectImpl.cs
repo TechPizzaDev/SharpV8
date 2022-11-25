@@ -12,11 +12,12 @@ namespace Microsoft.ClearScript.V8
 
         public V8ObjectHandle Handle => (V8ObjectHandle)holder.Handle;
 
-        public V8Object(V8ObjectHandle hObject, V8ValueSubtype subtype, V8ValueFlags flags)
+        public V8Object(V8ObjectHandle hObject, V8ValueSubtype subtype, V8ValueFlags flags, int identityHash)
         {
             holder = new V8EntityHolder("V8 object", hObject);
             Subtype = subtype;
             Flags = flags;
+            IdentityHash = identityHash;
         }
 
         public V8ValueSubtype Subtype { get; }
@@ -24,6 +25,8 @@ namespace Microsoft.ClearScript.V8
         public V8ValueFlags Flags { get; }
 
         #region IV8Object implementation
+
+        public int IdentityHash { get; }
 
         public object GetProperty(string name)
         {

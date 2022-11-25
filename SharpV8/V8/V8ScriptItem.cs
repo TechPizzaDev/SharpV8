@@ -283,12 +283,20 @@ namespace Microsoft.ClearScript.V8
 
         #region IScriptMarshalWrapper implementation
 
-        public override ScriptEngine Engine => engine;
+        public override V8ScriptEngine Engine => engine;
 
         public override object Unwrap()
         {
             return target;
         }
+
+        #endregion
+
+        #region Object overrides
+
+        public override bool Equals(object obj) => (obj is V8ScriptItem that) && engine.Equals(this, that);
+
+        public override int GetHashCode() => target.IdentityHash;
 
         #endregion
 

@@ -5,6 +5,7 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <Version>7.3.5</Version>
     </PropertyGroup>
 
     <ItemGroup>

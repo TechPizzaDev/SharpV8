@@ -903,7 +903,8 @@ namespace Microsoft.ClearScript.V8
                     return TryGetBigInteger(intValue, (int)uintValue, ptrOrHandle, out var result) ? result : null;
 
                 case V8ValueType.V8Object:
-                    return new V8Object((V8ObjectHandle)ptrOrHandle, (V8ValueSubtype)uintValue, (V8ValueFlags)intValue);
+                    return new V8Object(
+                        (V8ObjectHandle)ptrOrHandle, (V8ValueSubtype)(uintValue & 0xFFFFU), (V8ValueFlags)(uintValue >> 16), intValue);
 
                 case V8ValueType.HostObject:
                     return V8ProxyHelpers.GetHostObject(ptrOrHandle);

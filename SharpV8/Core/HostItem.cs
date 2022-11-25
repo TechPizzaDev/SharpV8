@@ -1530,7 +1530,7 @@ namespace Microsoft.ClearScript
             }
 
             var getMethod = property.GetMethod;
-            if ((getMethod == null) || !getMethod.IsAccessible(AccessContext) || getMethod.IsBlockedFromScript(DefaultAccess, false))
+            if ((getMethod == null) || !getMethod.IsAccessible(AccessContext) || getMethod.IsBlockedFromScript(property.GetScriptAccess(DefaultAccess), false))
             {
                 throw new UnauthorizedAccessException("The property get method is unavailable or inaccessible");
             }
@@ -1638,13 +1638,14 @@ namespace Microsoft.ClearScript
 
         private object SetHostProperty(PropertyInfo property, object[] args)
         {
-            if (property.IsReadOnlyForScript(DefaultAccess))
+            var scriptAccess = property.GetScriptAccess(DefaultAccess);
+            if (scriptAccess == ScriptAccess.ReadOnly)
             {
                 throw new UnauthorizedAccessException("The property is read-only");
             }
 
             var setMethod = property.SetMethod;
-            if ((setMethod == null) || !setMethod.IsAccessible(AccessContext) || setMethod.IsBlockedFromScript(DefaultAccess, false))
+            if ((setMethod == null) || !setMethod.IsAccessible(AccessContext) || setMethod.IsBlockedFromScript(scriptAccess, false))
             {
                 throw new UnauthorizedAccessException("The property set method is unavailable or inaccessible");
             }

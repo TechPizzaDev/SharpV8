@@ -42,6 +42,8 @@ Object.defineProperty(this, 'EngineInternal', { value: (globalObject => {
             return value.toString();
         }),
 
+        strictEquals: bind((left, right) => left === right),
+
         invokeConstructor: bind((constructor, args) => {
             if (typeof(constructor) !== 'function') {
                 throw new Error('Function expected');
