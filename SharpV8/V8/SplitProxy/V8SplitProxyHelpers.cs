@@ -921,17 +921,17 @@ namespace Microsoft.ClearScript.V8
             if (wordCount > 0)
             {
                 var byteCount = (ulong)wordCount * sizeof(ulong);
-                if (byteCount >= int.MaxValue)
+                if (byteCount >= (ulong)Array.MaxLength)
                 {
                     return false;
                 }
 
                 // use extra zero byte to force unsigned interpretation
-                var bytes = new byte[byteCount + 1];
+                var bytes = new byte[byteCount];
                 UnmanagedMemoryHelpers.Copy(pWords, byteCount, bytes, 0);
 
                 // construct result and negate if necessary
-                result = new BigInteger(bytes);
+                result = new BigInteger(bytes, isUnsigned: true);
                 if (signBit != 0)
                 {
                     result = BigInteger.Negate(result);

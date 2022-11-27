@@ -673,6 +673,7 @@ namespace Microsoft.ClearScript.V8
         #region Nested type: V8TypedArray<T>
 
         private class V8TypedArray<T> : V8TypedArray, ITypedArray<T>
+            where T : unmanaged
         {
             public V8TypedArray(V8ScriptEngine engine, V8Object target)
                 : base(engine, target)

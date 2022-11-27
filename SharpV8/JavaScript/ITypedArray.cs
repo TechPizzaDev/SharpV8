@@ -77,6 +77,7 @@ namespace Microsoft.ClearScript.JavaScript
     /// </para>
     /// </remarks>
     public interface ITypedArray<T> : ITypedArray
+        where T : unmanaged
     {
         /// <summary>
         /// Creates an array containing a copy of the typed array's contents.

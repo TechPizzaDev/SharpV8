@@ -65,7 +65,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => unchecked((byte)index)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((IArrayBuffer)engine.Script.typedArray.buffer).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((IArrayBuffer)engine.Script.typedArray.buffer).GetBytes()));
             }
@@ -101,7 +100,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((IArrayBuffer)engine.Script.typedArray.buffer).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((IArrayBuffer)engine.Script.typedArray.buffer).ReadBytes(128, 16384, readValues, 256));
@@ -124,7 +122,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((IArrayBuffer)engine.Script.typedArray.buffer).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Uint8Array(new ArrayBuffer(1024))");
                 Assert.AreEqual(256UL, ((IArrayBuffer)engine.Script.typedArray.buffer).WriteBytes(testValues, 256, 16384, 128));
@@ -159,7 +156,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => unchecked((byte)index)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((IDataView)engine.Script.dataView).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((IDataView)engine.Script.dataView).GetBytes()));
             }
@@ -195,7 +191,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((IDataView)engine.Script.dataView).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((IDataView)engine.Script.dataView).ReadBytes(128, 16384, readValues, 256));
@@ -218,7 +213,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((IDataView)engine.Script.dataView).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Uint8Array(new ArrayBuffer(1024))");
                 Assert.AreEqual(256UL, ((IDataView)engine.Script.dataView).WriteBytes(testValues, 256, 16384, 128));
@@ -254,7 +248,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => unchecked((byte)index)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<byte>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<byte>)engine.Script.typedArray).GetBytes()));
             }
@@ -290,7 +283,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -313,7 +305,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Uint8Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -339,7 +330,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => unchecked((byte)index)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<byte>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<byte>)engine.Script.typedArray).ToArray()));
             }
@@ -361,7 +351,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -384,7 +373,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Uint8Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -420,7 +408,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => (byte)(Math.Min(index, 255))).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<byte>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<byte>)engine.Script.typedArray).GetBytes()));
             }
@@ -456,7 +443,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -479,7 +465,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Uint8Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -505,7 +490,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => (byte)(Math.Min(index, 255))).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<byte>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<byte>)engine.Script.typedArray).ToArray()));
             }
@@ -527,7 +511,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -550,7 +533,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Uint8ClampedArray(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<byte>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -586,7 +568,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => unchecked((byte)(index - 512))).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<sbyte>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<sbyte>)engine.Script.typedArray).GetBytes()));
             }
@@ -622,7 +603,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<sbyte>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<sbyte>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -645,7 +625,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<sbyte>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Int8Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<sbyte>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -671,7 +650,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => unchecked((sbyte)(index - 512))).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<sbyte>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<sbyte>)engine.Script.typedArray).ToArray()));
             }
@@ -693,7 +671,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<sbyte>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new sbyte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<sbyte>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -716,7 +693,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<sbyte>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Int8Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<sbyte>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -762,7 +738,6 @@ namespace Microsoft.ClearScript.Test
             {
                 var testValues = Enumerable.Range(0, 1024).SelectMany(index => BitConverter.GetBytes((ushort)index)).ToArray();
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<ushort>)engine.Script.typedArray).GetBytes()));
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<ushort>)engine.Script.typedArray).GetBytes()));
                 }
@@ -770,7 +745,6 @@ namespace Microsoft.ClearScript.Test
             {
                 var testValues = Enumerable.Range(0, 1024).SelectMany(index => BitConverter.GetBytes((char)index)).ToArray();
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<char>)engine.Script.typedArray).GetBytes()));
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<char>)engine.Script.typedArray).GetBytes()));
                 }
@@ -814,7 +788,6 @@ namespace Microsoft.ClearScript.Test
                 Assert.AreEqual(256UL, ((ITypedArray<ushort>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
                 Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     readValues = new byte[512];
                     Assert.AreEqual(256UL, ((ITypedArray<ushort>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -831,7 +804,6 @@ namespace Microsoft.ClearScript.Test
                 Assert.AreEqual(256UL, ((ITypedArray<char>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
                 Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256).Take(256)));
 
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     readValues = new byte[512];
                     Assert.AreEqual(256UL, ((ITypedArray<char>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -856,7 +828,6 @@ namespace Microsoft.ClearScript.Test
                 Assert.AreEqual(256UL, ((ITypedArray<ushort>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
                 Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     engine.Execute("typedArray = new Uint16Array(new ArrayBuffer(123456), 128, 1024)");
                     Assert.AreEqual(256UL, ((ITypedArray<ushort>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -879,7 +850,6 @@ namespace Microsoft.ClearScript.Test
                 Assert.AreEqual(256UL, ((ITypedArray<char>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
                 Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     engine.Execute("typedArray = new Uint16Array(new ArrayBuffer(123456), 128, 1024)");
                     Assert.AreEqual(256UL, ((ITypedArray<char>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -907,7 +877,6 @@ namespace Microsoft.ClearScript.Test
             {
                 var testValues = Enumerable.Range(0, 1024).Select(index => (ushort)index).ToArray();
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<ushort>)engine.Script.typedArray).ToArray()));
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<ushort>)engine.Script.typedArray).ToArray()));
                 }
@@ -915,7 +884,6 @@ namespace Microsoft.ClearScript.Test
             {
                 var testValues = Enumerable.Range(0, 1024).Select(index => (char)index).ToArray();
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<char>)engine.Script.typedArray).ToArray()));
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<char>)engine.Script.typedArray).ToArray()));
                 }
@@ -939,7 +907,6 @@ namespace Microsoft.ClearScript.Test
                 Assert.AreEqual(256UL, ((ITypedArray<ushort>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
                 Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     readValues = new ushort[512];
                     Assert.AreEqual(256UL, ((ITypedArray<ushort>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -956,7 +923,6 @@ namespace Microsoft.ClearScript.Test
                 Assert.AreEqual(256UL, ((ITypedArray<char>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
                 Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     readValues = new char[512];
                     Assert.AreEqual(256UL, ((ITypedArray<char>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -981,7 +947,6 @@ namespace Microsoft.ClearScript.Test
                 Assert.AreEqual(256UL, ((ITypedArray<ushort>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
                 Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     engine.Execute("typedArray = new Uint16Array(new ArrayBuffer(123456), 128, 1024)");
                     Assert.AreEqual(256UL, ((ITypedArray<ushort>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -1004,7 +969,6 @@ namespace Microsoft.ClearScript.Test
                 Assert.AreEqual(256UL, ((ITypedArray<char>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
                 Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-                using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
                 {
                     engine.Execute("typedArray = new Uint16Array(new ArrayBuffer(123456), 128, 1024)");
                     Assert.AreEqual(256UL, ((ITypedArray<char>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -1041,7 +1005,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).SelectMany(index => BitConverter.GetBytes((short)(index - 512))).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<short>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<short>)engine.Script.typedArray).GetBytes()));
             }
@@ -1077,7 +1040,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<short>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<short>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -1100,7 +1062,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<short>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Int16Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<short>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -1126,7 +1087,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => (short)(index - 512)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<short>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<short>)engine.Script.typedArray).ToArray()));
             }
@@ -1148,7 +1108,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<short>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new short[512];
                 Assert.AreEqual(256UL, ((ITypedArray<short>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -1171,7 +1130,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<short>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Int16Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<short>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -1207,7 +1165,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).SelectMany(index => BitConverter.GetBytes((uint)index)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<uint>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<uint>)engine.Script.typedArray).GetBytes()));
             }
@@ -1243,7 +1200,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<uint>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<uint>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -1266,7 +1222,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<uint>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Uint32Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<uint>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -1292,7 +1247,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => (uint)index).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<uint>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<uint>)engine.Script.typedArray).ToArray()));
             }
@@ -1314,7 +1268,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<uint>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new uint[512];
                 Assert.AreEqual(256UL, ((ITypedArray<uint>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -1337,7 +1290,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<uint>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Uint32Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<uint>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -1373,7 +1325,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).SelectMany(BitConverter.GetBytes).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<int>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<int>)engine.Script.typedArray).GetBytes()));
             }
@@ -1409,7 +1360,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<int>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<int>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -1432,7 +1382,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<int>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Int32Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<int>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -1458,7 +1407,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<int>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<int>)engine.Script.typedArray).ToArray()));
             }
@@ -1480,7 +1428,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<int>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new int[512];
                 Assert.AreEqual(256UL, ((ITypedArray<int>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -1503,7 +1450,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<int>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Int32Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<int>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -1539,7 +1485,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).SelectMany(index => BitConverter.GetBytes((ulong)index)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<ulong>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<ulong>)engine.Script.typedArray).GetBytes()));
             }
@@ -1575,7 +1520,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<ulong>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<ulong>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -1598,7 +1542,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<ulong>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new BigUint64Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<ulong>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -1624,7 +1567,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => (ulong)index).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<ulong>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<ulong>)engine.Script.typedArray).ToArray()));
             }
@@ -1646,7 +1588,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<ulong>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new ulong[512];
                 Assert.AreEqual(256UL, ((ITypedArray<ulong>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -1669,7 +1610,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<ulong>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new BigUint64Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<ulong>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -1705,7 +1645,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).SelectMany(index => BitConverter.GetBytes((long)index)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<long>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<long>)engine.Script.typedArray).GetBytes()));
             }
@@ -1741,7 +1680,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<long>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<long>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -1764,7 +1702,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<long>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new BigInt64Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<long>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -1790,7 +1727,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => (long)index).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<long>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<long>)engine.Script.typedArray).ToArray()));
             }
@@ -1812,7 +1748,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<long>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new long[512];
                 Assert.AreEqual(256UL, ((ITypedArray<long>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -1835,7 +1770,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<long>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new BigInt64Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<long>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -1871,7 +1805,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).SelectMany(index => BitConverter.GetBytes(Convert.ToSingle(index * Math.PI))).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<float>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<float>)engine.Script.typedArray).GetBytes()));
             }
@@ -1907,7 +1840,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<float>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<float>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -1930,7 +1862,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<float>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Float32Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<float>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -1956,7 +1887,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => Convert.ToSingle(index * Math.PI)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<float>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<float>)engine.Script.typedArray).ToArray()));
             }
@@ -1978,7 +1908,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<float>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new float[512];
                 Assert.AreEqual(256UL, ((ITypedArray<float>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -2001,7 +1930,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<float>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Float32Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<float>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
@@ -2037,7 +1965,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).SelectMany(index => BitConverter.GetBytes(index * Math.PI)).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<double>)engine.Script.typedArray).GetBytes()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<double>)engine.Script.typedArray).GetBytes()));
             }
@@ -2073,7 +2000,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<double>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new byte[512];
                 Assert.AreEqual(256UL, ((ITypedArray<double>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
@@ -2096,7 +2022,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<double>)engine.Script.typedArray).ReadBytes(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Float64Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<double>)engine.Script.typedArray).WriteBytes(testValues, 256, 16384, 128));
@@ -2122,7 +2047,6 @@ namespace Microsoft.ClearScript.Test
 
             var testValues = Enumerable.Range(0, 1024).Select(index => index * Math.PI).ToArray();
             Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<double>)engine.Script.typedArray).ToArray()));
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 Assert.IsTrue(testValues.SequenceEqual(((ITypedArray<double>)engine.Script.typedArray).ToArray()));
             }
@@ -2144,7 +2068,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<double>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(128).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 readValues = new double[512];
                 Assert.AreEqual(256UL, ((ITypedArray<double>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
@@ -2167,7 +2090,6 @@ namespace Microsoft.ClearScript.Test
             Assert.AreEqual(256UL, ((ITypedArray<double>)engine.Script.typedArray).Read(128, 16384, readValues, 256));
             Assert.IsTrue(testValues.Skip(256).Take(256).SequenceEqual(readValues.Skip(256)));
 
-            using (Scope.Create(() => MiscHelpers.Exchange(ref UnmanagedMemoryHelpers.DisableMarshalCopy, true), value => UnmanagedMemoryHelpers.DisableMarshalCopy = value))
             {
                 engine.Execute("typedArray = new Float64Array(new ArrayBuffer(123456), 128, 1024)");
                 Assert.AreEqual(256UL, ((ITypedArray<double>)engine.Script.typedArray).Write(testValues, 256, 16384, 128));
