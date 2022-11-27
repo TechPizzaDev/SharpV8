@@ -4,28 +4,13 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Microsoft.ClearScript.Util;
 
 namespace Microsoft.ClearScript.V8.SplitProxy
 {
     internal static partial class V8SplitProxyManaged
     {
         #region fast method pointers
-
-        private readonly struct StdBool
-        {
-            private readonly byte bits;
-
-            // ReSharper disable once UnusedMember.Local
-            private StdBool(byte bits) => this.bits = bits;
-
-            private static readonly StdBool @false = new(0);
-            private static readonly StdBool @true = new(1);
-
-            public static implicit operator bool(StdBool value) => value.bits != 0;
-            public static implicit operator StdBool(bool value) => value ? @true : @false;
-
-            public static void Write(IntPtr ptr, StdBool value) => Marshal.WriteByte(ptr, value.bits);
-        }
 
         private static unsafe IntPtr CacheV8ObjectFastMethodPtr
         {
@@ -137,13 +122,13 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             get
             {
                 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-                static void Thunk(IntPtr pObject, StdStringPtr pName, V8ValuePtr pValue, IntPtr pIsCacheable)
+                static void Thunk(IntPtr pObject, StdStringPtr pName, V8ValuePtr pValue, sbyte* pIsCacheable)
                 {
-                    GetHostObjectNamedPropertyWithCacheability(pObject, pName, pValue, out var isCacheable);
-                    StdBool.Write(pIsCacheable, isCacheable);
+                    GetHostObjectNamedPropertyWithCacheability(pObject, pName, pValue, out bool isCacheable);
+                    *pIsCacheable = isCacheable.ToSbyte();
                 }
 
-                delegate* unmanaged[Stdcall]<IntPtr, StdStringPtr, V8ValuePtr, IntPtr, void> pThunk = &Thunk;
+                delegate* unmanaged[Stdcall]<IntPtr, StdStringPtr, V8ValuePtr, sbyte*, void> pThunk = &Thunk;
                 return (IntPtr)pThunk;
             }
         }
@@ -198,12 +183,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             get
             {
                 [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
-                static void Thunk(IntPtr pObject, StdBool asConstructor, StdV8ValueArrayPtr pArgs, V8ValuePtr pResult)
+                static void Thunk(IntPtr pObject, sbyte asConstructor, StdV8ValueArrayPtr pArgs, V8ValuePtr pResult)
                 {
-                    InvokeHostObject(pObject, asConstructor, pArgs, pResult);
+                    InvokeHostObject(pObject, asConstructor.ToBool(), pArgs, pResult);
                 }
 
-                delegate* unmanaged[Stdcall]<IntPtr, StdBool, StdV8ValueArrayPtr, V8ValuePtr, void> pThunk = &Thunk;
+                delegate* unmanaged[Stdcall]<IntPtr, sbyte, StdV8ValueArrayPtr, V8ValuePtr, void> pThunk = &Thunk;
                 return (IntPtr)pThunk;
             }
         }

@@ -300,7 +300,7 @@ namespace Microsoft.ClearScript.V8
 
         private V8ContextHandle(IntPtr guts) => this.guts = guts;
 
-        public static readonly V8ContextHandle Empty = new(IntPtr.Zero);
+        public static V8ContextHandle Empty => new(IntPtr.Zero);
 
         public static bool operator ==(V8ContextHandle left, V8ContextHandle right) => left.guts == right.guts;
         public static bool operator !=(V8ContextHandle left, V8ContextHandle right) => left.guts != right.guts;

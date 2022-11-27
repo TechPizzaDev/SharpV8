@@ -3,6 +3,7 @@
 
 using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace Microsoft.ClearScript.V8.SplitProxy
@@ -1029,7 +1030,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region Imports holder
 
-        public static class Imports
+        public static partial class Imports
         {
             public const string DllName = "ClearScriptV8";
 
@@ -1141,1003 +1142,1146 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             #region initialization
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern IntPtr V8SplitProxyManaged_SetMethodTable(
-                [In] IntPtr pMethodTable
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial IntPtr V8SplitProxyManaged_SetMethodTable(
+                IntPtr pMethodTable
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern IntPtr V8SplitProxyNative_GetVersion();
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial IntPtr V8SplitProxyNative_GetVersion();
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Environment_InitializeICU(
-                [In] IntPtr pICUData,
-                [In] uint size
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Environment_InitializeICU(
+                IntPtr pICUData,
+                uint size
             );
 
             #endregion
 
             #region StdString methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdStringPtr StdString_New(
-                [In][MarshalAs(UnmanagedType.LPWStr)] string value,
-                [In] int length
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial StdStringPtr StdString_New(
+                [MarshalAs(UnmanagedType.LPWStr)] string value,
+                int length
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern IntPtr StdString_GetValue(
-                [In] StdStringPtr pString,
-                [Out] out int length
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial IntPtr StdString_GetValue(
+                StdStringPtr pString,
+                out int length
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdString_SetValue(
-                [In] StdStringPtr pString,
-                [In][MarshalAs(UnmanagedType.LPWStr)] string value,
-                [In] int length
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdString_SetValue(
+                StdStringPtr pString,
+                [MarshalAs(UnmanagedType.LPWStr)] string value,
+                int length
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdString_Delete(
-                [In] StdStringPtr pString
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdString_Delete(
+                StdStringPtr pString
             );
 
             #endregion
 
             #region StdStringArray methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdStringArrayPtr StdStringArray_New(
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial StdStringArrayPtr StdStringArray_New(
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern int StdStringArray_GetElementCount(
-                [In] StdStringArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial int StdStringArray_GetElementCount(
+                StdStringArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdStringArray_SetElementCount(
-                [In] StdStringArrayPtr pArray,
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdStringArray_SetElementCount(
+                StdStringArrayPtr pArray,
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern IntPtr StdStringArray_GetElement(
-                [In] StdStringArrayPtr pArray,
-                [In] int index,
-                [Out] out int length
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial IntPtr StdStringArray_GetElement(
+                StdStringArrayPtr pArray,
+                int index,
+                out int length
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdStringArray_SetElement(
-                [In] StdStringArrayPtr pArray,
-                [In] int index,
-                [In][MarshalAs(UnmanagedType.LPWStr)] string value,
-                [In] int length
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdStringArray_SetElement(
+                StdStringArrayPtr pArray,
+                int index,
+                [MarshalAs(UnmanagedType.LPWStr)] string value,
+                int length
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdStringArray_Delete(
-                [In] StdStringArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdStringArray_Delete(
+                StdStringArrayPtr pArray
             );
 
             #endregion
 
             #region StdByteArray methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdByteArrayPtr StdByteArray_New(
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial StdByteArrayPtr StdByteArray_New(
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern int StdByteArray_GetElementCount(
-                [In] StdByteArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial int StdByteArray_GetElementCount(
+                StdByteArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdByteArray_SetElementCount(
-                [In] StdByteArrayPtr pArray,
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdByteArray_SetElementCount(
+                StdByteArrayPtr pArray,
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern IntPtr StdByteArray_GetData(
-                [In] StdByteArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial IntPtr StdByteArray_GetData(
+                StdByteArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdByteArray_Delete(
-                [In] StdByteArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdByteArray_Delete(
+                StdByteArrayPtr pArray
             );
 
             #endregion
 
             #region StdInt32Array methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdInt32ArrayPtr StdInt32Array_New(
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial StdInt32ArrayPtr StdInt32Array_New(
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern int StdInt32Array_GetElementCount(
-                [In] StdInt32ArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial int StdInt32Array_GetElementCount(
+                StdInt32ArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdInt32Array_SetElementCount(
-                [In] StdInt32ArrayPtr pArray,
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdInt32Array_SetElementCount(
+                StdInt32ArrayPtr pArray,
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern IntPtr StdInt32Array_GetData(
-                [In] StdInt32ArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial IntPtr StdInt32Array_GetData(
+                StdInt32ArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdInt32Array_Delete(
-                [In] StdInt32ArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdInt32Array_Delete(
+                StdInt32ArrayPtr pArray
             );
 
             #endregion
 
             #region StdUInt32Array methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdUInt32ArrayPtr StdUInt32Array_New(
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial StdUInt32ArrayPtr StdUInt32Array_New(
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern int StdUInt32Array_GetElementCount(
-                [In] StdUInt32ArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial int StdUInt32Array_GetElementCount(
+                StdUInt32ArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdUInt32Array_SetElementCount(
-                [In] StdUInt32ArrayPtr pArray,
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdUInt32Array_SetElementCount(
+                StdUInt32ArrayPtr pArray,
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern IntPtr StdUInt32Array_GetData(
-                [In] StdUInt32ArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial IntPtr StdUInt32Array_GetData(
+                StdUInt32ArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdUInt32Array_Delete(
-                [In] StdUInt32ArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdUInt32Array_Delete(
+                StdUInt32ArrayPtr pArray
             );
 
             #endregion
 
             #region StdUInt64Array methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdUInt64ArrayPtr StdUInt64Array_New(
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial StdUInt64ArrayPtr StdUInt64Array_New(
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern int StdUInt64Array_GetElementCount(
-                [In] StdUInt64ArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial int StdUInt64Array_GetElementCount(
+                StdUInt64ArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdUInt64Array_SetElementCount(
-                [In] StdUInt64ArrayPtr pArray,
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdUInt64Array_SetElementCount(
+                StdUInt64ArrayPtr pArray,
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern IntPtr StdUInt64Array_GetData(
-                [In] StdUInt64ArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial IntPtr StdUInt64Array_GetData(
+                StdUInt64ArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdUInt64Array_Delete(
-                [In] StdUInt64ArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdUInt64Array_Delete(
+                StdUInt64ArrayPtr pArray
             );
 
             #endregion
 
             #region StdPtrArray methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdPtrArrayPtr StdPtrArray_New(
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial StdPtrArrayPtr StdPtrArray_New(
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern int StdPtrArray_GetElementCount(
-                [In] StdPtrArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial int StdPtrArray_GetElementCount(
+                StdPtrArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdPtrArray_SetElementCount(
-                [In] StdPtrArrayPtr pArray,
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdPtrArray_SetElementCount(
+                StdPtrArrayPtr pArray,
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern IntPtr StdPtrArray_GetData(
-                [In] StdPtrArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial IntPtr StdPtrArray_GetData(
+                StdPtrArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdPtrArray_Delete(
-                [In] StdPtrArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdPtrArray_Delete(
+                StdPtrArrayPtr pArray
             );
 
             #endregion
 
             #region StdV8ValueArray methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern StdV8ValueArrayPtr StdV8ValueArray_New(
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial StdV8ValueArrayPtr StdV8ValueArray_New(
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern int StdV8ValueArray_GetElementCount(
-                [In] StdV8ValueArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial int StdV8ValueArray_GetElementCount(
+                StdV8ValueArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdV8ValueArray_SetElementCount(
-                [In] StdV8ValueArrayPtr pArray,
-                [In] int elementCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdV8ValueArray_SetElementCount(
+                StdV8ValueArrayPtr pArray,
+                int elementCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ValuePtr StdV8ValueArray_GetData(
-                [In] StdV8ValueArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ValuePtr StdV8ValueArray_GetData(
+                StdV8ValueArrayPtr pArray
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void StdV8ValueArray_Delete(
-                [In] StdV8ValueArrayPtr pArray
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void StdV8ValueArray_Delete(
+                StdV8ValueArrayPtr pArray
             );
 
             #endregion
 
             #region V8Value methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ValuePtr V8Value_New();
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ValuePtr V8Value_New();
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetNonexistent(
-                [In] V8ValuePtr pV8Value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetNonexistent(
+                V8ValuePtr pV8Value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetUndefined(
-                [In] V8ValuePtr pV8Value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetUndefined(
+                V8ValuePtr pV8Value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetNull(
-                [In] V8ValuePtr pV8Value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetNull(
+                V8ValuePtr pV8Value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetBoolean(
-                [In] V8ValuePtr pV8Value,
-                [In][MarshalAs(UnmanagedType.I1)] bool value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetBoolean(
+                V8ValuePtr pV8Value,
+                [MarshalAs(UnmanagedType.I1)] bool value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetNumber(
-                [In] V8ValuePtr pV8Value,
-                [In] double value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetNumber(
+                V8ValuePtr pV8Value,
+                double value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetInt32(
-                [In] V8ValuePtr pV8Value,
-                [In] int value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetInt32(
+                V8ValuePtr pV8Value,
+                int value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetUInt32(
-                [In] V8ValuePtr pV8Value,
-                [In] uint value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetUInt32(
+                V8ValuePtr pV8Value,
+                uint value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetString(
-                [In] V8ValuePtr pV8Value,
-                [In][MarshalAs(UnmanagedType.LPWStr)] string value,
-                [In] int length
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetString(
+                V8ValuePtr pV8Value,
+                [MarshalAs(UnmanagedType.LPWStr)] string value,
+                int length
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetDateTime(
-                [In] V8ValuePtr pV8Value,
-                [In] double value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetDateTime(
+                V8ValuePtr pV8Value,
+                double value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetBigInt(
-                [In] V8ValuePtr pV8Value,
-                [In] int signBit,
-                [In][MarshalAs(UnmanagedType.LPArray)] byte[] bytes,
-                [In] int length
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetBigInt(
+                V8ValuePtr pV8Value,
+                int signBit,
+                [MarshalAs(UnmanagedType.LPArray)] byte[] bytes,
+                int length
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetV8Object(
-                [In] V8ValuePtr pV8Value,
-                [In] V8ObjectHandle hObject,
-                [In] V8ValueSubtype subtype,
-                [In] V8ValueFlags flags
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetV8Object(
+                V8ValuePtr pV8Value,
+                V8ObjectHandle hObject,
+                V8ValueSubtype subtype,
+                V8ValueFlags flags
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_SetHostObject(
-                [In] V8ValuePtr pV8Value,
-                [In] IntPtr pObject
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_SetHostObject(
+                V8ValuePtr pV8Value,
+                IntPtr pObject
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ValueType V8Value_Decode(
-                [In] V8ValuePtr pV8Value,
-                [Out] out int intValue,
-                [Out] out uint uintValue,
-                [Out] out double doubleValue,
-                [Out] out IntPtr ptrOrHandle
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ValueType V8Value_Decode(
+                V8ValuePtr pV8Value,
+                out int intValue,
+                out uint uintValue,
+                out double doubleValue,
+                out IntPtr ptrOrHandle
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Value_Delete(
-                [In] V8ValuePtr pV8Value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Value_Delete(
+                V8ValuePtr pV8Value
             );
 
             #endregion
 
             #region V8CpuProfile methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8CpuProfile_GetInfo(
-                [In] V8CpuProfilePtr pProfile,
-                [In] V8Entity hEntity,
-                [In] StdStringPtr pName,
-                [Out] out ulong startTimestamp,
-                [Out] out ulong endTimestamp,
-                [Out] out int sampleCount,
-                [Out] out V8CpuProfileImpl.NodePtr pRootNode
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8CpuProfile_GetInfo(
+                V8CpuProfilePtr pProfile,
+                V8Entity hEntity,
+                StdStringPtr pName,
+                out ulong startTimestamp,
+                out ulong endTimestamp,
+                out int sampleCount,
+                out V8CpuProfileImpl.NodePtr pRootNode
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8CpuProfile_GetSample(
-                [In] V8CpuProfilePtr pProfile,
-                [In] int index,
-                [Out] out ulong nodeId,
-                [Out] out ulong timestamp
+            public static partial bool V8CpuProfile_GetSample(
+                V8CpuProfilePtr pProfile,
+                int index,
+                out ulong nodeId,
+                out ulong timestamp
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8CpuProfileNode_GetInfo(
-                [In] V8CpuProfileImpl.NodePtr pNode,
-                [In] V8Entity hEntity,
-                [Out] out ulong nodeId,
-                [Out] out long scriptId,
-                [In] StdStringPtr pScriptName,
-                [In] StdStringPtr pFunctionName,
-                [In] StdStringPtr pBailoutReason,
-                [Out] out long lineNumber,
-                [Out] out long columnNumber,
-                [Out] out ulong hitCount,
-                [Out] out uint hitLineCount,
-                [Out] out int childCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8CpuProfileNode_GetInfo(
+                V8CpuProfileImpl.NodePtr pNode,
+                V8Entity hEntity,
+                out ulong nodeId,
+                out long scriptId,
+                StdStringPtr pScriptName,
+                StdStringPtr pFunctionName,
+                StdStringPtr pBailoutReason,
+                out long lineNumber,
+                out long columnNumber,
+                out ulong hitCount,
+                out uint hitLineCount,
+                out int childCount
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8CpuProfileNode_GetHitLines(
-                [In] V8CpuProfileImpl.NodePtr pNode,
-                [In] StdInt32ArrayPtr pLineNumbers,
-                [In] StdUInt32ArrayPtr pHitCounts
+            public static partial bool V8CpuProfileNode_GetHitLines(
+                V8CpuProfileImpl.NodePtr pNode,
+                StdInt32ArrayPtr pLineNumbers,
+                StdUInt32ArrayPtr pHitCounts
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8CpuProfileImpl.NodePtr V8CpuProfileNode_GetChildNode(
-                [In] V8CpuProfileImpl.NodePtr pNode,
-                [In] int index
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8CpuProfileImpl.NodePtr V8CpuProfileNode_GetChildNode(
+                V8CpuProfileImpl.NodePtr pNode,
+                int index
             );
 
             #endregion
 
             #region V8 isolate methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8IsolateHandle V8Isolate_Create(
-                [In] StdStringPtr pName,
-                [In] int maxNewSpaceSize,
-                [In] int maxOldSpaceSize,
-                [In] double heapExpansionMultiplier,
-                [In] ulong maxArrayBufferAllocation,
-                [In] V8RuntimeFlags flags,
-                [In] int debugPort
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8IsolateHandle V8Isolate_Create(
+                StdStringPtr pName,
+                int maxNewSpaceSize,
+                int maxOldSpaceSize,
+                double heapExpansionMultiplier,
+                ulong maxArrayBufferAllocation,
+                V8RuntimeFlags flags,
+                int debugPort
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ContextHandle V8Isolate_CreateContext(
-                [In] V8IsolateHandle hIsolate,
-                [In] StdStringPtr pName,
-                [In] V8ScriptEngineFlags flags,
-                [In] int debugPort
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ContextHandle V8Isolate_CreateContext(
+                V8IsolateHandle hIsolate,
+                StdStringPtr pName,
+                V8ScriptEngineFlags flags,
+                int debugPort
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern UIntPtr V8Isolate_GetMaxHeapSize(
-                [In] V8IsolateHandle hIsolate
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial UIntPtr V8Isolate_GetMaxHeapSize(
+                V8IsolateHandle hIsolate
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_SetMaxHeapSize(
-                [In] V8IsolateHandle hIsolate,
-                [In] UIntPtr size
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_SetMaxHeapSize(
+                V8IsolateHandle hIsolate,
+                UIntPtr size
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern double V8Isolate_GetHeapSizeSampleInterval(
-                [In] V8IsolateHandle hIsolate
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial double V8Isolate_GetHeapSizeSampleInterval(
+                V8IsolateHandle hIsolate
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_SetHeapSizeSampleInterval(
-                [In] V8IsolateHandle hIsolate,
-                [In] double milliseconds
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_SetHeapSizeSampleInterval(
+                V8IsolateHandle hIsolate,
+                double milliseconds
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern UIntPtr V8Isolate_GetMaxStackUsage(
-                [In] V8IsolateHandle hIsolate
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial UIntPtr V8Isolate_GetMaxStackUsage(
+                V8IsolateHandle hIsolate
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_SetMaxStackUsage(
-                [In] V8IsolateHandle hIsolate,
-                [In] UIntPtr size
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_SetMaxStackUsage(
+                V8IsolateHandle hIsolate,
+                UIntPtr size
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_AwaitDebuggerAndPause(
-                [In] V8IsolateHandle hIsolate
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_AwaitDebuggerAndPause(
+                V8IsolateHandle hIsolate
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_CancelAwaitDebugger(
-                [In] V8IsolateHandle hIsolate
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_CancelAwaitDebugger(
+                V8IsolateHandle hIsolate
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ScriptHandle V8Isolate_Compile(
-                [In] V8IsolateHandle hIsolate,
-                [In] StdStringPtr pResourceName,
-                [In] StdStringPtr pSourceMapUrl,
-                [In] ulong uniqueId,
-                [In][MarshalAs(UnmanagedType.I1)] bool isModule,
-                [In] IntPtr pDocumentInfo,
-                [In] StdStringPtr pCode
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ScriptHandle V8Isolate_Compile(
+                V8IsolateHandle hIsolate,
+                StdStringPtr pResourceName,
+                StdStringPtr pSourceMapUrl,
+                ulong uniqueId,
+                [MarshalAs(UnmanagedType.I1)] bool isModule,
+                IntPtr pDocumentInfo,
+                StdStringPtr pCode
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ScriptHandle V8Isolate_CompileProducingCache(
-                [In] V8IsolateHandle hIsolate,
-                [In] StdStringPtr pResourceName,
-                [In] StdStringPtr pSourceMapUrl,
-                [In] ulong uniqueId,
-                [In][MarshalAs(UnmanagedType.I1)] bool isModule,
-                [In] IntPtr pDocumentInfo,
-                [In] StdStringPtr pCode,
-                [In] V8CacheKind cacheKind,
-                [In] StdByteArrayPtr pCacheBytes
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ScriptHandle V8Isolate_CompileProducingCache(
+                V8IsolateHandle hIsolate,
+                StdStringPtr pResourceName,
+                StdStringPtr pSourceMapUrl,
+                ulong uniqueId,
+                [MarshalAs(UnmanagedType.I1)] bool isModule,
+                IntPtr pDocumentInfo,
+                StdStringPtr pCode,
+                V8CacheKind cacheKind,
+                StdByteArrayPtr pCacheBytes
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ScriptHandle V8Isolate_CompileConsumingCache(
-                [In] V8IsolateHandle hIsolate,
-                [In] StdStringPtr pResourceName,
-                [In] StdStringPtr pSourceMapUrl,
-                [In] ulong uniqueId,
-                [In][MarshalAs(UnmanagedType.I1)] bool isModule,
-                [In] IntPtr pDocumentInfo,
-                [In] StdStringPtr pCode,
-                [In] V8CacheKind cacheKind,
-                [In] StdByteArrayPtr pCacheBytes,
-                [Out][MarshalAs(UnmanagedType.I1)] out bool cacheAccepted
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ScriptHandle V8Isolate_CompileConsumingCache(
+                V8IsolateHandle hIsolate,
+                StdStringPtr pResourceName,
+                StdStringPtr pSourceMapUrl,
+                ulong uniqueId,
+                [MarshalAs(UnmanagedType.I1)] bool isModule,
+                IntPtr pDocumentInfo,
+                StdStringPtr pCode,
+                V8CacheKind cacheKind,
+                StdByteArrayPtr pCacheBytes,
+                [MarshalAs(UnmanagedType.I1)] out bool cacheAccepted
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8Isolate_GetEnableInterruptPropagation(
-                [In] V8IsolateHandle hIsolate
+            public static partial bool V8Isolate_GetEnableInterruptPropagation(
+                V8IsolateHandle hIsolate
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_SetEnableInterruptPropagation(
-                [In] V8IsolateHandle hIsolate,
-                [In][MarshalAs(UnmanagedType.I1)] bool value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_SetEnableInterruptPropagation(
+                V8IsolateHandle hIsolate,
+                [MarshalAs(UnmanagedType.I1)] bool value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8Isolate_GetDisableHeapSizeViolationInterrupt(
-                [In] V8IsolateHandle hIsolate
+            public static partial bool V8Isolate_GetDisableHeapSizeViolationInterrupt(
+                V8IsolateHandle hIsolate
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_SetDisableHeapSizeViolationInterrupt(
-                [In] V8IsolateHandle hIsolate,
-                [In][MarshalAs(UnmanagedType.I1)] bool value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_SetDisableHeapSizeViolationInterrupt(
+                V8IsolateHandle hIsolate,
+                [MarshalAs(UnmanagedType.I1)] bool value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_GetHeapStatistics(
-                [In] V8IsolateHandle hIsolate,
-                [Out] out ulong totalHeapSize,
-                [Out] out ulong totalHeapSizeExecutable,
-                [Out] out ulong totalPhysicalSize,
-                [Out] out ulong totalAvailableSize,
-                [Out] out ulong usedHeapSize,
-                [Out] out ulong heapSizeLimit,
-                [Out] out ulong totalExternalSize
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_GetHeapStatistics(
+                V8IsolateHandle hIsolate,
+                out ulong totalHeapSize,
+                out ulong totalHeapSizeExecutable,
+                out ulong totalPhysicalSize,
+                out ulong totalAvailableSize,
+                out ulong usedHeapSize,
+                out ulong heapSizeLimit,
+                out ulong totalExternalSize
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_GetStatistics(
-                [In] V8IsolateHandle hIsolate,
-                [Out] out ulong scriptCount,
-                [Out] out ulong scriptCacheSize,
-                [Out] out ulong moduleCount,
-                [In] StdUInt64ArrayPtr pPostedTaskCounts,
-                [In] StdUInt64ArrayPtr pInvokedTaskCounts
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_GetStatistics(
+                V8IsolateHandle hIsolate,
+                out ulong scriptCount,
+                out ulong scriptCacheSize,
+                out ulong moduleCount,
+                StdUInt64ArrayPtr pPostedTaskCounts,
+                StdUInt64ArrayPtr pInvokedTaskCounts
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_CollectGarbage(
-                [In] V8IsolateHandle hIsolate,
-                [In][MarshalAs(UnmanagedType.I1)] bool exhaustive
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_CollectGarbage(
+                V8IsolateHandle hIsolate,
+                [MarshalAs(UnmanagedType.I1)] bool exhaustive
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8Isolate_BeginCpuProfile(
-                [In] V8IsolateHandle hIsolate,
-                [In] StdStringPtr pName,
-                [In][MarshalAs(UnmanagedType.I1)] bool recordSamples
+            public static partial bool V8Isolate_BeginCpuProfile(
+                V8IsolateHandle hIsolate,
+                StdStringPtr pName,
+                [MarshalAs(UnmanagedType.I1)] bool recordSamples
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_EndCpuProfile(
-                [In] V8IsolateHandle hIsolate,
-                [In] StdStringPtr pName,
-                [In] IntPtr pAction
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_EndCpuProfile(
+                V8IsolateHandle hIsolate,
+                StdStringPtr pName,
+                IntPtr pAction
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_CollectCpuProfileSample(
-                [In] V8IsolateHandle hIsolate
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_CollectCpuProfileSample(
+                V8IsolateHandle hIsolate
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern uint V8Isolate_GetCpuProfileSampleInterval(
-                [In] V8IsolateHandle hIsolate
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial uint V8Isolate_GetCpuProfileSampleInterval(
+                V8IsolateHandle hIsolate
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_SetCpuProfileSampleInterval(
-                [In] V8IsolateHandle hIsolate,
-                [In] uint value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_SetCpuProfileSampleInterval(
+                V8IsolateHandle hIsolate,
+                uint value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Isolate_WriteHeapSnapshot(
-                [In] V8IsolateHandle hIsolate,
-                [In] IntPtr pStream
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Isolate_WriteHeapSnapshot(
+                V8IsolateHandle hIsolate,
+                IntPtr pStream
             );
 
             #endregion
 
             #region V8 context methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern UIntPtr V8Context_GetMaxIsolateHeapSize(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial UIntPtr V8Context_GetMaxIsolateHeapSize(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_SetMaxIsolateHeapSize(
-                [In] V8ContextHandle hContext,
-                [In] UIntPtr size
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_SetMaxIsolateHeapSize(
+                V8ContextHandle hContext,
+                UIntPtr size
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern double V8Context_GetIsolateHeapSizeSampleInterval(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial double V8Context_GetIsolateHeapSizeSampleInterval(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_SetIsolateHeapSizeSampleInterval(
-                [In] V8ContextHandle hContext,
-                [In] double milliseconds
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_SetIsolateHeapSizeSampleInterval(
+                V8ContextHandle hContext,
+                double milliseconds
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern UIntPtr V8Context_GetMaxIsolateStackUsage(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial UIntPtr V8Context_GetMaxIsolateStackUsage(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_SetMaxIsolateStackUsage(
-                [In] V8ContextHandle hContext,
-                [In] UIntPtr size
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_SetMaxIsolateStackUsage(
+                V8ContextHandle hContext,
+                UIntPtr size
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_InvokeWithLock(
-                [In] V8ContextHandle hContext,
-                [In] IntPtr pAction
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_InvokeWithLock(
+                V8ContextHandle hContext,
+                IntPtr pAction
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_GetRootItem(
-                [In] V8ContextHandle hContext,
-                [In] V8ValuePtr pItem
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_GetRootItem(
+                V8ContextHandle hContext,
+                V8ValuePtr pItem
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_AddGlobalItem(
-                [In] V8ContextHandle hContext,
-                [In] StdStringPtr pName,
-                [In] V8ValuePtr pValue,
-                [In][MarshalAs(UnmanagedType.I1)] bool globalMembers
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_AddGlobalItem(
+                V8ContextHandle hContext,
+                StdStringPtr pName,
+                V8ValuePtr pValue,
+                [MarshalAs(UnmanagedType.I1)] bool globalMembers
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_AwaitDebuggerAndPause(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_AwaitDebuggerAndPause(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_CancelAwaitDebugger(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_CancelAwaitDebugger(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_ExecuteCode(
-                [In] V8ContextHandle hContext,
-                [In] StdStringPtr pResourceName,
-                [In] StdStringPtr pSourceMapUrl,
-                [In] ulong uniqueId,
-                [In][MarshalAs(UnmanagedType.I1)] bool isModule,
-                [In] IntPtr pDocumentInfo,
-                [In] StdStringPtr pCode,
-                [In][MarshalAs(UnmanagedType.I1)] bool evaluate,
-                [In] V8ValuePtr pResult
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_ExecuteCode(
+                V8ContextHandle hContext,
+                StdStringPtr pResourceName,
+                StdStringPtr pSourceMapUrl,
+                ulong uniqueId,
+                [MarshalAs(UnmanagedType.I1)] bool isModule,
+                IntPtr pDocumentInfo,
+                StdStringPtr pCode,
+                [MarshalAs(UnmanagedType.I1)] bool evaluate,
+                V8ValuePtr pResult
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ScriptHandle V8Context_Compile(
-                [In] V8ContextHandle hContext,
-                [In] StdStringPtr pResourceName,
-                [In] StdStringPtr pSourceMapUrl,
-                [In] ulong uniqueId,
-                [In][MarshalAs(UnmanagedType.I1)] bool isModule,
-                [In] IntPtr pDocumentInfo,
-                [In] StdStringPtr pCode
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ScriptHandle V8Context_Compile(
+                V8ContextHandle hContext,
+                StdStringPtr pResourceName,
+                StdStringPtr pSourceMapUrl,
+                ulong uniqueId,
+                [MarshalAs(UnmanagedType.I1)] bool isModule,
+                IntPtr pDocumentInfo,
+                StdStringPtr pCode
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ScriptHandle V8Context_CompileProducingCache(
-                [In] V8ContextHandle hContext,
-                [In] StdStringPtr pResourceName,
-                [In] StdStringPtr pSourceMapUrl,
-                [In] ulong uniqueId,
-                [In][MarshalAs(UnmanagedType.I1)] bool isModule,
-                [In] IntPtr pDocumentInfo,
-                [In] StdStringPtr pCode,
-                [In] V8CacheKind cacheKind,
-                [In] StdByteArrayPtr pCacheBytes
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ScriptHandle V8Context_CompileProducingCache(
+                V8ContextHandle hContext,
+                StdStringPtr pResourceName,
+                StdStringPtr pSourceMapUrl,
+                ulong uniqueId,
+                [MarshalAs(UnmanagedType.I1)] bool isModule,
+                IntPtr pDocumentInfo,
+                StdStringPtr pCode,
+                V8CacheKind cacheKind,
+                StdByteArrayPtr pCacheBytes
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern V8ScriptHandle V8Context_CompileConsumingCache(
-                [In] V8ContextHandle hContext,
-                [In] StdStringPtr pResourceName,
-                [In] StdStringPtr pSourceMapUrl,
-                [In] ulong uniqueId,
-                [In][MarshalAs(UnmanagedType.I1)] bool isModule,
-                [In] IntPtr pDocumentInfo,
-                [In] StdStringPtr pCode,
-                [In] V8CacheKind cacheKind,
-                [In] StdByteArrayPtr pCacheBytes,
-                [Out][MarshalAs(UnmanagedType.I1)] out bool cacheAccepted
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial V8ScriptHandle V8Context_CompileConsumingCache(
+                V8ContextHandle hContext,
+                StdStringPtr pResourceName,
+                StdStringPtr pSourceMapUrl,
+                ulong uniqueId,
+                [MarshalAs(UnmanagedType.I1)] bool isModule,
+                IntPtr pDocumentInfo,
+                StdStringPtr pCode,
+                V8CacheKind cacheKind,
+                StdByteArrayPtr pCacheBytes,
+                [MarshalAs(UnmanagedType.I1)] out bool cacheAccepted
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_ExecuteScript(
-                [In] V8ContextHandle hContext,
-                [In] V8ScriptHandle hScript,
-                [In][MarshalAs(UnmanagedType.I1)] bool evaluate,
-                [In] V8ValuePtr pResult
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_ExecuteScript(
+                V8ContextHandle hContext,
+                V8ScriptHandle hScript,
+                [MarshalAs(UnmanagedType.I1)] bool evaluate,
+                V8ValuePtr pResult
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_Interrupt(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_Interrupt(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_CancelInterrupt(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_CancelInterrupt(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8Context_GetEnableIsolateInterruptPropagation(
-                [In] V8ContextHandle hContext
+            public static partial bool V8Context_GetEnableIsolateInterruptPropagation(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_SetEnableIsolateInterruptPropagation(
-                [In] V8ContextHandle hContext,
-                [In][MarshalAs(UnmanagedType.I1)] bool value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_SetEnableIsolateInterruptPropagation(
+                V8ContextHandle hContext,
+                [MarshalAs(UnmanagedType.I1)] bool value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8Context_GetDisableIsolateHeapSizeViolationInterrupt(
-                [In] V8ContextHandle hContext
+            public static partial bool V8Context_GetDisableIsolateHeapSizeViolationInterrupt(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_SetDisableIsolateHeapSizeViolationInterrupt(
-                [In] V8ContextHandle hContext,
-                [In][MarshalAs(UnmanagedType.I1)] bool value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_SetDisableIsolateHeapSizeViolationInterrupt(
+                V8ContextHandle hContext,
+                [MarshalAs(UnmanagedType.I1)] bool value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_GetIsolateHeapStatistics(
-                [In] V8ContextHandle hContext,
-                [Out] out ulong totalHeapSize,
-                [Out] out ulong totalHeapSizeExecutable,
-                [Out] out ulong totalPhysicalSize,
-                [Out] out ulong totalAvailableSize,
-                [Out] out ulong usedHeapSize,
-                [Out] out ulong heapSizeLimit,
-                [Out] out ulong totalExternalSize
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_GetIsolateHeapStatistics(
+                V8ContextHandle hContext,
+                out ulong totalHeapSize,
+                out ulong totalHeapSizeExecutable,
+                out ulong totalPhysicalSize,
+                out ulong totalAvailableSize,
+                out ulong usedHeapSize,
+                out ulong heapSizeLimit,
+                out ulong totalExternalSize
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_GetIsolateStatistics(
-                [In] V8ContextHandle hContext,
-                [Out] out ulong scriptCount,
-                [Out] out ulong scriptCacheSize,
-                [Out] out ulong moduleCount,
-                [In] StdUInt64ArrayPtr pPostedTaskCounts,
-                [In] StdUInt64ArrayPtr pInvokedTaskCounts
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_GetIsolateStatistics(
+                V8ContextHandle hContext,
+                out ulong scriptCount,
+                out ulong scriptCacheSize,
+                out ulong moduleCount,
+                StdUInt64ArrayPtr pPostedTaskCounts,
+                StdUInt64ArrayPtr pInvokedTaskCounts
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_GetStatistics(
-                [In] V8ContextHandle hContext,
-                [Out] out ulong scriptCount,
-                [Out] out ulong moduleCount,
-                [Out] out ulong moduleCacheSize
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_GetStatistics(
+                V8ContextHandle hContext,
+                out ulong scriptCount,
+                out ulong moduleCount,
+                out ulong moduleCacheSize
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_CollectGarbage(
-                [In] V8ContextHandle hContext,
-                [In][MarshalAs(UnmanagedType.I1)] bool exhaustive
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_CollectGarbage(
+                V8ContextHandle hContext,
+                [MarshalAs(UnmanagedType.I1)] bool exhaustive
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_OnAccessSettingsChanged(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_OnAccessSettingsChanged(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8Context_BeginCpuProfile(
-                [In] V8ContextHandle hContext,
-                [In] StdStringPtr pName,
-                [In][MarshalAs(UnmanagedType.I1)] bool recordSamples
+            public static partial bool V8Context_BeginCpuProfile(
+                V8ContextHandle hContext,
+                StdStringPtr pName,
+                [MarshalAs(UnmanagedType.I1)] bool recordSamples
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_EndCpuProfile(
-                [In] V8ContextHandle hContext,
-                [In] StdStringPtr pName,
-                [In] IntPtr pAction
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_EndCpuProfile(
+                V8ContextHandle hContext,
+                StdStringPtr pName,
+                IntPtr pAction
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_CollectCpuProfileSample(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_CollectCpuProfileSample(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern uint V8Context_GetCpuProfileSampleInterval(
-                [In] V8ContextHandle hContext
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial uint V8Context_GetCpuProfileSampleInterval(
+                V8ContextHandle hContext
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_SetCpuProfileSampleInterval(
-                [In] V8ContextHandle hContext,
-                [In] uint value
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_SetCpuProfileSampleInterval(
+                V8ContextHandle hContext,
+                uint value
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Context_WriteIsolateHeapSnapshot(
-                [In] V8ContextHandle hContext,
-                [In] IntPtr pStream
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Context_WriteIsolateHeapSnapshot(
+                V8ContextHandle hContext,
+                IntPtr pStream
             );
 
             #endregion
 
             #region V8 object methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_GetNamedProperty(
-                [In] V8ObjectHandle hObject,
-                [In] StdStringPtr pName,
-                [In] V8ValuePtr pValue
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_GetNamedProperty(
+                V8ObjectHandle hObject,
+                StdStringPtr pName,
+                V8ValuePtr pValue
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_SetNamedProperty(
-                [In] V8ObjectHandle hObject,
-                [In] StdStringPtr pName,
-                [In] V8ValuePtr pValue
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_SetNamedProperty(
+                V8ObjectHandle hObject,
+                StdStringPtr pName,
+                V8ValuePtr pValue
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8Object_DeleteNamedProperty(
-                [In] V8ObjectHandle hObject,
-                [In] StdStringPtr pName
+            public static partial bool V8Object_DeleteNamedProperty(
+                V8ObjectHandle hObject,
+                StdStringPtr pName
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_GetPropertyNames(
-                [In] V8ObjectHandle hObject,
-                [In] StdStringArrayPtr pNames
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_GetPropertyNames(
+                V8ObjectHandle hObject,
+                StdStringArrayPtr pNames
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_GetIndexedProperty(
-                [In] V8ObjectHandle hObject,
-                [In] int index,
-                [In] V8ValuePtr pValue
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_GetIndexedProperty(
+                V8ObjectHandle hObject,
+                int index,
+                V8ValuePtr pValue
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_SetIndexedProperty(
-                [In] V8ObjectHandle hObject,
-                [In] int index,
-                [In] V8ValuePtr pValue
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_SetIndexedProperty(
+                V8ObjectHandle hObject,
+                int index,
+                V8ValuePtr pValue
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             [return: MarshalAs(UnmanagedType.I1)]
-            public static extern bool V8Object_DeleteIndexedProperty(
-                [In] V8ObjectHandle hObject,
-                [In] int index
+            public static partial bool V8Object_DeleteIndexedProperty(
+                V8ObjectHandle hObject,
+                int index
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_GetPropertyIndices(
-                [In] V8ObjectHandle hObject,
-                [In] StdInt32ArrayPtr pIndices
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_GetPropertyIndices(
+                V8ObjectHandle hObject,
+                StdInt32ArrayPtr pIndices
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_Invoke(
-                [In] V8ObjectHandle hObject,
-                [In][MarshalAs(UnmanagedType.I1)] bool asConstructor,
-                [In] StdV8ValueArrayPtr pArgs,
-                [In] V8ValuePtr pResult
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_Invoke(
+                V8ObjectHandle hObject,
+                [MarshalAs(UnmanagedType.I1)] bool asConstructor,
+                StdV8ValueArrayPtr pArgs,
+                V8ValuePtr pResult
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_InvokeMethod(
-                [In] V8ObjectHandle hObject,
-                [In] StdStringPtr pName,
-                [In] StdV8ValueArrayPtr pArgs,
-                [In] V8ValuePtr pResult
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_InvokeMethod(
+                V8ObjectHandle hObject,
+                StdStringPtr pName,
+                StdV8ValueArrayPtr pArgs,
+                V8ValuePtr pResult
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_GetArrayBufferOrViewInfo(
-                [In] V8ObjectHandle hObject,
-                [In] V8ValuePtr pArrayBuffer,
-                [Out] out ulong offset,
-                [Out] out ulong size,
-                [Out] out ulong length
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_GetArrayBufferOrViewInfo(
+                V8ObjectHandle hObject,
+                V8ValuePtr pArrayBuffer,
+                out ulong offset,
+                out ulong size,
+                out ulong length
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Object_InvokeWithArrayBufferOrViewData(
-                [In] V8ObjectHandle hObject,
-                [In] IntPtr pAction
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Object_InvokeWithArrayBufferOrViewData(
+                V8ObjectHandle hObject,
+                IntPtr pAction
             );
 
             #endregion
 
             #region V8 debug callback methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8DebugCallback_ConnectClient(
-                [In] V8DebugCallbackHandle hCallback
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8DebugCallback_ConnectClient(
+                V8DebugCallbackHandle hCallback
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8DebugCallback_SendCommand(
-                [In] V8DebugCallbackHandle hCallback,
-                [In] StdStringPtr pCommand
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8DebugCallback_SendCommand(
+                V8DebugCallbackHandle hCallback,
+                StdStringPtr pCommand
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8DebugCallback_DisconnectClient(
-                [In] V8DebugCallbackHandle hCallback
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8DebugCallback_DisconnectClient(
+                V8DebugCallbackHandle hCallback
             );
 
             #endregion
 
             #region native callback methods
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void NativeCallback_Invoke(
-                [In] NativeCallbackHandle hCallback
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void NativeCallback_Invoke(
+                NativeCallbackHandle hCallback
             );
 
             #endregion
 
             #region V8 entity cleanup
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Entity_Release(
-                [In] V8Entity hEntity
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Entity_Release(
+                V8Entity hEntity
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8Entity_DestroyHandle(
-                [In] V8Entity hEntity
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8Entity_DestroyHandle(
+                V8Entity hEntity
             );
 
             #endregion
 
             #region error handling
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void HostException_Schedule(
-                [In] StdStringPtr pMessage,
-                [In] V8ValuePtr pException
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void HostException_Schedule(
+                StdStringPtr pMessage,
+                V8ValuePtr pException
             );
 
             #endregion
 
             #region unit test support
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern UIntPtr V8UnitTestSupport_GetTextDigest(
-                [In] StdStringPtr pString
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial UIntPtr V8UnitTestSupport_GetTextDigest(
+                StdStringPtr pString
             );
 
-            [DllImport(DllName, CallingConvention = CallingConvention.StdCall)]
-            public static extern void V8UnitTestSupport_GetStatistics(
-                [Out] out ulong isolateCount,
-                [Out] out ulong contextCount
+            [LibraryImport(DllName)]
+            [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            public static partial void V8UnitTestSupport_GetStatistics(
+                out ulong isolateCount,
+                out ulong contextCount
             );
 
             #endregion

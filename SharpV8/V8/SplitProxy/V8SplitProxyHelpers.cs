@@ -40,7 +40,7 @@ namespace Microsoft.ClearScript.V8
 
         private StdStringPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdStringPtr Null = new(IntPtr.Zero);
+        public static StdStringPtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(StdStringPtr left, StdStringPtr right) => left.bits == right.bits;
         public static bool operator !=(StdStringPtr left, StdStringPtr right) => left.bits != right.bits;
@@ -1076,7 +1076,7 @@ namespace Microsoft.ClearScript.V8
 
         private V8ValuePtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly V8ValuePtr Null = new(IntPtr.Zero);
+        public static V8ValuePtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(V8ValuePtr left, V8ValuePtr right) => left.bits == right.bits;
         public static bool operator !=(V8ValuePtr left, V8ValuePtr right) => left.bits != right.bits;

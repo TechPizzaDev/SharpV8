@@ -381,6 +381,16 @@ namespace Microsoft.ClearScript.Util
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
+        public static sbyte ToSbyte(this bool value)
+        {
+            return value ? (sbyte)1 : (sbyte)0;
+        }
+
+        public static bool ToBool(this sbyte value)
+        {
+            return value != 0;
+        }
+
         #endregion
 
         #region miscellaneous
