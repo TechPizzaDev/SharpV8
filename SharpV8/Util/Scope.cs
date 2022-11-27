@@ -5,82 +5,32 @@ using System;
 
 namespace Microsoft.ClearScript.Util
 {
-    public interface IScope<out T> : IDisposable
+    public interface IScopeAction<T>
     {
-        T Value { get; }
+        void Invoke(T value);
     }
 
-    public static class Scope
+    public struct Scope<T, TAction> : IDisposable
+        where TAction : IScopeAction<T>
     {
-        public static IDisposable Create(Action enterAction, Action exitAction)
+        private readonly TAction? exitAction;
+        private OneWayFlag disposedFlag = new();
+
+        public Scope(T value, TAction? exitAction = default)
         {
-            return new ScopeImpl(enterAction, exitAction);
+            this.exitAction = exitAction;
+            disposedFlag = new();
+            Value = value;
         }
 
-        public static IScope<T> Create<T>(Func<T> enterFunc, Action<T> exitAction)
+        public T Value { get; }
+
+        public void Dispose()
         {
-            return new ScopeImpl<T>(enterFunc, exitAction);
+            if (disposedFlag.Set())
+            {
+                exitAction?.Invoke(Value);
+            }
         }
-
-        #region Nested type: ScopeImpl
-
-        private sealed class ScopeImpl : IDisposable
-        {
-            private readonly Action exitAction;
-            private OneWayFlag disposedFlag = new OneWayFlag();
-
-            public ScopeImpl(Action enterAction, Action exitAction)
-            {
-                this.exitAction = exitAction;
-                enterAction?.Invoke();
-            }
-
-            #region IDisposable implementation
-
-            public void Dispose()
-            {
-                if (disposedFlag.Set())
-                {
-                    exitAction?.Invoke();
-                }
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region Nested type: ScopeImpl<T>
-
-        private sealed class ScopeImpl<T> : IScope<T>
-        {
-            private readonly Action<T> exitAction;
-            private OneWayFlag disposedFlag = new OneWayFlag();
-
-            public ScopeImpl(Func<T> enterFunc, Action<T> exitAction)
-            {
-                this.exitAction = exitAction;
-                if (enterFunc != null)
-                {
-                    Value = enterFunc();
-                }
-            }
-
-            #region IScope<T> implementation
-
-            public T Value { get; }
-
-            public void Dispose()
-            {
-                if (disposedFlag.Set())
-                {
-                    exitAction?.Invoke(Value);
-                }
-            }
-
-            #endregion
-        }
-
-        #endregion
     }
 }

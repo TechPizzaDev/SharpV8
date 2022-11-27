@@ -1337,9 +1337,17 @@ namespace Microsoft.ClearScript
 
         internal ScriptFrame CurrentScriptFrame { get; private set; }
 
-        internal IDisposable CreateEngineScope()
+        internal Scope<ScriptEngine, EngineDestructor> CreateEngineScope()
         {
-            return Scope.Create(() => MiscHelpers.Exchange(ref currentEngine, this), previousEngine => currentEngine = previousEngine);
+            return new Scope<ScriptEngine, EngineDestructor>(MiscHelpers.Exchange(ref currentEngine, this));
+        }
+
+        internal readonly struct EngineDestructor : IScopeAction<ScriptEngine>
+        {
+            public void Invoke(ScriptEngine previousEngine)
+            {
+                currentEngine = previousEngine;
+            }
         }
 
         internal virtual void ScriptInvoke(Action action)

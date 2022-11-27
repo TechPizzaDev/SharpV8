@@ -434,10 +434,18 @@ namespace Microsoft.ClearScript.Util
             return new Random(Convert.ToUInt32(DateTime.Now.Ticks.ToUnsigned() & 0x00000000FFFFFFFFUL).ToSigned());
         }
 
-        public static async Task<IDisposable> CreateLockScopeAsync(this SemaphoreSlim semaphore)
+        public static async Task<Scope<SemaphoreSlim, ReleaseSemaphoreAction>> CreateLockScopeAsync(this SemaphoreSlim semaphore)
         {
             await semaphore.WaitAsync().ConfigureAwait(false);
-            return Scope.Create(null, () => semaphore.Release());
+            return new Scope<SemaphoreSlim, ReleaseSemaphoreAction>(semaphore);
+        }
+
+        public readonly struct ReleaseSemaphoreAction : IScopeAction<SemaphoreSlim>
+        {
+            public void Invoke(SemaphoreSlim semaphore)
+            {
+                semaphore.Release();
+            }
         }
 
         public static byte[] ReadToEnd(this Stream stream)

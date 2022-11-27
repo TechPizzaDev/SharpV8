@@ -16,9 +16,9 @@ namespace Microsoft.ClearScript.V8
 
     internal static class StdString
     {
-        public static IScope<StdStringPtr> CreateScope(string value = null)
+        public static Scope<StdStringPtr, Destructor> CreateScope(string? value = null)
         {
-            return InvokeNoThrow(() => Scope.Create(() => StdString_New(value ?? string.Empty), StdString_Delete));
+            return InvokeNoThrow(() => new Scope<StdStringPtr, Destructor>(StdString_New(value ?? string.Empty)));
         }
 
         public static string GetValue(StdStringPtr pString)
@@ -29,6 +29,14 @@ namespace Microsoft.ClearScript.V8
         public static void SetValue(StdStringPtr pString, string value)
         {
             InvokeNoThrow(() => StdString_SetValue(pString, value));
+        }
+
+        public readonly struct Destructor : IScopeAction<StdStringPtr>
+        {
+            public void Invoke(StdStringPtr value)
+            {
+                StdString_Delete(value);
+            }
         }
     }
 
@@ -56,14 +64,14 @@ namespace Microsoft.ClearScript.V8
 
     internal static class StdStringArray
     {
-        public static IScope<StdStringArrayPtr> CreateScope(int elementCount = 0)
+        public static Scope<StdStringArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => Scope.Create(() => StdStringArray_New(elementCount), StdStringArray_Delete));
+            return InvokeNoThrow(() => new Scope<StdStringArrayPtr, Destructor>(StdStringArray_New(elementCount)));
         }
 
-        public static IScope<StdStringArrayPtr> CreateScope(string[] array)
+        public static Scope<StdStringArrayPtr, Destructor> CreateScope(string[] array)
         {
-            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdStringArray_Delete));
+            return InvokeNoThrow(() => new Scope<StdStringArrayPtr, Destructor>(NewFromArray(array)));
         }
 
         public static int GetElementCount(StdStringArrayPtr pArray)
@@ -124,6 +132,14 @@ namespace Microsoft.ClearScript.V8
 
             return pArray;
         }
+
+        public readonly struct Destructor : IScopeAction<StdStringArrayPtr>
+        {
+            public void Invoke(StdStringArrayPtr value)
+            {
+                StdStringArray_Delete(value);
+            }
+        }
     }
 
     #region Type: StdStringArrayPtr
@@ -150,14 +166,14 @@ namespace Microsoft.ClearScript.V8
 
     internal static class StdByteArray
     {
-        public static IScope<StdByteArrayPtr> CreateScope(int elementCount = 0)
+        public static Scope<StdByteArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => Scope.Create(() => StdByteArray_New(elementCount), StdByteArray_Delete));
+            return InvokeNoThrow(() => new Scope<StdByteArrayPtr, Destructor>(StdByteArray_New(elementCount)));
         }
 
-        public static IScope<StdByteArrayPtr> CreateScope(byte[] array)
+        public static Scope<StdByteArrayPtr, Destructor> CreateScope(byte[] array)
         {
-            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdByteArray_Delete));
+            return InvokeNoThrow(() => new Scope<StdByteArrayPtr, Destructor>(NewFromArray(array)));
         }
 
         public static int GetElementCount(StdByteArrayPtr pArray)
@@ -212,6 +228,14 @@ namespace Microsoft.ClearScript.V8
 
             return pArray;
         }
+
+        public readonly struct Destructor : IScopeAction<StdByteArrayPtr>
+        {
+            public void Invoke(StdByteArrayPtr value)
+            {
+                StdByteArray_Delete(value);
+            }
+        }
     }
 
     #region Type: StdByteArrayPtr
@@ -238,14 +262,14 @@ namespace Microsoft.ClearScript.V8
 
     internal static class StdInt32Array
     {
-        public static IScope<StdInt32ArrayPtr> CreateScope(int elementCount = 0)
+        public static Scope<StdInt32ArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => Scope.Create(() => StdInt32Array_New(elementCount), StdInt32Array_Delete));
+            return InvokeNoThrow(() => new Scope<StdInt32ArrayPtr, Destructor>(StdInt32Array_New(elementCount)));
         }
 
-        public static IScope<StdInt32ArrayPtr> CreateScope(int[] array)
+        public static Scope<StdInt32ArrayPtr, Destructor> CreateScope(int[] array)
         {
-            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdInt32Array_Delete));
+            return InvokeNoThrow(() => new Scope<StdInt32ArrayPtr, Destructor>(NewFromArray(array)));
         }
 
         public static int GetElementCount(StdInt32ArrayPtr pArray)
@@ -300,6 +324,14 @@ namespace Microsoft.ClearScript.V8
 
             return pArray;
         }
+
+        public readonly struct Destructor : IScopeAction<StdInt32ArrayPtr>
+        {
+            public void Invoke(StdInt32ArrayPtr value)
+            {
+                StdInt32Array_Delete(value);
+            }
+        }
     }
 
     #region Type: StdInt32ArrayPtr
@@ -326,14 +358,14 @@ namespace Microsoft.ClearScript.V8
 
     internal static class StdUInt32Array
     {
-        public static IScope<StdUInt32ArrayPtr> CreateScope(int elementCount = 0)
+        public static Scope<StdUInt32ArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => Scope.Create(() => StdUInt32Array_New(elementCount), StdUInt32Array_Delete));
+            return InvokeNoThrow(() => new Scope<StdUInt32ArrayPtr, Destructor>(StdUInt32Array_New(elementCount)));
         }
 
-        public static IScope<StdUInt32ArrayPtr> CreateScope(uint[] array)
+        public static Scope<StdUInt32ArrayPtr, Destructor> CreateScope(uint[] array)
         {
-            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdUInt32Array_Delete));
+            return InvokeNoThrow(() => new Scope<StdUInt32ArrayPtr, Destructor>(NewFromArray(array)));
         }
 
         public static int GetElementCount(StdUInt32ArrayPtr pArray)
@@ -388,6 +420,14 @@ namespace Microsoft.ClearScript.V8
 
             return pArray;
         }
+
+        public readonly struct Destructor : IScopeAction<StdUInt32ArrayPtr>
+        {
+            public void Invoke(StdUInt32ArrayPtr value)
+            {
+                StdUInt32Array_Delete(value);
+            }
+        }
     }
 
     #region Type: StdUInt32ArrayPtr
@@ -414,14 +454,14 @@ namespace Microsoft.ClearScript.V8
 
     internal static class StdUInt64Array
     {
-        public static IScope<StdUInt64ArrayPtr> CreateScope(int elementCount = 0)
+        public static Scope<StdUInt64ArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => Scope.Create(() => StdUInt64Array_New(elementCount), StdUInt64Array_Delete));
+            return InvokeNoThrow(() => new Scope<StdUInt64ArrayPtr, Destructor>(StdUInt64Array_New(elementCount)));
         }
 
-        public static IScope<StdUInt64ArrayPtr> CreateScope(ulong[] array)
+        public static Scope<StdUInt64ArrayPtr, Destructor> CreateScope(ulong[] array)
         {
-            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdUInt64Array_Delete));
+            return InvokeNoThrow(() => new Scope<StdUInt64ArrayPtr, Destructor>(NewFromArray(array)));
         }
 
         public static int GetElementCount(StdUInt64ArrayPtr pArray)
@@ -476,6 +516,14 @@ namespace Microsoft.ClearScript.V8
 
             return pArray;
         }
+
+        public readonly struct Destructor : IScopeAction<StdUInt64ArrayPtr>
+        {
+            public void Invoke(StdUInt64ArrayPtr value)
+            {
+                StdUInt64Array_Delete(value);
+            }
+        }
     }
 
     #region Type: StdUInt64ArrayPtr
@@ -502,14 +550,14 @@ namespace Microsoft.ClearScript.V8
 
     internal static class StdPtrArray
     {
-        public static IScope<StdPtrArrayPtr> CreateScope(int elementCount = 0)
+        public static Scope<StdPtrArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => Scope.Create(() => StdPtrArray_New(elementCount), StdPtrArray_Delete));
+            return InvokeNoThrow(() => new Scope<StdPtrArrayPtr, Destructor>(StdPtrArray_New(elementCount)));
         }
 
-        public static IScope<StdPtrArrayPtr> CreateScope(IntPtr[] array)
+        public static Scope<StdPtrArrayPtr, Destructor> CreateScope(IntPtr[] array)
         {
-            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdPtrArray_Delete));
+            return InvokeNoThrow(() => new Scope<StdPtrArrayPtr, Destructor>(NewFromArray(array)));
         }
 
         public static int GetElementCount(StdPtrArrayPtr pArray)
@@ -564,6 +612,14 @@ namespace Microsoft.ClearScript.V8
 
             return pArray;
         }
+
+        public readonly struct Destructor : IScopeAction<StdPtrArrayPtr>
+        {
+            public void Invoke(StdPtrArrayPtr value)
+            {
+                StdPtrArray_Delete(value);
+            }
+        }
     }
 
     #region Type: StdPtrArrayPtr
@@ -590,14 +646,14 @@ namespace Microsoft.ClearScript.V8
 
     internal static class StdV8ValueArray
     {
-        public static IScope<StdV8ValueArrayPtr> CreateScope(int elementCount = 0)
+        public static Scope<StdV8ValueArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => Scope.Create(() => StdV8ValueArray_New(elementCount), StdV8ValueArray_Delete));
+            return InvokeNoThrow(() => new Scope<StdV8ValueArrayPtr, Destructor>(StdV8ValueArray_New(elementCount)));
         }
 
-        public static IScope<StdV8ValueArrayPtr> CreateScope(object[] array)
+        public static Scope<StdV8ValueArrayPtr, Destructor> CreateScope(object[] array)
         {
-            return InvokeNoThrow(() => Scope.Create(() => NewFromArray(array), StdV8ValueArray_Delete));
+            return InvokeNoThrow(() => new Scope<StdV8ValueArrayPtr, Destructor>(NewFromArray(array)));
         }
 
         public static int GetElementCount(StdV8ValueArrayPtr pArray)
@@ -666,6 +722,14 @@ namespace Microsoft.ClearScript.V8
         {
             return (V8ValuePtr)((IntPtr)pV8Value + index * V8Value.Size);
         }
+
+        public readonly struct Destructor : IScopeAction<StdV8ValueArrayPtr>
+        {
+            public void Invoke(StdV8ValueArrayPtr value)
+            {
+                StdV8ValueArray_Delete(value);
+            }
+        }
     }
 
     #region Type: StdV8ValueArrayPtr
@@ -694,12 +758,12 @@ namespace Microsoft.ClearScript.V8
     {
         public const int Size = 16;
 
-        public static IScope<V8ValuePtr> CreateScope()
+        public static Scope<V8ValuePtr, Destructor> CreateScope()
         {
-            return InvokeNoThrow(() => Scope.Create(V8Value_New, V8Value_Delete));
+            return InvokeNoThrow(() => new Scope<V8ValuePtr, Destructor>(V8Value_New()));
         }
 
-        public static IScope<V8ValuePtr> CreateScope(object obj)
+        public static Scope<V8ValuePtr, Destructor> CreateScope(object obj)
         {
             var scope = CreateScope();
             Set(scope.Value, obj);
@@ -1007,6 +1071,14 @@ namespace Microsoft.ClearScript.V8
         private static void SetHostObject(V8ValuePtr pV8Value, object obj)
         {
             InvokeNoThrow(() => V8Value_SetHostObject(pV8Value, V8ProxyHelpers.AddRefHostObject(obj)));
+        }
+
+        public readonly struct Destructor : IScopeAction<V8ValuePtr>
+        {
+            public void Invoke(V8ValuePtr value)
+            {
+                V8Value_Delete(value);
+            }
         }
     }
 

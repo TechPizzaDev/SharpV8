@@ -27,9 +27,17 @@ namespace Microsoft.ClearScript.V8
             GCHandle.FromIntPtr(pObject).Free();
         }
 
-        public static IScope<IntPtr> CreateAddRefHostObjectScope(object obj)
+        public static Scope<IntPtr, HostObjectReleaseAction> CreateAddRefHostObjectScope(object obj)
         {
-            return Scope.Create(() => AddRefHostObject(obj), ReleaseHostObject);
+            return new Scope<IntPtr, HostObjectReleaseAction>(AddRefHostObject(obj));
+        }
+
+        public readonly struct HostObjectReleaseAction : IScopeAction<IntPtr>
+        {
+            public void Invoke(IntPtr obj)
+            {
+                ReleaseHostObject(obj);
+            }
         }
 
         #endregion

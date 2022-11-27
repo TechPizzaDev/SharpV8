@@ -3761,10 +3761,18 @@ namespace Microsoft.ClearScript.Test
         [TestMethod, TestCategory("V8ScriptEngine")]
         public void V8ScriptEngine_CustomAttributeLoader()
         {
-            using (Scope.Create(() => HostSettings.CustomAttributeLoader, loader => HostSettings.CustomAttributeLoader = loader))
+            using (new Scope<CustomAttributeLoader, AttribLoaderAction>(HostSettings.CustomAttributeLoader))
             {
                 HostSettings.CustomAttributeLoader = new CamelCaseAttributeLoader();
                 TestCamelCaseMemberBinding();
+            }
+        }
+
+        private readonly struct AttribLoaderAction : IScopeAction<CustomAttributeLoader>
+        {
+            public void Invoke(CustomAttributeLoader loader)
+            {
+                HostSettings.CustomAttributeLoader = loader;
             }
         }
 
