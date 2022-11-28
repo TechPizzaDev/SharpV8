@@ -5,10 +5,11 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Microsoft.ClearScript.Util;
 
 namespace Microsoft.ClearScript.V8.SplitProxy
 {
-    internal static partial class V8SplitProxyNative
+    internal static unsafe partial class V8SplitProxyNative
     {
         #region V8SplitProxyNative implementation
 
@@ -33,20 +34,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region StdString methods
 
-        public static StdStringPtr StdString_New(string value)
+        public static StdStringPtr StdString_New(ReadOnlySpan<char> value)
         {
-            return Imports.StdString_New(value, value.Length);
+            fixed (char* ptr = value)
+            {
+                return Imports.StdString_New(ptr, value.Length);
+            }
         }
 
         public static string StdString_GetValue(StdStringPtr pString)
         {
-            var pValue = Imports.StdString_GetValue(pString, out var length);
+            int length;
+            var pValue = Imports.StdString_GetValue(pString, &length);
             return Marshal.PtrToStringUni(pValue, length);
         }
 
-        public static void StdString_SetValue(StdStringPtr pString, string value)
+        public static void StdString_SetValue(StdStringPtr pString, ReadOnlySpan<char> value)
         {
-            Imports.StdString_SetValue(pString, value, value.Length);
+            fixed (char* ptr = value)
+            {
+                Imports.StdString_SetValue(pString, ptr, value.Length);
+            }
         }
 
         public static void StdString_Delete(StdStringPtr pString)
@@ -75,13 +83,17 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         public static string StdStringArray_GetElement(StdStringArrayPtr pArray, int index)
         {
-            var pValue = Imports.StdStringArray_GetElement(pArray, index, out var length);
+            int length;
+            var pValue = Imports.StdStringArray_GetElement(pArray, index, &length);
             return Marshal.PtrToStringUni(pValue, length);
         }
 
         public static void StdStringArray_SetElement(StdStringArrayPtr pArray, int index, string value)
         {
-            Imports.StdStringArray_SetElement(pArray, index, value, value.Length);
+            fixed (char* ptr = value)
+            {
+                Imports.StdStringArray_SetElement(pArray, index, ptr, value.Length);
+            }
         }
 
         public static void StdStringArray_Delete(StdStringArrayPtr pArray)
@@ -289,7 +301,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         public static void V8Value_SetBoolean(V8ValuePtr pV8Value, bool value)
         {
-            Imports.V8Value_SetBoolean(pV8Value, value);
+            Imports.V8Value_SetBoolean(pV8Value, value.ToSbyte());
         }
 
         public static void V8Value_SetNumber(V8ValuePtr pV8Value, double value)
@@ -307,9 +319,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Value_SetUInt32(pV8Value, value);
         }
 
-        public static void V8Value_SetString(V8ValuePtr pV8Value, string value)
+        public static void V8Value_SetString(V8ValuePtr pV8Value, ReadOnlySpan<char> value)
         {
-            Imports.V8Value_SetString(pV8Value, value, value.Length);
+            fixed (char* ptr = value)
+            {
+                Imports.V8Value_SetString(pV8Value, ptr, value.Length);
+            }
         }
 
         public static void V8Value_SetDateTime(V8ValuePtr pV8Value, double value)
@@ -317,12 +332,16 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Value_SetDateTime(pV8Value, value);
         }
 
-        public static void V8Value_SetBigInt(V8ValuePtr pV8Value, int signBit, byte[] bytes)
+        public static void V8Value_SetBigInt(V8ValuePtr pV8Value, int signBit, ReadOnlySpan<byte> bytes)
         {
-            Imports.V8Value_SetBigInt(pV8Value, signBit, bytes, bytes.Length);
+            fixed (byte* ptr = bytes)
+            {
+                Imports.V8Value_SetBigInt(pV8Value, signBit, ptr, bytes.Length);
+            }
         }
 
-        public static void V8Value_SetV8Object(V8ValuePtr pV8Value, V8ObjectHandle hObject, V8ValueSubtype subtype, V8ValueFlags flags)
+        public static void V8Value_SetV8Object(
+            V8ValuePtr pV8Value, V8ObjectHandle hObject, V8ValueSubtype subtype, V8ValueFlags flags)
         {
             Imports.V8Value_SetV8Object(pV8Value, hObject, subtype, flags);
         }
@@ -1030,7 +1049,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region Imports holder
 
-        public static partial class Imports
+        public static unsafe partial class Imports
         {
             public const string DllName = "ClearScriptV8";
 
@@ -1142,9 +1161,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             #region initialization
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial IntPtr V8SplitProxyManaged_SetMethodTable(
+            [SuppressGCTransition]
+            public static extern IntPtr V8SplitProxyManaged_SetMethodTable(
                 IntPtr pMethodTable
             );
 
@@ -1166,22 +1186,23 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [LibraryImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             public static partial StdStringPtr StdString_New(
-                [MarshalAs(UnmanagedType.LPWStr)] string value,
+                char* value,
                 int length
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial IntPtr StdString_GetValue(
+            [SuppressGCTransition]
+            public static extern IntPtr StdString_GetValue(
                 StdStringPtr pString,
-                out int length
+                int* length
             );
 
             [LibraryImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             public static partial void StdString_SetValue(
                 StdStringPtr pString,
-                [MarshalAs(UnmanagedType.LPWStr)] string value,
+                char* value,
                 int length
             );
 
@@ -1201,9 +1222,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial int StdStringArray_GetElementCount(
+            [SuppressGCTransition]
+            public static extern int StdStringArray_GetElementCount(
                 StdStringArrayPtr pArray
             );
 
@@ -1214,12 +1236,13 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial IntPtr StdStringArray_GetElement(
+            [SuppressGCTransition]
+            public static extern IntPtr StdStringArray_GetElement(
                 StdStringArrayPtr pArray,
                 int index,
-                out int length
+                int* length
             );
 
             [LibraryImport(DllName)]
@@ -1227,7 +1250,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             public static partial void StdStringArray_SetElement(
                 StdStringArrayPtr pArray,
                 int index,
-                [MarshalAs(UnmanagedType.LPWStr)] string value,
+                char* value,
                 int length
             );
 
@@ -1247,9 +1270,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial int StdByteArray_GetElementCount(
+            [SuppressGCTransition]
+            public static extern int StdByteArray_GetElementCount(
                 StdByteArrayPtr pArray
             );
 
@@ -1260,9 +1284,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial IntPtr StdByteArray_GetData(
+            [SuppressGCTransition]
+            public static extern IntPtr StdByteArray_GetData(
                 StdByteArrayPtr pArray
             );
 
@@ -1282,9 +1307,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial int StdInt32Array_GetElementCount(
+            [SuppressGCTransition]
+            public static extern int StdInt32Array_GetElementCount(
                 StdInt32ArrayPtr pArray
             );
 
@@ -1295,9 +1321,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial IntPtr StdInt32Array_GetData(
+            [SuppressGCTransition]
+            public static extern IntPtr StdInt32Array_GetData(
                 StdInt32ArrayPtr pArray
             );
 
@@ -1317,9 +1344,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial int StdUInt32Array_GetElementCount(
+            [SuppressGCTransition]
+            public static extern int StdUInt32Array_GetElementCount(
                 StdUInt32ArrayPtr pArray
             );
 
@@ -1330,9 +1358,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial IntPtr StdUInt32Array_GetData(
+            [SuppressGCTransition]
+            public static extern IntPtr StdUInt32Array_GetData(
                 StdUInt32ArrayPtr pArray
             );
 
@@ -1352,9 +1381,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial int StdUInt64Array_GetElementCount(
+            [SuppressGCTransition]
+            public static extern int StdUInt64Array_GetElementCount(
                 StdUInt64ArrayPtr pArray
             );
 
@@ -1365,9 +1395,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial IntPtr StdUInt64Array_GetData(
+            [SuppressGCTransition]
+            public static extern IntPtr StdUInt64Array_GetData(
                 StdUInt64ArrayPtr pArray
             );
 
@@ -1387,9 +1418,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial int StdPtrArray_GetElementCount(
+            [SuppressGCTransition]
+            public static extern int StdPtrArray_GetElementCount(
                 StdPtrArrayPtr pArray
             );
 
@@ -1400,9 +1432,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial IntPtr StdPtrArray_GetData(
+            [SuppressGCTransition]
+            public static extern IntPtr StdPtrArray_GetData(
                 StdPtrArrayPtr pArray
             );
 
@@ -1422,9 +1455,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial int StdV8ValueArray_GetElementCount(
+            [SuppressGCTransition]
+            public static extern int StdV8ValueArray_GetElementCount(
                 StdV8ValueArrayPtr pArray
             );
 
@@ -1435,9 +1469,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 int elementCount
             );
 
-            [LibraryImport(DllName)]
+            [DllImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
-            public static partial V8ValuePtr StdV8ValueArray_GetData(
+            [SuppressGCTransition]
+            public static extern V8ValuePtr StdV8ValueArray_GetData(
                 StdV8ValueArrayPtr pArray
             );
 
@@ -1477,7 +1512,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             public static partial void V8Value_SetBoolean(
                 V8ValuePtr pV8Value,
-                [MarshalAs(UnmanagedType.I1)] bool value
+                sbyte value
             );
 
             [LibraryImport(DllName)]
@@ -1505,7 +1540,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             public static partial void V8Value_SetString(
                 V8ValuePtr pV8Value,
-                [MarshalAs(UnmanagedType.LPWStr)] string value,
+                char* value,
                 int length
             );
 
@@ -1521,7 +1556,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             public static partial void V8Value_SetBigInt(
                 V8ValuePtr pV8Value,
                 int signBit,
-                [MarshalAs(UnmanagedType.LPArray)] byte[] bytes,
+                byte* bytes,
                 int length
             );
 
