@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.ClearScript.JavaScript;
 using Microsoft.ClearScript.Properties;
@@ -48,14 +49,30 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         private static void ScheduleHostException(IntPtr pObject, Exception exception)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.HostException_Schedule(
-                exception.GetBaseException().Message, V8ProxyHelpers.MarshalExceptionToScript(pObject, exception)));
+            ScheduleHostExceptionAction action = new()
+            {
+                Message = exception.GetBaseException().Message,
+                Exception = V8ProxyHelpers.MarshalExceptionToScript(pObject, exception)
+            };
+            V8SplitProxyNative.Invoke(ref action);
         }
 
         private static void ScheduleHostException(Exception exception)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.HostException_Schedule(
-                exception.GetBaseException().Message, ScriptEngine.Current?.MarshalToScript(exception)));
+            ScheduleHostExceptionAction action = new()
+            {
+                Message = exception.GetBaseException().Message,
+                Exception = ScriptEngine.Current?.MarshalToScript(exception)
+            };
+            V8SplitProxyNative.Invoke(ref action);
+        }
+
+        private struct ScheduleHostExceptionAction : IProxyAction
+        {
+            public string Message;
+            public object? Exception;
+
+            public void Invoke() => V8SplitProxyNative.HostException_Schedule(Message, Exception);
         }
 
         private static uint GetMaxCacheSizeForCategory(DocumentCategory category)

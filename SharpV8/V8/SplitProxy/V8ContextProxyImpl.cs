@@ -3,14 +3,13 @@
 
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using Microsoft.ClearScript.JavaScript;
 using Microsoft.ClearScript.Util;
 using Microsoft.ClearScript.V8.SplitProxy;
 
 namespace Microsoft.ClearScript.V8
 {
-    internal sealed class V8ContextProxyImpl : V8ContextProxy
+    internal sealed unsafe class V8ContextProxyImpl : V8ContextProxy
     {
         private V8EntityHolder holder;
 
@@ -55,9 +54,26 @@ namespace Microsoft.ClearScript.V8
             return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_GetRootItem(Handle));
         }
 
-        public override void AddGlobalItem(string name, object item, bool globalMembers)
+        public override void AddGlobalItem(ReadOnlySpan<char> name, object item, bool globalMembers)
         {
-            V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_AddGlobalItem(Handle, name, item, globalMembers));
+            AddGlobalItemAction action = new()
+            {
+                Handle = Handle,
+                Name = &name,
+                Item = item,
+                GlobalMembers = globalMembers,
+            };
+            V8SplitProxyNative.InvokeThrowing(ref action);
+        }
+
+        private struct AddGlobalItemAction : IProxyAction
+        {
+            public V8ContextHandle Handle;
+            public ReadOnlySpan<char>* Name;
+            public object Item;
+            public bool GlobalMembers;
+
+            public void Invoke() => V8SplitProxyNative.V8Context_AddGlobalItem(Handle, *Name, Item, GlobalMembers);
         }
 
         public override void AwaitDebuggerAndPause()
@@ -70,34 +86,80 @@ namespace Microsoft.ClearScript.V8
             V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_CancelAwaitDebugger(Handle));
         }
 
-        public override object Execute(UniqueDocumentInfo documentInfo, string code, bool evaluate)
+        public override object Execute(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code, bool evaluate)
         {
-            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_ExecuteCode(
-                Handle,
-                MiscHelpers.GetUrlOrPath(documentInfo.Uri, documentInfo.UniqueName),
-                MiscHelpers.GetUrlOrPath(documentInfo.SourceMapUri, string.Empty),
-                documentInfo.UniqueId,
-                documentInfo.Category == ModuleCategory.Standard,
-                V8ProxyHelpers.AddRefHostObject(documentInfo),
-                code,
-                evaluate
-            ));
+            ExecuteCodeAction action = new()
+            {
+                Handle = Handle,
+                DocumentInfo = documentInfo,
+                Code = &code,
+                Evaluate = evaluate,
+            };
+            V8SplitProxyNative.InvokeThrowing(ref action);
+            return action.Result;
         }
 
-        public override V8Script Compile(UniqueDocumentInfo documentInfo, string code)
+        private struct ExecuteCodeAction : IProxyAction
         {
-            return new V8ScriptImpl(documentInfo, code.GetDigest(), V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_Compile(
-                Handle,
-                MiscHelpers.GetUrlOrPath(documentInfo.Uri, documentInfo.UniqueName),
-                MiscHelpers.GetUrlOrPath(documentInfo.SourceMapUri, string.Empty),
-                documentInfo.UniqueId,
-                documentInfo.Category == ModuleCategory.Standard,
-                V8ProxyHelpers.AddRefHostObject(documentInfo),
-                code
-            )));
+            public V8ContextHandle Handle;
+            public UniqueDocumentInfo DocumentInfo;
+            public ReadOnlySpan<char>* Code;
+            public bool Evaluate;
+            public object Result;
+
+            public void Invoke()
+            {
+                Result = V8SplitProxyNative.V8Context_ExecuteCode(
+                    Handle,
+                    MiscHelpers.GetUrlOrPath(DocumentInfo.Uri, DocumentInfo.UniqueName),
+                    MiscHelpers.GetUrlOrPath(DocumentInfo.SourceMapUri, string.Empty),
+                    DocumentInfo.UniqueId,
+                    DocumentInfo.Category == ModuleCategory.Standard,
+                    V8ProxyHelpers.AddRefHostObject(DocumentInfo),
+                    *Code,
+                    Evaluate);
+            }
         }
 
-        public override V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
+        public override V8Script Compile(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code)
+        {
+            CompileAction action = new()
+            {
+                Handle = Handle,
+                DocumentInfo = documentInfo,
+                Code = &code,
+            };
+            V8SplitProxyNative.InvokeThrowing(ref action);
+            return new V8ScriptImpl(documentInfo, code.GetDigest(), action.Result);
+        }
+
+        private struct CompileAction : IProxyAction
+        {
+            public V8ContextHandle Handle;
+            public UniqueDocumentInfo DocumentInfo;
+            public ReadOnlySpan<char>* Code;
+
+            public V8ScriptHandle Result;
+
+            public void Invoke()
+            {
+                Result = V8SplitProxyNative.V8Context_Compile(
+                    Handle,
+                    MiscHelpers.GetUrlOrPath(DocumentInfo.Uri, DocumentInfo.UniqueName),
+                    MiscHelpers.GetUrlOrPath(DocumentInfo.SourceMapUri, string.Empty),
+                    DocumentInfo.UniqueId,
+                    DocumentInfo.Category == ModuleCategory.Standard,
+                    V8ProxyHelpers.AddRefHostObject(DocumentInfo),
+                    *Code
+                );
+            }
+        }
+
+        public override V8Script Compile(
+            UniqueDocumentInfo documentInfo,
+            ReadOnlySpan<char> code,
+            V8CacheKind cacheKind,
+            out byte[] cacheBytes)
         {
             if (cacheKind == V8CacheKind.None)
             {
@@ -105,67 +167,131 @@ namespace Microsoft.ClearScript.V8
                 return Compile(documentInfo, code);
             }
 
-            byte[] tempCacheBytes = null;
-            var script = new V8ScriptImpl(documentInfo, code.GetDigest(), V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_CompileProducingCache(
-                Handle,
-                MiscHelpers.GetUrlOrPath(documentInfo.Uri, documentInfo.UniqueName),
-                MiscHelpers.GetUrlOrPath(documentInfo.SourceMapUri, string.Empty),
-                documentInfo.UniqueId,
-                documentInfo.Category == ModuleCategory.Standard,
-                V8ProxyHelpers.AddRefHostObject(documentInfo),
-                code,
-                cacheKind,
-                out tempCacheBytes
-            )));
+            CompileProducingCacheAction action = new()
+            {
+                Handle = Handle,
+                DocumentInfo = documentInfo,
+                Code = &code,
+                CacheKind = cacheKind,
+            };
+            V8SplitProxyNative.InvokeThrowing(ref action);
+            var script = new V8ScriptImpl(documentInfo, code.GetDigest(), action.Result);
 
-            cacheBytes = tempCacheBytes;
+            cacheBytes = action.CacheBytes;
             return script;
         }
 
-        public override V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
+        private struct CompileProducingCacheAction : IProxyAction
         {
-            if (cacheKind == V8CacheKind.None || cacheBytes == null || cacheBytes.Length < 1)
+            public V8ContextHandle Handle;
+            public UniqueDocumentInfo DocumentInfo;
+            public ReadOnlySpan<char>* Code;
+            public V8CacheKind CacheKind;
+
+            public V8ScriptHandle Result;
+            public byte[] CacheBytes;
+
+            public void Invoke()
+            {
+                Result = V8SplitProxyNative.V8Context_CompileProducingCache(
+                    Handle,
+                    MiscHelpers.GetUrlOrPath(DocumentInfo.Uri, DocumentInfo.UniqueName),
+                    MiscHelpers.GetUrlOrPath(DocumentInfo.SourceMapUri, string.Empty),
+                    DocumentInfo.UniqueId,
+                    DocumentInfo.Category == ModuleCategory.Standard,
+                    V8ProxyHelpers.AddRefHostObject(DocumentInfo),
+                    *Code,
+                    CacheKind,
+                    out CacheBytes
+                );
+            }
+        }
+
+        public override V8Script Compile(
+            UniqueDocumentInfo documentInfo,
+            ReadOnlySpan<char> code,
+            V8CacheKind cacheKind,
+            ReadOnlySpan<byte> cacheBytes,
+            out bool cacheAccepted)
+        {
+            if (cacheKind == V8CacheKind.None || cacheBytes.IsEmpty)
             {
                 cacheAccepted = false;
                 return Compile(documentInfo, code);
             }
 
-            var cacheSize = cacheBytes.Length;
-            using (var cacheBlock = new CoTaskMemBlock(cacheSize))
+            CompileConsumingCacheAction action = new()
             {
-                Marshal.Copy(cacheBytes, 0, cacheBlock.Addr, cacheSize);
+                Handle = Handle,
+                DocumentInfo = documentInfo,
+                Code = &code,
+                CacheKind = cacheKind,
+                CacheBytes = &cacheBytes,
+            };
+            V8SplitProxyNative.InvokeThrowing(ref action);
+            var script = new V8ScriptImpl(documentInfo, code.GetDigest(), action.Result);
 
-                var tempCacheAccepted = false;
-                var script = new V8ScriptImpl(documentInfo, code.GetDigest(), V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_CompileConsumingCache(
+            cacheAccepted = action.CacheAccepted;
+            return script;
+        }
+
+        private struct CompileConsumingCacheAction : IProxyAction
+        {
+            public V8ContextHandle Handle;
+            public UniqueDocumentInfo DocumentInfo;
+            public ReadOnlySpan<char>* Code;
+            public V8CacheKind CacheKind;
+            public ReadOnlySpan<byte>* CacheBytes;
+
+            public V8ScriptHandle Result;
+            public bool CacheAccepted;
+
+            public void Invoke()
+            {
+                Result = V8SplitProxyNative.V8Context_CompileConsumingCache(
                     Handle,
-                    MiscHelpers.GetUrlOrPath(documentInfo.Uri, documentInfo.UniqueName),
-                    MiscHelpers.GetUrlOrPath(documentInfo.SourceMapUri, string.Empty),
-                    documentInfo.UniqueId,
-                    documentInfo.Category == ModuleCategory.Standard,
-                    V8ProxyHelpers.AddRefHostObject(documentInfo),
-                    code,
-                    cacheKind,
-                    cacheBytes,
-                    out tempCacheAccepted
-                )));
-
-                cacheAccepted = tempCacheAccepted;
-                return script;
+                    MiscHelpers.GetUrlOrPath(DocumentInfo.Uri, DocumentInfo.UniqueName),
+                    MiscHelpers.GetUrlOrPath(DocumentInfo.SourceMapUri, string.Empty),
+                    DocumentInfo.UniqueId,
+                    DocumentInfo.Category == ModuleCategory.Standard,
+                    V8ProxyHelpers.AddRefHostObject(DocumentInfo),
+                    *Code,
+                    CacheKind,
+                    *CacheBytes,
+                    out CacheAccepted);
             }
         }
 
         public override object Execute(V8Script script, bool evaluate)
         {
-            if (!(script is V8ScriptImpl scriptImpl))
+            if (script is V8ScriptImpl scriptImpl)
             {
-                throw new ArgumentException("Invalid compiled script", nameof(script));
+                ExecuteScriptAction action = new()
+                {
+                    Handle = Handle,
+                    Script = scriptImpl.Handle,
+                    Evaluate = evaluate,
+                };
+                V8SplitProxyNative.InvokeThrowing(ref action);
+                return action.Result;
             }
+            throw new ArgumentException("Invalid compiled script", nameof(script));
+        }
 
-            return V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_ExecuteScript(
-                Handle,
-                scriptImpl.Handle,
-                evaluate
-            ));
+        private struct ExecuteScriptAction : IProxyAction
+        {
+            public V8ContextHandle Handle;
+            public V8ScriptHandle Script;
+            public bool Evaluate;
+            public object Result;
+
+            public void Invoke()
+            {
+                Result = V8SplitProxyNative.V8Context_ExecuteScript(
+                    Handle,
+                    Script,
+                    Evaluate);
+            }
         }
 
         public override void Interrupt()

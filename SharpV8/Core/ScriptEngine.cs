@@ -1200,7 +1200,7 @@ namespace Microsoft.ClearScript
 
         internal virtual bool UseCaseInsensitiveMemberBinding => false;
 
-        internal abstract void AddHostItem(string itemName, HostItemFlags flags, object item);
+        internal abstract void AddHostItem(ReadOnlySpan<char> itemName, HostItemFlags flags, object item);
 
         internal object PrepareResult<T>(T result, ScriptMemberFlags flags, bool isListIndexResult)
         {
@@ -1243,11 +1243,11 @@ namespace Microsoft.ClearScript
             return args.Select(arg => MarshalToHost(arg, preserveHostTargets)).ToArray();
         }
 
-        internal abstract object Execute(UniqueDocumentInfo documentInfo, string code, bool evaluate);
+        internal abstract object Execute(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code, bool evaluate);
 
-        internal abstract object ExecuteRaw(UniqueDocumentInfo documentInfo, string code, bool evaluate);
+        internal abstract object ExecuteRaw(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code, bool evaluate);
 
-        internal object Evaluate(UniqueDocumentInfo documentInfo, string code, bool marshalResult)
+        internal object Evaluate(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code, bool marshalResult)
         {
             var result = Execute(documentInfo, code, true);
             if (marshalResult)

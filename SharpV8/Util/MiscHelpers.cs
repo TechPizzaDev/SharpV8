@@ -78,31 +78,34 @@ namespace Microsoft.ClearScript.Util
             return string.Format(CultureInfo.InvariantCulture, format, args);
         }
 
-        public static StringBuilder AppendInvariant(this StringBuilder builder, string format, params object[] args)
+        public static string FormatCode(ReadOnlySpan<char> code)
         {
-            return builder.AppendFormat(CultureInfo.InvariantCulture, format, args);
-        }
+            IEnumerable<string> baseLines = code.ToString().Replace("\r\n", "\n").Split('\n');
 
-        public static string FormatCode(string code)
-        {
-            var lines = (code ?? string.Empty).Replace("\r\n", "\n").Split('\n');
+            IEnumerable<string> resultLines = baseLines
+                .SkipWhile(string.IsNullOrWhiteSpace).Reverse()
+                .SkipWhile(string.IsNullOrWhiteSpace).Reverse();
 
-            lines = lines.SkipWhile(string.IsNullOrWhiteSpace).Reverse().SkipWhile(string.IsNullOrWhiteSpace).Reverse().ToArray();
-            if (lines.Length > 0)
+            var firstLine = resultLines.FirstOrDefault();
+            if (firstLine != null)
             {
-                var firstLine = lines[0];
-                for (var indentLength = firstLine.TakeWhile(char.IsWhiteSpace).Count(); indentLength > 0; indentLength--)
+                IEnumerable<ReadOnlyMemory<char>> lines = resultLines.Select(x => x.AsMemory());
+
+                for (int indentLength = firstLine.TakeWhile(char.IsWhiteSpace).Count(); indentLength > 0; indentLength--)
                 {
-                    var indent = firstLine.Substring(0, indentLength);
-                    if (lines.Skip(1).All(line => string.IsNullOrWhiteSpace(line) || line.StartsWith(indent, StringComparison.Ordinal)))
+                    ReadOnlyMemory<char> indent = firstLine.AsMemory(0, indentLength);
+
+                    if (lines.Skip(1).All(line => line.Span.IsWhiteSpace() || line.Span.StartsWith(indent.Span, StringComparison.Ordinal)))
                     {
-                        lines = lines.Select(line => string.IsNullOrWhiteSpace(line) ? string.Empty : line.Substring(indent.Length)).ToArray();
+                        lines = lines.Select(line => line.Span.IsEmpty ? ReadOnlyMemory<char>.Empty : line.Slice(indent.Length));
                         break;
                     }
                 }
+
+                resultLines = lines.Select(x => x.ToString());
             }
 
-            return string.Join("\n", lines) + '\n';
+            return string.Join("\n", resultLines.ToList()) + '\n';
         }
 
         public static string GetUrlOrPath(Uri uri, string alternate)
@@ -127,7 +130,7 @@ namespace Microsoft.ClearScript.Util
             return uri.AbsoluteUri;
         }
 
-        public static string ToQuotedJson(this string value)
+        public static StringBuilder ToQuotedJson(this string value)
         {
             var builder = new StringBuilder();
             builder.Append('\"');
@@ -151,7 +154,7 @@ namespace Microsoft.ClearScript.Util
             }
 
             builder.Append('\"');
-            return builder.ToString();
+            return builder;
         }
 
         public static unsafe UIntPtr GetDigest(this ReadOnlySpan<char> code)
@@ -281,32 +284,6 @@ namespace Microsoft.ClearScript.Util
             catch
             {
                 result = default;
-                return false;
-            }
-        }
-
-        public static async Task<bool> TryAsync(Task task)
-        {
-            try
-            {
-                await task.ConfigureAwait(false);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public static async Task<bool> TryAsync<T>(Holder<T> holder, Task<T> task)
-        {
-            try
-            {
-                holder.Value = await task.ConfigureAwait(false);
-                return true;
-            }
-            catch
-            {
                 return false;
             }
         }

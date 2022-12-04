@@ -1252,7 +1252,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region error handling
 
-        public static void HostException_Schedule(ReadOnlySpan<char> message, object exception)
+        public static void HostException_Schedule(ReadOnlySpan<char> message, object? exception)
         {
             using (var messageScope = StdString.CreateScope(message))
             {

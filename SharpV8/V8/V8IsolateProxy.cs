@@ -3,7 +3,6 @@
 
 using System;
 using System.IO;
-using Microsoft.ClearScript.V8.SplitProxy;
 
 namespace Microsoft.ClearScript.V8
 {
@@ -24,11 +23,20 @@ namespace Microsoft.ClearScript.V8
 
         public abstract void CancelAwaitDebugger();
 
-        public abstract V8Script Compile(UniqueDocumentInfo documentInfo, string code);
+        public abstract V8Script Compile(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code);
 
-        public abstract V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes);
+        public abstract V8Script Compile(
+            UniqueDocumentInfo documentInfo, 
+            ReadOnlySpan<char> code, 
+            V8CacheKind cacheKind, 
+            out byte[] cacheBytes);
 
-        public abstract V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted);
+        public abstract V8Script Compile(
+            UniqueDocumentInfo documentInfo,
+            ReadOnlySpan<char> code, 
+            V8CacheKind cacheKind,
+            ReadOnlySpan<byte> cacheBytes, 
+            out bool cacheAccepted);
 
         public abstract bool EnableInterruptPropagation { get; set; }
 

@@ -28,7 +28,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             try
             {
                 action();
-                ThrowScheduledException();
+                if (V8SplitProxyManaged.ScheduledException != null)
+                {
+                    ThrowScheduledException(V8SplitProxyManaged.ScheduledException);
+                }
             }
             finally
             {
@@ -44,7 +47,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             try
             {
                 var result = func();
-                ThrowScheduledException();
+                if (V8SplitProxyManaged.ScheduledException != null)
+                {
+                    ThrowScheduledException(V8SplitProxyManaged.ScheduledException);
+                }
                 return result;
             }
             finally
@@ -81,6 +87,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void InvokeThrowing<TAction>(ref TAction action)
+            where TAction : IProxyAction
+        {
+            var previousScheduledException = MiscHelpers.Exchange(ref V8SplitProxyManaged.ScheduledException, null);
+            var previousMethodTable = V8SplitProxyManaged_SetMethodTable(V8SplitProxyManaged.MethodTable);
+            try
+            {
+                action.Invoke();
+                if (V8SplitProxyManaged.ScheduledException != null)
+                {
+                    ThrowScheduledException(V8SplitProxyManaged.ScheduledException);
+                }
+            }
+            finally
+            {
+                V8SplitProxyManaged_SetMethodTable(previousMethodTable);
+                V8SplitProxyManaged.ScheduledException = previousScheduledException;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void Invoke<TAction>(ref TAction action)
             where TAction : IProxyAction
         {
@@ -89,12 +116,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             V8SplitProxyManaged_SetMethodTable(previousMethodTable);
         }
 
-        private static void ThrowScheduledException()
+        private static void ThrowScheduledException(Exception exception)
         {
-            if (V8SplitProxyManaged.ScheduledException != null)
-            {
-                throw V8SplitProxyManaged.ScheduledException;
-            }
+            throw exception;
         }
     }
 

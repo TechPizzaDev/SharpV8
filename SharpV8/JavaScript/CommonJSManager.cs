@@ -57,7 +57,7 @@ namespace Microsoft.ClearScript.JavaScript
 
         public int ModuleCacheSize => moduleCache.Count;
 
-        public Module GetOrCreateModule(UniqueDocumentInfo documentInfo, string code)
+        public Module GetOrCreateModule(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code)
         {
             var codeDigest = code.GetDigest();
 
@@ -132,9 +132,15 @@ namespace Microsoft.ClearScript.JavaScript
             private const string codePrefix = "(function (module, exports, require) {\n";
             private const string codeSuffix = "\n}).valueOf()";
 
-            public Module(CommonJSManager manager, ScriptEngine engine, UniqueDocumentInfo documentInfo, UIntPtr codeDigest, string code)
-                : this(manager, engine, documentInfo, codeDigest, () => engine.ExecuteRaw(documentInfo, GetAugmentedCode(code), true))
+            public Module(CommonJSManager manager, ScriptEngine engine, UniqueDocumentInfo documentInfo, UIntPtr codeDigest, ReadOnlySpan<char> code)
+                : this(manager, engine, documentInfo, codeDigest, GetDefaultEvaluator(engine, documentInfo, code))
             {
+            }
+
+            private static Func<object> GetDefaultEvaluator(ScriptEngine engine, UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code)
+            {
+                string aCode = GetAugmentedCode(code);
+                return () => engine.ExecuteRaw(documentInfo, aCode, true);
             }
 
             public Module(CommonJSManager manager, ScriptEngine engine, UniqueDocumentInfo documentInfo, UIntPtr codeDigest, Func<object> evaluator)
@@ -153,9 +159,9 @@ namespace Microsoft.ClearScript.JavaScript
 
             public Func<object> Evaluator { get; set; }
 
-            public static string GetAugmentedCode(string code)
+            public static string GetAugmentedCode(ReadOnlySpan<char> code)
             {
-                return codePrefix + code + codeSuffix;
+                return string.Concat(codePrefix, code, codeSuffix);
             }
 
             public object Process()

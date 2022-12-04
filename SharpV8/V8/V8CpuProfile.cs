@@ -275,7 +275,7 @@ namespace Microsoft.ClearScript.V8
 
                     if (!string.IsNullOrEmpty(BailoutReason))
                     {
-                        writer.Write(",\"deoptReason\":" + BailoutReason.ToQuotedJson());
+                        writer.Write(BailoutReason.ToQuotedJson().Insert(0, ",\"deoptReason\":"));
                     }
 
                     WritePositionTicksJson(writer);
@@ -289,9 +289,9 @@ namespace Microsoft.ClearScript.V8
 
                 writer.Write(",\"callFrame\":{");
                 {
-                    writer.Write("\"functionName\":" + (FunctionName ?? string.Empty).ToQuotedJson());
+                    writer.Write((FunctionName ?? string.Empty).ToQuotedJson().Insert(0, "\"functionName\":"));
                     writer.Write(",\"scriptId\":" + ScriptId);
-                    writer.Write(",\"url\":" + (ScriptName ?? string.Empty).ToQuotedJson());
+                    writer.Write((ScriptName ?? string.Empty).ToQuotedJson().Insert(0, ",\"url\":"));
                     writer.Write(",\"lineNumber\":" + (LineNumber - 1));
                     writer.Write(",\"columnNumber\":" + (ColumnNumber - 1));
                 }

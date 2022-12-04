@@ -23,19 +23,28 @@ namespace Microsoft.ClearScript.V8
 
         public abstract object GetRootItem();
 
-        public abstract void AddGlobalItem(string name, object item, bool globalMembers);
+        public abstract void AddGlobalItem(ReadOnlySpan<char> name, object item, bool globalMembers);
 
         public abstract void AwaitDebuggerAndPause();
 
         public abstract void CancelAwaitDebugger();
 
-        public abstract object Execute(UniqueDocumentInfo documentInfo, string code, bool evaluate);
+        public abstract object Execute(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code, bool evaluate);
 
-        public abstract V8Script Compile(UniqueDocumentInfo documentInfo, string code);
+        public abstract V8Script Compile(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code);
 
-        public abstract V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes);
+        public abstract V8Script Compile(
+            UniqueDocumentInfo documentInfo, 
+            ReadOnlySpan<char> code, 
+            V8CacheKind cacheKind,
+            out byte[] cacheBytes);
 
-        public abstract V8Script Compile(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted);
+        public abstract V8Script Compile(
+            UniqueDocumentInfo documentInfo,
+            ReadOnlySpan<char> code, 
+            V8CacheKind cacheKind,
+            ReadOnlySpan<byte> cacheBytes, 
+            out bool cacheAccepted);
 
         public abstract object Execute(V8Script script, bool evaluate);
 

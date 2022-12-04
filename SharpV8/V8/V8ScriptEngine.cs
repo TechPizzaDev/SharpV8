@@ -1002,7 +1002,7 @@ namespace Microsoft.ClearScript.V8
 
         // ReSharper restore ParameterHidesMember
 
-        private V8Script CompileInternal(UniqueDocumentInfo documentInfo, string code)
+        private V8Script CompileInternal(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code)
         {
             if (FormatCode)
             {
@@ -1027,14 +1027,18 @@ namespace Microsoft.ClearScript.V8
             return script;
         }
 
-        private V8Script CompileInternal(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
+        private V8Script CompileInternal(
+            UniqueDocumentInfo documentInfo,
+            ReadOnlySpan<char> code,
+            V8CacheKind cacheKind, 
+            out byte[] cacheBytes)
         {
             if (FormatCode)
             {
                 code = MiscHelpers.FormatCode(code);
             }
 
-            CommonJSManager.Module module = null;
+            CommonJSManager.Module? module = null;
             if (documentInfo.Category == ModuleCategory.CommonJS)
             {
                 module = CommonJSManager.GetOrCreateModule(documentInfo, code);
@@ -1052,7 +1056,12 @@ namespace Microsoft.ClearScript.V8
             return script;
         }
 
-        private V8Script CompileInternal(UniqueDocumentInfo documentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
+        private V8Script CompileInternal(
+            UniqueDocumentInfo documentInfo,
+            ReadOnlySpan<char> code,
+            V8CacheKind cacheKind, 
+            ReadOnlySpan<byte> cacheBytes,
+            out bool cacheAccepted)
         {
             if (FormatCode)
             {
@@ -1077,7 +1086,7 @@ namespace Microsoft.ClearScript.V8
             return script;
         }
 
-        private object ExecuteInternal(UniqueDocumentInfo documentInfo, string code, bool evaluate)
+        private object ExecuteInternal(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code, bool evaluate)
         {
             if (FormatCode)
             {
@@ -1277,7 +1286,7 @@ namespace Microsoft.ClearScript.V8
 
         internal override bool UseCaseInsensitiveMemberBinding => engineFlags.HasFlag(V8ScriptEngineFlags.UseCaseInsensitiveMemberBinding);
 
-        internal override void AddHostItem(string itemName, HostItemFlags flags, object item)
+        internal override void AddHostItem(ReadOnlySpan<char> itemName, HostItemFlags flags, object item)
         {
             VerifyNotDisposed();
 
@@ -1287,7 +1296,7 @@ namespace Microsoft.ClearScript.V8
                 throw new InvalidOperationException("GlobalMembers support is disabled in this script engine");
             }
 
-            MiscHelpers.VerifyNonNullArgument(itemName, nameof(itemName));
+            string itemNameStr = itemName.ToString();
             Debug.Assert(item != null);
 
             ScriptInvoke(() =>
@@ -1298,7 +1307,7 @@ namespace Microsoft.ClearScript.V8
                     throw new InvalidOperationException("Invalid host item");
                 }
 
-                proxy.AddGlobalItem(itemName, marshaledItem, globalMembers);
+                proxy.AddGlobalItem(itemNameStr, marshaledItem, globalMembers);
             });
         }
 
@@ -1467,9 +1476,11 @@ namespace Microsoft.ClearScript.V8
             return scriptItem;
         }
 
-        internal override object Execute(UniqueDocumentInfo documentInfo, string code, bool evaluate)
+        internal override object Execute(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code, bool evaluate)
         {
             VerifyNotDisposed();
+
+            string codeStr = code.ToString();
 
             return ScriptInvoke(() =>
             {
@@ -1485,7 +1496,7 @@ namespace Microsoft.ClearScript.V8
                         proxy.AwaitDebuggerAndPause();
                     }
 
-                    return ExecuteInternal(documentInfo, code, evaluate);
+                    return ExecuteInternal(documentInfo, codeStr, evaluate);
                 }
 
                 var state = new Timer[] { null };
@@ -1501,7 +1512,7 @@ namespace Microsoft.ClearScript.V8
                             proxy.AwaitDebuggerAndPause();
                         }
 
-                        return ExecuteInternal(documentInfo, code, evaluate);
+                        return ExecuteInternal(documentInfo, codeStr, evaluate);
                     }
                     finally
                     {
@@ -1511,7 +1522,7 @@ namespace Microsoft.ClearScript.V8
             });
         }
 
-        internal override object ExecuteRaw(UniqueDocumentInfo documentInfo, string code, bool evaluate)
+        internal override object ExecuteRaw(UniqueDocumentInfo documentInfo, ReadOnlySpan<char> code, bool evaluate)
         {
             return proxy.Execute(documentInfo, code, evaluate);
         }
