@@ -1319,20 +1319,6 @@ namespace Microsoft.ClearScript
 
         #endregion
 
-        #region host-side invocation
-
-        internal virtual void HostInvoke(Action action)
-        {
-            action();
-        }
-
-        internal virtual T HostInvoke<T>(Func<T> func)
-        {
-            return func();
-        }
-
-        #endregion
-
         #region script-side invocation
 
         internal ScriptFrame CurrentScriptFrame { get; private set; }

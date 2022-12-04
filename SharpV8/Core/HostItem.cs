@@ -41,7 +41,7 @@ namespace Microsoft.ClearScript
             Flags = flags;
 
             BindSpecialTarget();
-            BindTargetMemberData();
+            TryBindTargetMemberData();
         }
 
         #endregion
@@ -526,44 +526,52 @@ namespace Microsoft.ClearScript
             return false;
         }
 
+        private void TryBindTargetMemberData()
+        {
+            if ((targetMemberData == null) ||
+                (AccessContext != CurrentAccessContext) || 
+                (DefaultAccess != CurrentDefaultAccess) ||
+                (TargetFlags != CurrentTargetFlags))
+            {
+                BindTargetMemberData();
+            }
+        }
+
         private void BindTargetMemberData()
         {
-            if ((targetMemberData == null) || (AccessContext != CurrentAccessContext) || (DefaultAccess != CurrentDefaultAccess) || (TargetFlags != CurrentTargetFlags))
+            if (Target is HostMethod)
             {
-                if (Target is HostMethod)
-                {
-                    // host methods can share their (dummy) member data
-                    targetMemberData = Engine.SharedHostMethodMemberData;
-                    return;
-                }
-
-                if (Target is HostIndexedProperty)
-                {
-                    // host indexed properties can share their (dummy) member data
-                    targetMemberData = Engine.SharedHostIndexedPropertyMemberData;
-                    return;
-                }
-
-                if (Target is ScriptMethod)
-                {
-                    // script methods can share their (dummy) member data
-                    targetMemberData = Engine.SharedScriptMethodMemberData;
-                    return;
-                }
-
-                if (Target is HostObject hostObject)
-                {
-                    if ((TargetDynamic == null) && (TargetPropertyBag == null) && (TargetList == null) && (TargetDynamicMetaObject == null))
-                    {
-                        // host objects without dynamic members can share their member data
-                        targetMemberData = Engine.GetSharedHostObjectMemberData(hostObject, CurrentAccessContext, CurrentDefaultAccess, CurrentTargetFlags);
-                        return;
-                    }
-                }
-
-                // all other targets use unique member data
-                targetMemberData = new HostTargetMemberDataWithContext(CurrentAccessContext, CurrentDefaultAccess, CurrentTargetFlags);
+                // host methods can share their (dummy) member data
+                targetMemberData = Engine.SharedHostMethodMemberData;
+                return;
             }
+
+            if (Target is HostIndexedProperty)
+            {
+                // host indexed properties can share their (dummy) member data
+                targetMemberData = Engine.SharedHostIndexedPropertyMemberData;
+                return;
+            }
+
+            if (Target is ScriptMethod)
+            {
+                // script methods can share their (dummy) member data
+                targetMemberData = Engine.SharedScriptMethodMemberData;
+                return;
+            }
+
+            if (Target is HostObject hostObject)
+            {
+                if ((TargetDynamic == null) && (TargetPropertyBag == null) && (TargetList == null) && (TargetDynamicMetaObject == null))
+                {
+                    // host objects without dynamic members can share their member data
+                    targetMemberData = Engine.GetSharedHostObjectMemberData(hostObject, CurrentAccessContext, CurrentDefaultAccess, CurrentTargetFlags);
+                    return;
+                }
+            }
+
+            // all other targets use unique member data
+            targetMemberData = new HostTargetMemberDataWithContext(CurrentAccessContext, CurrentDefaultAccess, CurrentTargetFlags);
         }
 
         private static bool TargetSupportsSpecialTargets(HostTarget target)
@@ -783,12 +791,6 @@ namespace Microsoft.ClearScript
 
         private StringComparer MemberNameComparer => UseCaseInsensitiveMemberBinding ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
 
-        private T HostInvoke<T>(Func<T> func)
-        {
-            BindTargetMemberData();
-            return Engine.HostInvoke(func);
-        }
-
         private BindingFlags GetCommonBindFlags()
         {
             var bindFlags = BindingFlags.Public | BindingFlags.NonPublic;
@@ -885,47 +887,46 @@ namespace Microsoft.ClearScript
 
         private object InvokeReflectMember(string name, BindingFlags invokeFlags, object[] wrappedArgs, CultureInfo culture, string[] namedParams, out bool isCacheable)
         {
-            var resultIsCacheable = false;
-            var result = Engine.MarshalToScript(HostInvoke(() =>
+            TryBindTargetMemberData();
+
+            var args = Engine.MarshalToHost(wrappedArgs, false);
+
+            var argOffset = 0;
+            if ((namedParams != null) && (namedParams.Length > 0) && (namedParams[0] == SpecialParamNames.This))
             {
-                var args = Engine.MarshalToHost(wrappedArgs, false);
+                args = args.Skip(1).ToArray();
+                argOffset = 1;
+            }
 
-                var argOffset = 0;
-                if ((namedParams != null) && (namedParams.Length > 0) && (namedParams[0] == SpecialParamNames.This))
+            object result;
+            var bindArgs = args;
+            if ((args.Length > 0) && (invokeFlags.HasFlag(BindingFlags.InvokeMethod) || invokeFlags.HasFlag(BindingFlags.CreateInstance)))
+            {
+                bindArgs = Engine.MarshalToHost(wrappedArgs, true);
+                if (argOffset > 0)
                 {
-                    args = args.Skip(1).ToArray();
-                    argOffset = 1;
+                    bindArgs = bindArgs.Skip(argOffset).ToArray();
                 }
 
-                var bindArgs = args;
-                if ((args.Length > 0) && (invokeFlags.HasFlag(BindingFlags.InvokeMethod) || invokeFlags.HasFlag(BindingFlags.CreateInstance)))
+                var savedArgs = (object[])args.Clone();
+                result = InvokeMember(name, invokeFlags, args, bindArgs, culture, false, out isCacheable);
+
+                for (var index = 0; index < args.Length; index++)
                 {
-                    bindArgs = Engine.MarshalToHost(wrappedArgs, true);
-                    if (argOffset > 0)
+                    var arg = args[index];
+                    if (!ReferenceEquals(arg, savedArgs[index]))
                     {
-                        bindArgs = bindArgs.Skip(argOffset).ToArray();
+                        wrappedArgs[argOffset + index] = Engine.MarshalToScript(arg);
                     }
-
-                    var savedArgs = (object[])args.Clone();
-                    var tempResult = InvokeMember(name, invokeFlags, args, bindArgs, culture, false, out resultIsCacheable);
-
-                    for (var index = 0; index < args.Length; index++)
-                    {
-                        var arg = args[index];
-                        if (!ReferenceEquals(arg, savedArgs[index]))
-                        {
-                            wrappedArgs[argOffset + index] = Engine.MarshalToScript(arg);
-                        }
-                    }
-
-                    return tempResult;
                 }
+            }
+            else
+            {
+                result = InvokeMember(name, invokeFlags, args, bindArgs, culture, false, out isCacheable);
+            }
 
-                return InvokeMember(name, invokeFlags, args, bindArgs, culture, false, out resultIsCacheable);
-            }));
-
-            isCacheable = resultIsCacheable;
-            return result;
+            var marshalledResult = Engine.MarshalToScript(result);
+            return marshalledResult;
         }
 
         private object InvokeDynamicMember(string name, BindingFlags invokeFlags, object[] args)
@@ -1838,16 +1839,15 @@ namespace Microsoft.ClearScript
 
         FieldInfo[] IReflect.GetFields(BindingFlags bindFlags)
         {
-            return HostInvoke(() =>
-            {
-                UpdateFieldNames(out var updated);
-                if (updated || (AllFields == null))
-                {
-                    AllFields = MemberMap.GetFields(AllFieldNames);
-                }
+            TryBindTargetMemberData();
 
-                return AllFields;
-            });
+            UpdateFieldNames(out var updated);
+            if (updated || (AllFields == null))
+            {
+                AllFields = MemberMap.GetFields(AllFieldNames);
+            }
+
+            return AllFields;
         }
 
         MemberInfo[] IReflect.GetMember(string name, BindingFlags bindFlags)
@@ -1883,30 +1883,28 @@ namespace Microsoft.ClearScript
 
         MethodInfo[] IReflect.GetMethods(BindingFlags bindFlags)
         {
-            return HostInvoke(() =>
-            {
-                UpdateMethodNames(out var updated);
-                if (updated || (AllMethods == null))
-                {
-                    AllMethods = MemberMap.GetMethods(AllMethodNames);
-                }
+            TryBindTargetMemberData();
 
-                return AllMethods;
-            });
+            UpdateMethodNames(out var updated);
+            if (updated || (AllMethods == null))
+            {
+                AllMethods = MemberMap.GetMethods(AllMethodNames);
+            }
+
+            return AllMethods;
         }
 
         PropertyInfo[] IReflect.GetProperties(BindingFlags bindFlags)
         {
-            return HostInvoke(() =>
-            {
-                UpdatePropertyNames(out var updated);
-                if (updated || (AllProperties == null))
-                {
-                    AllProperties = MemberMap.GetProperties(AllPropertyNames);
-                }
+            TryBindTargetMemberData();
 
-                return AllProperties;
-            });
+            UpdatePropertyNames(out var updated);
+            if (updated || (AllProperties == null))
+            {
+                AllProperties = MemberMap.GetProperties(AllPropertyNames);
+            }
+
+            return AllProperties;
         }
 
         PropertyInfo IReflect.GetProperty(string name, BindingFlags bindFlags, Binder binder, Type returnType, Type[] types, ParameterModifier[] modifiers)
@@ -1958,53 +1956,51 @@ namespace Microsoft.ClearScript
 
         bool IDynamic.DeleteProperty(string name)
         {
-            return HostInvoke(() =>
+            TryBindTargetMemberData();
+
+            if (TargetDynamic != null)
             {
-                if (TargetDynamic != null)
+                return TargetDynamic.DeleteProperty(name);
+            }
+
+            if (TargetPropertyBag != null)
+            {
+                return TargetPropertyBag.Remove(name);
+            }
+
+            if (TargetDynamicMetaObject != null)
+            {
+                if (TargetDynamicMetaObject.TryDeleteMember(name, out var result) && result)
                 {
-                    return TargetDynamic.DeleteProperty(name);
+                    return true;
                 }
 
-                if (TargetPropertyBag != null)
+                if (TargetDynamicMetaObject.TryDeleteIndex(new object[] { name }, out result))
                 {
-                    return TargetPropertyBag.Remove(name);
+                    return result;
                 }
 
-                if (TargetDynamicMetaObject != null)
-                {
-                    if (TargetDynamicMetaObject.TryDeleteMember(name, out var result) && result)
-                    {
-                        return true;
-                    }
+                throw new InvalidOperationException("Invalid dynamic member deletion");
+            }
 
-                    if (TargetDynamicMetaObject.TryDeleteIndex(new object[] { name }, out result))
-                    {
-                        return result;
-                    }
-
-                    throw new InvalidOperationException("Invalid dynamic member deletion");
-                }
-
-                throw new NotSupportedException("The object does not support dynamic members");
-            });
+            throw new NotSupportedException("The object does not support dynamic members");
         }
 
         string[] IDynamic.GetPropertyNames()
         {
-            return HostInvoke(() =>
+            TryBindTargetMemberData();
+
+            UpdateFieldNames(out var updatedFieldNames);
+            UpdateMethodNames(out var updatedMethodNames);
+            UpdatePropertyNames(out var updatedPropertyNames);
+            UpdateEnumerationSettingsToken(out var updatedEnumerationSettingsToken);
+
+            if (updatedFieldNames || updatedMethodNames || updatedPropertyNames || updatedEnumerationSettingsToken || (AllMemberNames == null))
             {
-                UpdateFieldNames(out var updatedFieldNames);
-                UpdateMethodNames(out var updatedMethodNames);
-                UpdatePropertyNames(out var updatedPropertyNames);
-                UpdateEnumerationSettingsToken(out var updatedEnumerationSettingsToken);
+                AllMemberNames = AllFieldNames.Concat(EnumeratedMethodNames).Concat(AllPropertyNames).ExcludeIndices().Distinct().ToArray();
+            }
 
-                if (updatedFieldNames || updatedMethodNames || updatedPropertyNames || updatedEnumerationSettingsToken || (AllMemberNames == null))
-                {
-                    AllMemberNames = AllFieldNames.Concat(EnumeratedMethodNames).Concat(AllPropertyNames).ExcludeIndices().Distinct().ToArray();
-                }
-
-                return AllMemberNames;
-            });
+            return AllMemberNames;
         }
 
         object IDynamic.GetProperty(int index)
@@ -2019,49 +2015,47 @@ namespace Microsoft.ClearScript
 
         bool IDynamic.DeleteProperty(int index)
         {
-            return HostInvoke(() =>
+            TryBindTargetMemberData();
+
+            if (TargetDynamic != null)
             {
-                if (TargetDynamic != null)
+                return TargetDynamic.DeleteProperty(index);
+            }
+
+            if (TargetPropertyBag != null)
+            {
+                return TargetPropertyBag.Remove(index.ToString(CultureInfo.InvariantCulture));
+            }
+
+            if (TargetDynamicMetaObject != null)
+            {
+                if (TargetDynamicMetaObject.TryDeleteMember(index.ToString(CultureInfo.InvariantCulture), out var result) && result)
                 {
-                    return TargetDynamic.DeleteProperty(index);
+                    return true;
                 }
 
-                if (TargetPropertyBag != null)
+                if (TargetDynamicMetaObject.TryDeleteIndex(new object[] { index }, out result))
                 {
-                    return TargetPropertyBag.Remove(index.ToString(CultureInfo.InvariantCulture));
+                    return result;
                 }
 
-                if (TargetDynamicMetaObject != null)
-                {
-                    if (TargetDynamicMetaObject.TryDeleteMember(index.ToString(CultureInfo.InvariantCulture), out var result) && result)
-                    {
-                        return true;
-                    }
+                throw new InvalidOperationException("Invalid dynamic member deletion");
+            }
 
-                    if (TargetDynamicMetaObject.TryDeleteIndex(new object[] { index }, out result))
-                    {
-                        return result;
-                    }
-
-                    throw new InvalidOperationException("Invalid dynamic member deletion");
-                }
-
-                return false;
-            });
+            return false;
         }
 
         int[] IDynamic.GetPropertyIndices()
         {
-            return HostInvoke(() =>
-            {
-                UpdatePropertyNames(out var updated);
-                if (updated || (PropertyIndices == null))
-                {
-                    PropertyIndices = AllPropertyNames.GetIndices().Distinct().ToArray();
-                }
+            TryBindTargetMemberData();
 
-                return PropertyIndices;
-            });
+            UpdatePropertyNames(out var updated);
+            if (updated || (PropertyIndices == null))
+            {
+                PropertyIndices = AllPropertyNames.GetIndices().Distinct().ToArray();
+            }
+
+            return PropertyIndices;
         }
 
         object IDynamic.Invoke(bool asConstructor, params object[] args)
@@ -2118,30 +2112,28 @@ namespace Microsoft.ClearScript
 
             FieldInfo IExpando.AddField(string name)
             {
-                return HostInvoke(() =>
-                {
-                    if (CanAddExpandoMembers())
-                    {
-                        AddExpandoMemberName(name);
-                        return MemberMap.GetField(name);
-                    }
+                TryBindTargetMemberData();
 
-                    throw new NotSupportedException("The object does not support dynamic fields");
-                });
+                if (CanAddExpandoMembers())
+                {
+                    AddExpandoMemberName(name);
+                    return MemberMap.GetField(name);
+                }
+
+                throw new NotSupportedException("The object does not support dynamic fields");
             }
 
             PropertyInfo IExpando.AddProperty(string name)
             {
-                return HostInvoke(() =>
-                {
-                    if (CanAddExpandoMembers())
-                    {
-                        AddExpandoMemberName(name);
-                        return MemberMap.GetProperty(name);
-                    }
+                TryBindTargetMemberData();
 
-                    throw new NotSupportedException("The object does not support dynamic properties");
-                });
+                if (CanAddExpandoMembers())
+                {
+                    AddExpandoMemberName(name);
+                    return MemberMap.GetProperty(name);
+                }
+
+                throw new NotSupportedException("The object does not support dynamic properties");
             }
 
             MethodInfo IExpando.AddMethod(string name, Delegate method)
@@ -2156,59 +2148,58 @@ namespace Microsoft.ClearScript
 
             protected virtual bool RemoveMember(string name)
             {
-                return HostInvoke(() =>
-                {
-                    if (TargetDynamic != null)
-                    {
-                        if (int.TryParse(name, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index))
-                        {
-                            if (TargetDynamic.DeleteProperty(index))
-                            {
-                                RemoveExpandoMemberName(index.ToString(CultureInfo.InvariantCulture));
-                                return true;
-                            }
-                        }
-                        else if (TargetDynamic.DeleteProperty(name))
-                        {
-                            RemoveExpandoMemberName(name);
-                            return true;
-                        }
-                    }
-                    else if (TargetPropertyBag != null)
-                    {
-                        if (TargetPropertyBag.Remove(name))
-                        {
-                            RemoveExpandoMemberName(name);
-                            return true;
-                        }
-                    }
-                    else if (TargetDynamicMetaObject != null)
-                    {
-                        if (TargetDynamicMetaObject.TryDeleteMember(name, out var result) && result)
-                        {
-                            RemoveExpandoMemberName(name);
-                            return true;
-                        }
+                TryBindTargetMemberData();
 
-                        if (int.TryParse(name, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index) && TargetDynamicMetaObject.TryDeleteIndex(new object[] { index }, out result))
+                if (TargetDynamic != null)
+                {
+                    if (int.TryParse(name, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index))
+                    {
+                        if (TargetDynamic.DeleteProperty(index))
                         {
                             RemoveExpandoMemberName(index.ToString(CultureInfo.InvariantCulture));
                             return true;
                         }
-
-                        if (TargetDynamicMetaObject.TryDeleteIndex(new object[] { name }, out result))
-                        {
-                            RemoveExpandoMemberName(name);
-                            return true;
-                        }
                     }
-                    else
+                    else if (TargetDynamic.DeleteProperty(name))
                     {
-                        throw new NotSupportedException("The object does not support dynamic members");
+                        RemoveExpandoMemberName(name);
+                        return true;
+                    }
+                }
+                else if (TargetPropertyBag != null)
+                {
+                    if (TargetPropertyBag.Remove(name))
+                    {
+                        RemoveExpandoMemberName(name);
+                        return true;
+                    }
+                }
+                else if (TargetDynamicMetaObject != null)
+                {
+                    if (TargetDynamicMetaObject.TryDeleteMember(name, out var result) && result)
+                    {
+                        RemoveExpandoMemberName(name);
+                        return true;
                     }
 
-                    return false;
-                });
+                    if (int.TryParse(name, NumberStyles.Integer, CultureInfo.InvariantCulture, out var index) && TargetDynamicMetaObject.TryDeleteIndex(new object[] { index }, out result))
+                    {
+                        RemoveExpandoMemberName(index.ToString(CultureInfo.InvariantCulture));
+                        return true;
+                    }
+
+                    if (TargetDynamicMetaObject.TryDeleteIndex(new object[] { name }, out result))
+                    {
+                        RemoveExpandoMemberName(name);
+                        return true;
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException("The object does not support dynamic members");
+                }
+
+                return false;
             }
 
             #endregion
