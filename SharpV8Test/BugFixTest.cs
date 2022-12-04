@@ -1383,7 +1383,7 @@ namespace Microsoft.ClearScript.Test
                 }
 
                 var value = new string(chars);
-                Assert.AreEqual(value.GetDigest(), proxy.GetNativeDigest(value));
+                Assert.AreEqual(value.AsSpan().GetDigest(), proxy.GetNativeDigest(value));
             }
         }
 

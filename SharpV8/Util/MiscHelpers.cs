@@ -154,19 +154,20 @@ namespace Microsoft.ClearScript.Util
             return builder.ToString();
         }
 
-        public static UIntPtr GetDigest(this string code)
+        public static unsafe UIntPtr GetDigest(this ReadOnlySpan<char> code)
         {
-            return (UIntPtr.Size == 4) ? (UIntPtr)code.GetDigestAsUInt32() : (UIntPtr)code.GetDigestAsUInt64();
+            ReadOnlySpan<char> span = code;
+            return sizeof(nuint) == 4 ? GetDigestAsUInt32(span) : (nuint)GetDigestAsUInt64(span);
         }
 
-        public static uint GetDigestAsUInt32(this string code)
+        public static uint GetDigestAsUInt32(ReadOnlySpan<char> code)
         {
             var digest = 2166136261U;
             const uint prime = 16777619U;
 
             unchecked
             {
-                var bytes = Encoding.Unicode.GetBytes(code);
+                var bytes = MemoryMarshal.AsBytes(code);
                 for (var index = 0; index < bytes.Length; index++)
                 {
                     digest ^= bytes[index];
@@ -177,12 +178,12 @@ namespace Microsoft.ClearScript.Util
             return digest;
         }
 
-        public static ulong GetDigestAsUInt64(this string code)
+        public static ulong GetDigestAsUInt64(ReadOnlySpan<char> code)
         {
             var digest = 14695981039346656037UL;
             const ulong prime = 1099511628211UL;
 
-            var bytes = Encoding.Unicode.GetBytes(code);
+            var bytes = MemoryMarshal.AsBytes(code);
             for (var index = 0; index < bytes.Length; index++)
             {
                 digest ^= bytes[index];
@@ -448,10 +449,7 @@ namespace Microsoft.ClearScript.Util
 
         public readonly struct ReleaseSemaphoreAction : IScopeAction<SemaphoreSlim>
         {
-            public void Invoke(SemaphoreSlim semaphore)
-            {
-                semaphore.Release();
-            }
+            public void Invoke(SemaphoreSlim semaphore) => semaphore.Release();
         }
 
         public static byte[] ReadToEnd(this Stream stream)
