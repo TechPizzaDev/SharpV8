@@ -408,7 +408,13 @@ namespace Microsoft.ClearScript.Util
             {
                 using (callback)
                 {
-                    Try(callback.Invoke);
+                    try
+                    {
+                        callback.Invoke();
+                    }
+                    catch
+                    {
+                    }
                 }
 
                 // The above code appears to be problematic on some .NET runtimes, intermittently

@@ -11,12 +11,12 @@ namespace Microsoft.ClearScript.Util
     {
         private readonly Timer timer;
         private readonly NativeCallback callback;
-        private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag disposedFlag = new();
 
         public NativeCallbackTimer(int dueTime, int period, NativeCallback callback)
         {
             this.callback = callback;
-            timer = new Timer(OnTimer, null, Timeout.Infinite, Timeout.Infinite);
+            timer = new Timer(OnTimer, this, Timeout.Infinite, Timeout.Infinite);
 
             if ((dueTime != Timeout.Infinite) || (period != Timeout.Infinite))
             {
@@ -37,11 +37,19 @@ namespace Microsoft.ClearScript.Util
             return false;
         }
 
-        private void OnTimer(object state)
+        private static void OnTimer(object? state)
         {
-            if (!disposedFlag.IsSet)
+            NativeCallbackTimer timer = (NativeCallbackTimer)state!;
+
+            if (!timer.disposedFlag.IsSet)
             {
-                MiscHelpers.Try(callback.Invoke);
+                try
+                {
+                    timer.callback.Invoke();
+                }
+                catch
+                {
+                }
             }
         }
 
