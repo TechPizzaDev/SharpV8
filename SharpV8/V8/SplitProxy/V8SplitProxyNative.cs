@@ -2,13 +2,14 @@
 // Licensed under the MIT license.
 
 using System;
+using System.Runtime.CompilerServices;
 using Microsoft.ClearScript.Util;
 
 namespace Microsoft.ClearScript.V8.SplitProxy
 {
     internal static partial class V8SplitProxyNative
     {
-        public static string GetVersion()
+        public static ReadOnlySpan<char> GetVersion()
         {
             try
             {
@@ -79,6 +80,15 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Invoke<TAction>(ref TAction action)
+            where TAction : IProxyAction
+        {
+            var previousMethodTable = V8SplitProxyManaged_SetMethodTable(V8SplitProxyManaged.MethodTable);
+            action.Invoke();
+            V8SplitProxyManaged_SetMethodTable(previousMethodTable);
+        }
+
         private static void ThrowScheduledException()
         {
             if (V8SplitProxyManaged.ScheduledException != null)
@@ -86,5 +96,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 throw V8SplitProxyManaged.ScheduledException;
             }
         }
+    }
+
+    public interface IProxyAction
+    {
+        void Invoke();
     }
 }

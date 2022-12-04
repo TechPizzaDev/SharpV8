@@ -16,29 +16,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
     // ReSharper disable once PartialTypeWithSinglePart
     internal static unsafe partial class V8SplitProxyManaged
     {
-        public static IntPtr MethodTable => pFunctionPtrs;
-
-        private static IntPtr pDelegatePtrs;
-        private static IntPtr pFunctionPtrs;
-        private static int methodCount;
+        private static IntPtr DelegateTable { get; }
+        public static IntPtr MethodTable { get; }
+        public static int MethodCount { get; }
 
         [ThreadStatic]
         public static Exception? ScheduledException;
 
         static V8SplitProxyManaged()
         {
-            Initialize();
+            (DelegateTable, MethodTable, MethodCount) = Initialize();
         }
 
-        private static void Initialize()
+        private static (IntPtr delegatePtrs, IntPtr functionPtrs, int methodCount) Initialize()
         {
             var nativeVersion = V8SplitProxyNative.GetVersion();
-            if (nativeVersion != ClearScriptVersion.Informational)
+            if (!nativeVersion.SequenceEqual(ClearScriptVersion.Informational))
             {
-                throw new InvalidOperationException($"V8 native assembly: loaded version {nativeVersion} does not match required version {ClearScriptVersion.Informational}");
+                throw new InvalidOperationException(
+                    $"V8 native assembly: loaded version {nativeVersion} does not" +
+                    $" match required version {ClearScriptVersion.Informational}.");
             }
 
-            CreateMethodTable();
+            return CreateMethodTable();
         }
 
         private static void Teardown()
@@ -48,12 +48,14 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         private static void ScheduleHostException(IntPtr pObject, Exception exception)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.HostException_Schedule(exception.GetBaseException().Message, V8ProxyHelpers.MarshalExceptionToScript(pObject, exception)));
+            V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.HostException_Schedule(
+                exception.GetBaseException().Message, V8ProxyHelpers.MarshalExceptionToScript(pObject, exception)));
         }
 
         private static void ScheduleHostException(Exception exception)
         {
-            V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.HostException_Schedule(exception.GetBaseException().Message, ScriptEngine.Current?.MarshalToScript(exception)));
+            V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.HostException_Schedule(
+                exception.GetBaseException().Message, ScriptEngine.Current?.MarshalToScript(exception)));
         }
 
         private static uint GetMaxCacheSizeForCategory(DocumentCategory category)
@@ -331,10 +333,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region method table construction and teardown
 
-        private static void CreateMethodTable()
+        private static (IntPtr delegatePtrs, IntPtr functionPtrs, int methodCount) CreateMethodTable()
         {
-            Debug.Assert(methodCount == 0);
-
             (IntPtr, IntPtr)[] methodPairs =
             {
                 //----------------------------------------------------------------------------
@@ -426,9 +426,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 GetMethodPair<RawGetGlobalFlags>(GetGlobalFlags)
             };
 
-            methodCount = methodPairs.Length;
-            pDelegatePtrs = Marshal.AllocCoTaskMem(methodCount * IntPtr.Size);
-            pFunctionPtrs = Marshal.AllocCoTaskMem(methodCount * IntPtr.Size);
+            int methodCount = methodPairs.Length;
+            IntPtr pDelegatePtrs = Marshal.AllocCoTaskMem(methodCount * IntPtr.Size);
+            IntPtr pFunctionPtrs = Marshal.AllocCoTaskMem(methodCount * IntPtr.Size);
 
             for (var index = 0; index < methodCount; index++)
             {
@@ -436,32 +436,30 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 Marshal.WriteIntPtr(pDelegatePtrs, index * IntPtr.Size, pDelegate);
                 Marshal.WriteIntPtr(pFunctionPtrs, index * IntPtr.Size, pFunction);
             }
+
+            return (pDelegatePtrs, pFunctionPtrs, methodCount);
         }
 
         private static void DestroyMethodTable()
         {
-            Debug.Assert(methodCount > 0);
+            Debug.Assert(MethodCount > 0);
 
-            for (var index = 0; index < methodCount; index++)
+            for (var index = 0; index < MethodCount; index++)
             {
-                var pDelegate = Marshal.ReadIntPtr(pDelegatePtrs, index * IntPtr.Size);
+                var pDelegate = Marshal.ReadIntPtr(DelegateTable, index * IntPtr.Size);
                 if (pDelegate != IntPtr.Zero)
                 {
                     V8ProxyHelpers.ReleaseHostObject(pDelegate);
                 }
             }
 
-            Marshal.FreeCoTaskMem(pDelegatePtrs);
-            Marshal.FreeCoTaskMem(pFunctionPtrs);
-
-            methodCount = 0;
-            pDelegatePtrs = IntPtr.Zero;
-            pFunctionPtrs = IntPtr.Zero;
+            Marshal.FreeCoTaskMem(DelegateTable);
+            Marshal.FreeCoTaskMem(MethodTable);
         }
 
         private static (IntPtr, IntPtr) GetMethodPair<T>(T del)
         {
-            return (V8ProxyHelpers.AddRefHostObject(del), Marshal.GetFunctionPointerForDelegate((Delegate)(object)del));
+            return (V8ProxyHelpers.AddRefHostObject(del), Marshal.GetFunctionPointerForDelegate<T>(del));
         }
 
         #endregion
@@ -475,11 +473,27 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             var exception = V8ProxyHelpers.MarshalExceptionToHost(V8Value.Get(pException));
             if (exception is ScriptEngineException scriptEngineException)
             {
-                ScheduledException = new ScriptEngineException(scriptEngineException.EngineName, scriptEngineException.Message, scriptEngineException.ErrorDetails, scriptEngineException.HResult, scriptEngineException.IsFatal, scriptEngineException.ExecutionStarted, scriptEngineException.ScriptExceptionAsObject, scriptEngineException);
+                ScheduledException = new ScriptEngineException(
+                    scriptEngineException.EngineName,
+                    scriptEngineException.Message,
+                    scriptEngineException.ErrorDetails,
+                    scriptEngineException.HResult,
+                    scriptEngineException.IsFatal,
+                    scriptEngineException.ExecutionStarted,
+                    scriptEngineException.ScriptExceptionAsObject,
+                    scriptEngineException);
             }
             else if (exception is ScriptInterruptedException scriptInterruptedException)
             {
-                ScheduledException = new ScriptInterruptedException(scriptInterruptedException.EngineName, scriptInterruptedException.Message, scriptInterruptedException.ErrorDetails, scriptInterruptedException.HResult, scriptInterruptedException.IsFatal, scriptInterruptedException.ExecutionStarted, scriptInterruptedException.ScriptExceptionAsObject, scriptInterruptedException);
+                ScheduledException = new ScriptInterruptedException(
+                    scriptInterruptedException.EngineName,
+                    scriptInterruptedException.Message,
+                    scriptInterruptedException.ErrorDetails,
+                    scriptInterruptedException.HResult,
+                    scriptInterruptedException.IsFatal,
+                    scriptInterruptedException.ExecutionStarted,
+                    scriptInterruptedException.ScriptExceptionAsObject,
+                    scriptInterruptedException);
             }
             else
             {
@@ -493,20 +507,50 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             ScheduledException = new InvalidOperationException(StdString.GetValue(pMessage));
         }
 
-        private static void ScheduleScriptEngineException(StdStringPtr pEngineName, StdStringPtr pMessage, StdStringPtr pStackTrace, sbyte isFatal, sbyte executionStarted, V8ValuePtr pScriptException, V8ValuePtr pInnerException)
+        private static void ScheduleScriptEngineException(
+            StdStringPtr pEngineName,
+            StdStringPtr pMessage,
+            StdStringPtr pStackTrace,
+            sbyte isFatal,
+            sbyte executionStarted,
+            V8ValuePtr pScriptException,
+            V8ValuePtr pInnerException)
         {
             Debug.Assert(ScheduledException == null);
             var scriptException = ScriptEngine.Current?.MarshalToHost(V8Value.Get(pScriptException), false);
             var innerException = V8ProxyHelpers.MarshalExceptionToHost(V8Value.Get(pInnerException));
-            ScheduledException = new ScriptEngineException(StdString.GetValue(pEngineName), StdString.GetValue(pMessage), StdString.GetValue(pStackTrace), 0, isFatal.ToBool(), executionStarted.ToBool(), scriptException, innerException);
+            ScheduledException = new ScriptEngineException(
+                StdString.GetValue(pEngineName),
+                StdString.GetValue(pMessage),
+                StdString.GetValue(pStackTrace),
+                0,
+                isFatal.ToBool(),
+                executionStarted.ToBool(),
+                scriptException,
+                innerException);
         }
 
-        private static void ScheduleScriptInterruptedException(StdStringPtr pEngineName, StdStringPtr pMessage, StdStringPtr pStackTrace, sbyte isFatal, sbyte executionStarted, V8ValuePtr pScriptException, V8ValuePtr pInnerException)
+        private static void ScheduleScriptInterruptedException(
+            StdStringPtr pEngineName,
+            StdStringPtr pMessage,
+            StdStringPtr pStackTrace,
+            sbyte isFatal,
+            sbyte executionStarted,
+            V8ValuePtr pScriptException,
+            V8ValuePtr pInnerException)
         {
             Debug.Assert(ScheduledException == null);
             var scriptException = ScriptEngine.Current?.MarshalToHost(V8Value.Get(pScriptException), false);
             var innerException = V8ProxyHelpers.MarshalExceptionToHost(V8Value.Get(pInnerException));
-            ScheduledException = new ScriptInterruptedException(StdString.GetValue(pEngineName), StdString.GetValue(pMessage), StdString.GetValue(pStackTrace), 0, isFatal.ToBool(), executionStarted.ToBool(), scriptException, innerException);
+            ScheduledException = new ScriptInterruptedException(
+                StdString.GetValue(pEngineName),
+                StdString.GetValue(pMessage),
+                StdString.GetValue(pStackTrace),
+                0,
+                isFatal.ToBool(),
+                executionStarted.ToBool(),
+                scriptException,
+                innerException);
         }
 
         private static void InvokeHostAction(IntPtr pAction)
@@ -552,12 +596,14 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         private static void CacheV8Object(IntPtr pCache, IntPtr pObject, IntPtr pV8Object)
         {
-            V8ProxyHelpers.GetHostObject<Dictionary<object, IntPtr>>(pCache).Add(V8ProxyHelpers.GetHostObject(pObject), pV8Object);
+            V8ProxyHelpers.GetHostObject<Dictionary<object, IntPtr>>(pCache)
+                .Add(V8ProxyHelpers.GetHostObject(pObject), pV8Object);
         }
 
         private static IntPtr GetCachedV8Object(IntPtr pCache, IntPtr pObject)
         {
-            return V8ProxyHelpers.GetHostObject<Dictionary<object, IntPtr>>(pCache).TryGetValue(V8ProxyHelpers.GetHostObject(pObject), out IntPtr pV8Object) ? pV8Object : IntPtr.Zero;
+            return V8ProxyHelpers.GetHostObject<Dictionary<object, IntPtr>>(pCache)
+                .TryGetValue(V8ProxyHelpers.GetHostObject(pObject), out IntPtr pV8Object) ? pV8Object : IntPtr.Zero;
         }
 
         private static void GetAllCachedV8Objects(IntPtr pCache, StdPtrArrayPtr pV8ObjectPtrs)
@@ -573,7 +619,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         private static IntPtr CreateDebugAgent(StdStringPtr pName, StdStringPtr pVersion, int port, sbyte remote, V8DebugCallbackHandle hCallback)
         {
-            return V8ProxyHelpers.AddRefHostObject(new V8DebugAgent(StdString.GetValue(pName), StdString.GetValue(pVersion), port, remote.ToBool(), new V8DebugListener(hCallback)));
+            return V8ProxyHelpers.AddRefHostObject(new V8DebugAgent(
+                StdString.GetValue(pName), 
+                StdString.GetValue(pVersion),
+                port, 
+                remote.ToBool(), 
+                new V8DebugListener(hCallback)));
         }
 
         private static void SendDebugMessage(IntPtr pAgent, StdStringPtr pContent)
@@ -624,7 +675,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         {
             try
             {
-                V8Value.Set(pValue, V8ProxyHelpers.GetHostObjectProperty(pObject, StdString.GetValue(pName)));
+                V8Value.Set(pValue, V8ProxyHelpers.GetHostObjectProperty(pObject, StdString.GetSpan(pName)));
             }
             catch (Exception exception)
             {
@@ -636,7 +687,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         {
             try
             {
-                V8Value.Set(pValue, V8ProxyHelpers.GetHostObjectProperty(pObject, StdString.GetValue(pName), out isCacheable));
+                V8Value.Set(pValue, V8ProxyHelpers.GetHostObjectProperty(pObject, StdString.GetSpan(pName), out isCacheable));
             }
             catch (Exception exception)
             {
@@ -649,7 +700,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         {
             try
             {
-                V8ProxyHelpers.SetHostObjectProperty(pObject, StdString.GetValue(pName), V8Value.Get(pValue));
+                V8ProxyHelpers.SetHostObjectProperty(pObject, StdString.GetSpan(pName), V8Value.Get(pValue));
             }
             catch (Exception exception)
             {
@@ -661,7 +712,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         {
             try
             {
-                return V8ProxyHelpers.DeleteHostObjectProperty(pObject, StdString.GetValue(pName)).ToSbyte();
+                return V8ProxyHelpers.DeleteHostObjectProperty(pObject, StdString.GetSpan(pName)).ToSbyte();
             }
             catch (Exception exception)
             {
@@ -755,7 +806,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         {
             try
             {
-                V8Value.Set(pResult, V8ProxyHelpers.InvokeHostObjectMethod(pObject, StdString.GetValue(pName), StdV8ValueArray.ToArray(pArgs)));
+                V8Value.Set(pResult, V8ProxyHelpers.InvokeHostObjectMethod(pObject, StdString.GetSpan(pName), StdV8ValueArray.ToArray(pArgs)));
             }
             catch (Exception exception)
             {
@@ -808,14 +859,26 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             V8ProxyHelpers.ReleaseHostObject(pTimer);
         }
 
-        private static void LoadModule(IntPtr pSourceDocumentInfo, StdStringPtr pSpecifier, StdStringPtr pResourceName, StdStringPtr pSourceMapUrl, ulong* uniqueId, sbyte* isModule, StdStringPtr pCode, IntPtr* pDocumentInfo)
+        private static void LoadModule(
+            IntPtr pSourceDocumentInfo, 
+            StdStringPtr pSpecifier, 
+            StdStringPtr pResourceName, 
+            StdStringPtr pSourceMapUrl, 
+            ulong* uniqueId,
+            sbyte* isModule,
+            StdStringPtr pCode, 
+            IntPtr* pDocumentInfo)
         {
             string code;
             UniqueDocumentInfo documentInfo;
 
             try
             {
-                code = V8ProxyHelpers.LoadModule(pSourceDocumentInfo, StdString.GetValue(pSpecifier), ModuleCategory.Standard, out documentInfo);
+                code = V8ProxyHelpers.LoadModule(
+                    pSourceDocumentInfo, 
+                    StdString.GetValue(pSpecifier), 
+                    ModuleCategory.Standard, 
+                    out documentInfo);
             }
             catch (Exception exception)
             {

@@ -20,9 +20,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             return Imports.V8SplitProxyManaged_SetMethodTable(pMethodTable);
         }
 
-        public static string V8SplitProxyNative_GetVersion()
+        public static ReadOnlySpan<char> V8SplitProxyNative_GetVersion()
         {
-            return Marshal.PtrToStringUni(Imports.V8SplitProxyNative_GetVersion());
+            return MemoryMarshal.CreateReadOnlySpanFromNullTerminated((char*)Imports.V8SplitProxyNative_GetVersion());
         }
 
         public static void V8Environment_InitializeICU(IntPtr pICUData, uint size)
@@ -42,11 +42,11 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static string StdString_GetValue(StdStringPtr pString)
+        public static ReadOnlySpan<char> StdString_GetValue(StdStringPtr pString)
         {
             int length;
             var pValue = Imports.StdString_GetValue(pString, &length);
-            return Marshal.PtrToStringUni(pValue, length);
+            return new ReadOnlySpan<char>((void*)pValue, length);
         }
 
         public static void StdString_SetValue(StdStringPtr pString, ReadOnlySpan<char> value)
@@ -81,14 +81,14 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.StdStringArray_SetElementCount(pArray, elementCount);
         }
 
-        public static string StdStringArray_GetElement(StdStringArrayPtr pArray, int index)
+        public static ReadOnlySpan<char> StdStringArray_GetElement(StdStringArrayPtr pArray, int index)
         {
             int length;
             var pValue = Imports.StdStringArray_GetElement(pArray, index, &length);
-            return Marshal.PtrToStringUni(pValue, length);
+            return new ReadOnlySpan<char>((void*)pValue, length);
         }
 
-        public static void StdStringArray_SetElement(StdStringArrayPtr pArray, int index, string value)
+        public static void StdStringArray_SetElement(StdStringArrayPtr pArray, int index, ReadOnlySpan<char> value)
         {
             fixed (char* ptr = value)
             {
@@ -351,7 +351,12 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Value_SetHostObject(pV8Value, pObject);
         }
 
-        public static V8ValueType V8Value_Decode(V8ValuePtr pV8Value, out int intValue, out uint uintValue, out double doubleValue, out IntPtr ptrOrHandle)
+        public static V8ValueType V8Value_Decode(
+            V8ValuePtr pV8Value,
+            out int intValue,
+            out uint uintValue,
+            out double doubleValue,
+            out IntPtr ptrOrHandle)
         {
             return Imports.V8Value_Decode(pV8Value, out intValue, out uintValue, out doubleValue, out ptrOrHandle);
         }
@@ -365,11 +370,25 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8CpuProfile methods
 
-        public static void V8CpuProfile_GetInfo(V8CpuProfilePtr pProfile, V8Entity hEntity, out string name, out ulong startTimestamp, out ulong endTimestamp, out int sampleCount, out V8CpuProfileImpl.NodePtr pRootNode)
+        public static void V8CpuProfile_GetInfo(
+            V8CpuProfilePtr pProfile,
+            V8Entity hEntity,
+            out string name,
+            out ulong startTimestamp,
+            out ulong endTimestamp,
+            out int sampleCount,
+            out V8CpuProfileImpl.NodePtr pRootNode)
         {
             using (var nameScope = StdString.CreateScope())
             {
-                Imports.V8CpuProfile_GetInfo(pProfile, hEntity, nameScope.Value, out startTimestamp, out endTimestamp, out sampleCount, out pRootNode);
+                Imports.V8CpuProfile_GetInfo(
+                    pProfile,
+                    hEntity,
+                    nameScope.Value,
+                    out startTimestamp,
+                    out endTimestamp,
+                    out sampleCount,
+                    out pRootNode);
                 name = StdString.GetValue(nameScope.Value);
             }
         }
@@ -379,7 +398,19 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             return Imports.V8CpuProfile_GetSample(pProfile, index, out nodeId, out timestamp);
         }
 
-        public static void V8CpuProfileNode_GetInfo(V8CpuProfileImpl.NodePtr pNode, V8Entity hEntity, out ulong nodeId, out long scriptId, out string scriptName, out string functionName, out string bailoutReason, out long lineNumber, out long columnNumber, out ulong hitCount, out uint hitLineCount, out int childCount)
+        public static void V8CpuProfileNode_GetInfo(
+            V8CpuProfileImpl.NodePtr pNode,
+            V8Entity hEntity,
+            out ulong nodeId,
+            out long scriptId,
+            out string scriptName,
+            out string functionName,
+            out string bailoutReason,
+            out long lineNumber,
+            out long columnNumber,
+            out ulong hitCount,
+            out uint hitLineCount,
+            out int childCount)
         {
             using (var scriptNameScope = StdString.CreateScope())
             {
@@ -387,17 +418,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 {
                     using (var bailoutReasonScope = StdString.CreateScope())
                     {
-                        Imports.V8CpuProfileNode_GetInfo(pNode, hEntity, out nodeId, out scriptId, scriptNameScope.Value, functionNameScope.Value, bailoutReasonScope.Value, out lineNumber, out columnNumber, out hitCount, out hitLineCount, out childCount);
+                        Imports.V8CpuProfileNode_GetInfo(
+                            pNode,
+                            hEntity,
+                            out nodeId,
+                            out scriptId,
+                            scriptNameScope.Value,
+                            functionNameScope.Value,
+                            bailoutReasonScope.Value,
+                            out lineNumber,
+                            out columnNumber,
+                            out hitCount,
+                            out hitLineCount,
+                            out childCount);
                         scriptName = StdString.GetValue(scriptNameScope.Value);
                         functionName = StdString.GetValue(functionNameScope.Value);
                         bailoutReason = StdString.GetValue(bailoutReasonScope.Value);
-
                     }
                 }
             }
         }
 
-        public static bool V8CpuProfileNode_GetHitLines(V8CpuProfileImpl.NodePtr pNode, out int[] lineNumbers, out uint[] hitCounts)
+        public static bool V8CpuProfileNode_GetHitLines(
+            V8CpuProfileImpl.NodePtr pNode, out int[] lineNumbers, out uint[] hitCounts)
         {
             using (var lineNumbersScope = StdInt32Array.CreateScope())
             {
@@ -420,15 +463,30 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8 isolate methods
 
-        public static V8IsolateHandle V8Isolate_Create(string name, int maxNewSpaceSize, int maxOldSpaceSize, double heapExpansionMultiplier, ulong maxArrayBufferAllocation, V8RuntimeFlags flags, int debugPort)
+        public static V8IsolateHandle V8Isolate_Create(
+            ReadOnlySpan<char> name,
+            int maxNewSpaceSize,
+            int maxOldSpaceSize,
+            double heapExpansionMultiplier,
+            ulong maxArrayBufferAllocation,
+            V8RuntimeFlags flags,
+            int debugPort)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
-                return Imports.V8Isolate_Create(nameScope.Value, maxNewSpaceSize, maxOldSpaceSize, heapExpansionMultiplier, maxArrayBufferAllocation, flags, debugPort);
+                return Imports.V8Isolate_Create(
+                    nameScope.Value,
+                    maxNewSpaceSize,
+                    maxOldSpaceSize,
+                    heapExpansionMultiplier,
+                    maxArrayBufferAllocation,
+                    flags,
+                    debugPort);
             }
         }
 
-        public static V8ContextHandle V8Isolate_CreateContext(V8IsolateHandle hIsolate, string name, V8ScriptEngineFlags flags, int debugPort)
+        public static V8ContextHandle V8Isolate_CreateContext(
+            V8IsolateHandle hIsolate, ReadOnlySpan<char> name, V8ScriptEngineFlags flags, int debugPort)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -476,7 +534,14 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Isolate_CancelAwaitDebugger(hIsolate);
         }
 
-        public static V8ScriptHandle V8Isolate_Compile(V8IsolateHandle hIsolate, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code)
+        public static V8ScriptHandle V8Isolate_Compile(
+            V8IsolateHandle hIsolate,
+            ReadOnlySpan<char> resourceName,
+            ReadOnlySpan<char> sourceMapUrl,
+            ulong uniqueId,
+            bool isModule,
+            IntPtr pDocumentInfo,
+            ReadOnlySpan<char> code)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -484,13 +549,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 {
                     using (var codeScope = StdString.CreateScope(code))
                     {
-                        return Imports.V8Isolate_Compile(hIsolate, resourceNameScope.Value, sourceMapUrlScope.Value, uniqueId, isModule, pDocumentInfo, codeScope.Value);
+                        return Imports.V8Isolate_Compile(
+                            hIsolate,
+                            resourceNameScope.Value,
+                            sourceMapUrlScope.Value,
+                            uniqueId,
+                            isModule,
+                            pDocumentInfo,
+                            codeScope.Value);
                     }
                 }
             }
         }
 
-        public static V8ScriptHandle V8Isolate_CompileProducingCache(V8IsolateHandle hIsolate, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
+        public static V8ScriptHandle V8Isolate_CompileProducingCache(
+            V8IsolateHandle hIsolate,
+            ReadOnlySpan<char> resourceName,
+            ReadOnlySpan<char> sourceMapUrl,
+            ulong uniqueId,
+            bool isModule,
+            IntPtr pDocumentInfo,
+            ReadOnlySpan<char> code,
+            V8CacheKind cacheKind,
+            out byte[] cacheBytes)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -500,7 +581,16 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                     {
                         using (var cacheBytesScope = StdByteArray.CreateScope())
                         {
-                            var hScript = Imports.V8Isolate_CompileProducingCache(hIsolate, resourceNameScope.Value, sourceMapUrlScope.Value, uniqueId, isModule, pDocumentInfo, codeScope.Value, cacheKind, cacheBytesScope.Value);
+                            var hScript = Imports.V8Isolate_CompileProducingCache(
+                                hIsolate,
+                                resourceNameScope.Value,
+                                sourceMapUrlScope.Value,
+                                uniqueId,
+                                isModule,
+                                pDocumentInfo,
+                                codeScope.Value,
+                                cacheKind,
+                                cacheBytesScope.Value);
                             cacheBytes = StdByteArray.ToArray(cacheBytesScope.Value);
                             return hScript;
                         }
@@ -509,7 +599,17 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8ScriptHandle V8Isolate_CompileConsumingCache(V8IsolateHandle hIsolate, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
+        public static V8ScriptHandle V8Isolate_CompileConsumingCache(
+            V8IsolateHandle hIsolate,
+            ReadOnlySpan<char> resourceName,
+            ReadOnlySpan<char> sourceMapUrl,
+            ulong uniqueId,
+            bool isModule,
+            IntPtr pDocumentInfo,
+            ReadOnlySpan<char> code,
+            V8CacheKind cacheKind,
+            ReadOnlySpan<byte> cacheBytes,
+            out bool cacheAccepted)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -519,7 +619,17 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                     {
                         using (var cacheBytesScope = StdByteArray.CreateScope(cacheBytes))
                         {
-                            return Imports.V8Isolate_CompileConsumingCache(hIsolate, resourceNameScope.Value, sourceMapUrlScope.Value, uniqueId, isModule, pDocumentInfo, codeScope.Value, cacheKind, cacheBytesScope.Value, out cacheAccepted);
+                            return Imports.V8Isolate_CompileConsumingCache(
+                                hIsolate,
+                                resourceNameScope.Value,
+                                sourceMapUrlScope.Value,
+                                uniqueId,
+                                isModule,
+                                pDocumentInfo,
+                                codeScope.Value,
+                                cacheKind,
+                                cacheBytesScope.Value,
+                                out cacheAccepted);
                         }
                     }
                 }
@@ -546,18 +656,46 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Isolate_SetDisableHeapSizeViolationInterrupt(hIsolate, value);
         }
 
-        public static void V8Isolate_GetHeapStatistics(V8IsolateHandle hIsolate, out ulong totalHeapSize, out ulong totalHeapSizeExecutable, out ulong totalPhysicalSize, out ulong totalAvailableSize, out ulong usedHeapSize, out ulong heapSizeLimit, out ulong totalExternalSize)
+        public static void V8Isolate_GetHeapStatistics(
+            V8IsolateHandle hIsolate,
+            out ulong totalHeapSize,
+            out ulong totalHeapSizeExecutable,
+            out ulong totalPhysicalSize,
+            out ulong totalAvailableSize,
+            out ulong usedHeapSize,
+            out ulong heapSizeLimit,
+            out ulong totalExternalSize)
         {
-            Imports.V8Isolate_GetHeapStatistics(hIsolate, out totalHeapSize, out totalHeapSizeExecutable, out totalPhysicalSize, out totalAvailableSize, out usedHeapSize, out heapSizeLimit, out totalExternalSize);
+            Imports.V8Isolate_GetHeapStatistics(
+                hIsolate,
+                out totalHeapSize,
+                out totalHeapSizeExecutable,
+                out totalPhysicalSize,
+                out totalAvailableSize,
+                out usedHeapSize,
+                out heapSizeLimit,
+                out totalExternalSize);
         }
 
-        public static void V8Isolate_GetStatistics(V8IsolateHandle hIsolate, out ulong scriptCount, out ulong scriptCacheSize, out ulong moduleCount, out ulong[] postedTaskCounts, out ulong[] invokedTaskCounts)
+        public static void V8Isolate_GetStatistics(
+            V8IsolateHandle hIsolate,
+            out ulong scriptCount,
+            out ulong scriptCacheSize,
+            out ulong moduleCount,
+            out ulong[] postedTaskCounts,
+            out ulong[] invokedTaskCounts)
         {
             using (var postedTaskCountsScope = StdUInt64Array.CreateScope())
             {
                 using (var invokedTaskCountsScope = StdUInt64Array.CreateScope())
                 {
-                    Imports.V8Isolate_GetStatistics(hIsolate, out scriptCount, out scriptCacheSize, out moduleCount, postedTaskCountsScope.Value, invokedTaskCountsScope.Value);
+                    Imports.V8Isolate_GetStatistics(
+                        hIsolate,
+                        out scriptCount,
+                        out scriptCacheSize,
+                        out moduleCount,
+                        postedTaskCountsScope.Value,
+                        invokedTaskCountsScope.Value);
                     postedTaskCounts = StdUInt64Array.ToArray(postedTaskCountsScope.Value);
                     invokedTaskCounts = StdUInt64Array.ToArray(invokedTaskCountsScope.Value);
                 }
@@ -569,7 +707,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Isolate_CollectGarbage(hIsolate, exhaustive);
         }
 
-        public static bool V8Isolate_BeginCpuProfile(V8IsolateHandle hIsolate, string name, bool recordSamples)
+        public static bool V8Isolate_BeginCpuProfile(V8IsolateHandle hIsolate, ReadOnlySpan<char> name, bool recordSamples)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -577,7 +715,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Isolate_EndCpuProfile(V8IsolateHandle hIsolate, string name, IntPtr pAction)
+        public static void V8Isolate_EndCpuProfile(V8IsolateHandle hIsolate, ReadOnlySpan<char> name, IntPtr pAction)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -653,7 +791,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Context_AddGlobalItem(V8ContextHandle hContext, string name, object value, bool globalMembers)
+        public static void V8Context_AddGlobalItem<T>(
+            V8ContextHandle hContext, ReadOnlySpan<char> name, T value, bool globalMembers)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -674,7 +813,15 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Context_CancelAwaitDebugger(hContext);
         }
 
-        public static object V8Context_ExecuteCode(V8ContextHandle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, bool evaluate)
+        public static object V8Context_ExecuteCode(
+            V8ContextHandle hContext,
+            ReadOnlySpan<char> resourceName,
+            ReadOnlySpan<char> sourceMapUrl,
+            ulong uniqueId,
+            bool isModule,
+            IntPtr pDocumentInfo,
+            ReadOnlySpan<char> code,
+            bool evaluate)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -684,7 +831,15 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                     {
                         using (var resultScope = V8Value.CreateScope())
                         {
-                            Imports.V8Context_ExecuteCode(hContext, resourceNameScope.Value, sourceMapUrlScope.Value, uniqueId, isModule, pDocumentInfo, codeScope.Value, evaluate, resultScope.Value);
+                            Imports.V8Context_ExecuteCode(
+                                hContext,
+                                resourceNameScope.Value,
+                                sourceMapUrlScope.Value,
+                                uniqueId, isModule,
+                                pDocumentInfo,
+                                codeScope.Value,
+                                evaluate,
+                                resultScope.Value);
                             return V8Value.Get(resultScope.Value);
                         }
                     }
@@ -692,7 +847,14 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8ScriptHandle V8Context_Compile(V8ContextHandle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code)
+        public static V8ScriptHandle V8Context_Compile(
+            V8ContextHandle hContext,
+            ReadOnlySpan<char> resourceName,
+            ReadOnlySpan<char> sourceMapUrl,
+            ulong uniqueId,
+            bool isModule,
+            IntPtr pDocumentInfo,
+            ReadOnlySpan<char> code)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -700,13 +862,29 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 {
                     using (var codeScope = StdString.CreateScope(code))
                     {
-                        return Imports.V8Context_Compile(hContext, resourceNameScope.Value, sourceMapUrlScope.Value, uniqueId, isModule, pDocumentInfo, codeScope.Value);
+                        return Imports.V8Context_Compile(
+                            hContext,
+                            resourceNameScope.Value,
+                            sourceMapUrlScope.Value,
+                            uniqueId,
+                            isModule,
+                            pDocumentInfo,
+                            codeScope.Value);
                     }
                 }
             }
         }
 
-        public static V8ScriptHandle V8Context_CompileProducingCache(V8ContextHandle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, out byte[] cacheBytes)
+        public static V8ScriptHandle V8Context_CompileProducingCache(
+            V8ContextHandle hContext,
+            ReadOnlySpan<char> resourceName,
+            ReadOnlySpan<char> sourceMapUrl,
+            ulong uniqueId,
+            bool isModule,
+            IntPtr pDocumentInfo,
+            ReadOnlySpan<char> code,
+            V8CacheKind cacheKind,
+            out byte[] cacheBytes)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -716,7 +894,16 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                     {
                         using (var cacheBytesScope = StdByteArray.CreateScope())
                         {
-                            var hScript = Imports.V8Context_CompileProducingCache(hContext, resourceNameScope.Value, sourceMapUrlScope.Value, uniqueId, isModule, pDocumentInfo, codeScope.Value, cacheKind, cacheBytesScope.Value);
+                            var hScript = Imports.V8Context_CompileProducingCache(
+                                hContext,
+                                resourceNameScope.Value,
+                                sourceMapUrlScope.Value,
+                                uniqueId,
+                                isModule,
+                                pDocumentInfo,
+                                codeScope.Value,
+                                cacheKind,
+                                cacheBytesScope.Value);
                             cacheBytes = StdByteArray.ToArray(cacheBytesScope.Value);
                             return hScript;
                         }
@@ -725,7 +912,17 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static V8ScriptHandle V8Context_CompileConsumingCache(V8ContextHandle hContext, string resourceName, string sourceMapUrl, ulong uniqueId, bool isModule, IntPtr pDocumentInfo, string code, V8CacheKind cacheKind, byte[] cacheBytes, out bool cacheAccepted)
+        public static V8ScriptHandle V8Context_CompileConsumingCache(
+            V8ContextHandle hContext,
+            ReadOnlySpan<char> resourceName,
+            ReadOnlySpan<char> sourceMapUrl,
+            ulong uniqueId,
+            bool isModule,
+            IntPtr pDocumentInfo,
+            ReadOnlySpan<char> code,
+            V8CacheKind cacheKind,
+            ReadOnlySpan<byte> cacheBytes,
+            out bool cacheAccepted)
         {
             using (var resourceNameScope = StdString.CreateScope(resourceName))
             {
@@ -735,7 +932,17 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                     {
                         using (var cacheBytesScope = StdByteArray.CreateScope(cacheBytes))
                         {
-                            return Imports.V8Context_CompileConsumingCache(hContext, resourceNameScope.Value, sourceMapUrlScope.Value, uniqueId, isModule, pDocumentInfo, codeScope.Value, cacheKind, cacheBytesScope.Value, out cacheAccepted);
+                            return Imports.V8Context_CompileConsumingCache(
+                                hContext,
+                                resourceNameScope.Value,
+                                sourceMapUrlScope.Value,
+                                uniqueId,
+                                isModule,
+                                pDocumentInfo,
+                                codeScope.Value,
+                                cacheKind,
+                                cacheBytesScope.Value,
+                                out cacheAccepted);
                         }
                     }
                 }
@@ -781,25 +988,54 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Context_SetDisableIsolateHeapSizeViolationInterrupt(hContext, value);
         }
 
-        public static void V8Context_GetIsolateHeapStatistics(V8ContextHandle hContext, out ulong totalHeapSize, out ulong totalHeapSizeExecutable, out ulong totalPhysicalSize, out ulong totalAvailableSize, out ulong usedHeapSize, out ulong heapSizeLimit, out ulong totalExternalSize)
+        public static void V8Context_GetIsolateHeapStatistics(
+            V8ContextHandle hContext,
+            out ulong totalHeapSize, 
+            out ulong totalHeapSizeExecutable, 
+            out ulong totalPhysicalSize, 
+            out ulong totalAvailableSize, 
+            out ulong usedHeapSize, 
+            out ulong heapSizeLimit,
+            out ulong totalExternalSize)
         {
-            Imports.V8Context_GetIsolateHeapStatistics(hContext, out totalHeapSize, out totalHeapSizeExecutable, out totalPhysicalSize, out totalAvailableSize, out usedHeapSize, out heapSizeLimit, out totalExternalSize);
+            Imports.V8Context_GetIsolateHeapStatistics(
+                hContext, 
+                out totalHeapSize, 
+                out totalHeapSizeExecutable, 
+                out totalPhysicalSize,
+                out totalAvailableSize,
+                out usedHeapSize, 
+                out heapSizeLimit,
+                out totalExternalSize);
         }
 
-        public static void V8Context_GetIsolateStatistics(V8ContextHandle hContext, out ulong scriptCount, out ulong scriptCacheSize, out ulong moduleCount, out ulong[] postedTaskCounts, out ulong[] invokedTaskCounts)
+        public static void V8Context_GetIsolateStatistics(
+            V8ContextHandle hContext,
+            out ulong scriptCount, 
+            out ulong scriptCacheSize, 
+            out ulong moduleCount, 
+            out ulong[] postedTaskCounts,
+            out ulong[] invokedTaskCounts)
         {
             using (var postedTaskCountsScope = StdUInt64Array.CreateScope())
             {
                 using (var invokedTaskCountsScope = StdUInt64Array.CreateScope())
                 {
-                    Imports.V8Context_GetIsolateStatistics(hContext, out scriptCount, out scriptCacheSize, out moduleCount, postedTaskCountsScope.Value, invokedTaskCountsScope.Value);
+                    Imports.V8Context_GetIsolateStatistics(
+                        hContext, 
+                        out scriptCount,
+                        out scriptCacheSize,
+                        out moduleCount, 
+                        postedTaskCountsScope.Value,
+                        invokedTaskCountsScope.Value);
                     postedTaskCounts = StdUInt64Array.ToArray(postedTaskCountsScope.Value);
                     invokedTaskCounts = StdUInt64Array.ToArray(invokedTaskCountsScope.Value);
                 }
             }
         }
 
-        public static void V8Context_GetStatistics(V8ContextHandle hContext, out ulong scriptCount, out ulong moduleCount, out ulong moduleCacheSize)
+        public static void V8Context_GetStatistics(
+            V8ContextHandle hContext, out ulong scriptCount, out ulong moduleCount, out ulong moduleCacheSize)
         {
             Imports.V8Context_GetStatistics(hContext, out scriptCount, out moduleCount, out moduleCacheSize);
         }
@@ -814,7 +1050,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Context_OnAccessSettingsChanged(hContext);
         }
 
-        public static bool V8Context_BeginCpuProfile(V8ContextHandle hContext, string name, bool recordSamples)
+        public static bool V8Context_BeginCpuProfile(V8ContextHandle hContext, ReadOnlySpan<char> name, bool recordSamples)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -822,7 +1058,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Context_EndCpuProfile(V8ContextHandle hContext, string name, IntPtr pAction)
+        public static void V8Context_EndCpuProfile(V8ContextHandle hContext, ReadOnlySpan<char> name, IntPtr pAction)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -854,7 +1090,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region V8 object methods
 
-        public static object V8Object_GetNamedProperty(V8ObjectHandle hObject, string name)
+        public static object V8Object_GetNamedProperty(V8ObjectHandle hObject, ReadOnlySpan<char> name)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -866,7 +1102,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Object_SetNamedProperty(V8ObjectHandle hObject, string name, object value)
+        public static void V8Object_SetNamedProperty(V8ObjectHandle hObject, ReadOnlySpan<char> name, object value)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -877,7 +1113,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static bool V8Object_DeleteNamedProperty(V8ObjectHandle hObject, string name)
+        public static bool V8Object_DeleteNamedProperty(V8ObjectHandle hObject, ReadOnlySpan<char> name)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -925,7 +1161,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static object V8Object_Invoke(V8ObjectHandle hObject, bool asConstructor, object[] args)
+        public static object V8Object_Invoke(V8ObjectHandle hObject, bool asConstructor, ReadOnlySpan<object> args)
         {
             using (var argsScope = StdV8ValueArray.CreateScope(args))
             {
@@ -937,7 +1173,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static object V8Object_InvokeMethod(V8ObjectHandle hObject, string name, object[] args)
+        public static object V8Object_InvokeMethod(V8ObjectHandle hObject, ReadOnlySpan<char> name, ReadOnlySpan<object> args)
         {
             using (var nameScope = StdString.CreateScope(name))
             {
@@ -952,7 +1188,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             }
         }
 
-        public static void V8Object_GetArrayBufferOrViewInfo(V8ObjectHandle hObject, out V8Object arrayBuffer, out ulong offset, out ulong size, out ulong length)
+        public static void V8Object_GetArrayBufferOrViewInfo(
+            V8ObjectHandle hObject, out V8Object arrayBuffer, out ulong offset, out ulong size, out ulong length)
         {
             using (var arrayBufferScope = V8Value.CreateScope())
             {
@@ -975,7 +1212,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8DebugCallback_ConnectClient(hCallback);
         }
 
-        public static void V8DebugCallback_SendCommand(V8DebugCallbackHandle hCallback, string command)
+        public static void V8DebugCallback_SendCommand(V8DebugCallbackHandle hCallback, ReadOnlySpan<char> command)
         {
             using (var commandScope = StdString.CreateScope(command))
             {
@@ -1015,7 +1252,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region error handling
 
-        public static void HostException_Schedule(string message, object exception)
+        public static void HostException_Schedule(ReadOnlySpan<char> message, object exception)
         {
             using (var messageScope = StdString.CreateScope(message))
             {
@@ -1030,7 +1267,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         #region unit test support
 
-        public static UIntPtr V8UnitTestSupport_GetTextDigest(string value)
+        public static UIntPtr V8UnitTestSupport_GetTextDigest(ReadOnlySpan<char> value)
         {
             using (var valueScope = StdString.CreateScope(value))
             {
@@ -1137,7 +1374,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
                 }
             }
 
-            public static bool TryResolveLibrary(string libraryName, Assembly assembly, DllImportSearchPath? searchPath, out IntPtr nativeLibrary)
+            public static bool TryResolveLibrary(
+                string libraryName, Assembly assembly, DllImportSearchPath? searchPath, out IntPtr nativeLibrary)
             {
                 DllImportResolver? resolveLibrary = ResolveLibrary;
                 if (resolveLibrary != null)

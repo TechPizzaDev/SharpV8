@@ -5,8 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.ClearScript.Util;
+using Microsoft.ClearScript.V8.SplitProxy;
 
 namespace Microsoft.ClearScript.V8
 {
@@ -14,29 +16,61 @@ namespace Microsoft.ClearScript.V8
 
     #region native object helpers
 
-    internal static class StdString
+    internal static unsafe class StdString
     {
-        public static Scope<StdStringPtr, Destructor> CreateScope(string? value = null)
+        public static Scope<StdStringPtr, Destructor> CreateScope(ReadOnlySpan<char> value = default)
         {
-            return InvokeNoThrow(() => new Scope<StdStringPtr, Destructor>(StdString_New(value ?? string.Empty)));
+            StringNewAction action = new() { Value = &value };
+            Invoke(ref action);
+            return new Scope<StdStringPtr, Destructor>(action.Result);
+        }
+
+        private struct StringNewAction : IProxyAction
+        {
+            public ReadOnlySpan<char>* Value;
+            public StdStringPtr Result;
+
+            public void Invoke() => Result = StdString_New(*Value);
+        }
+
+        public static ReadOnlySpan<char> GetSpan(StdStringPtr pString)
+        {
+            ReadOnlySpan<char> span;
+            GetSpanAction action = new() { Ptr = pString, Result = &span };
+            Invoke(ref action);
+            return span;
+        }
+
+        private struct GetSpanAction : IProxyAction
+        {
+            public StdStringPtr Ptr;
+            public ReadOnlySpan<char>* Result;
+
+            public void Invoke() => *Result = StdString_GetValue(Ptr);
         }
 
         public static string GetValue(StdStringPtr pString)
         {
-            return InvokeNoThrow(() => StdString_GetValue(pString));
+            return GetSpan(pString).ToString();
         }
 
-        public static void SetValue(StdStringPtr pString, string value)
+        public static void SetValue(StdStringPtr pString, ReadOnlySpan<char> value)
         {
-            InvokeNoThrow(() => StdString_SetValue(pString, value));
+            StringSetValueAction action = new() { Ptr = pString, Value = &value };
+            Invoke(ref action);
+        }
+
+        private struct StringSetValueAction : IProxyAction
+        {
+            public StdStringPtr Ptr;
+            public ReadOnlySpan<char>* Value;
+
+            public void Invoke() => StdString_SetValue(Ptr, *Value);
         }
 
         public readonly struct Destructor : IScopeAction<StdStringPtr>
         {
-            public void Invoke(StdStringPtr value)
-            {
-                StdString_Delete(value);
-            }
+            public void Invoke(StdStringPtr value) => StdString_Delete(value);
         }
     }
 
@@ -62,72 +96,128 @@ namespace Microsoft.ClearScript.V8
 
     #endregion
 
-    internal static class StdStringArray
+    internal static unsafe class StdStringArray
     {
         public static Scope<StdStringArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => new Scope<StdStringArrayPtr, Destructor>(StdStringArray_New(elementCount)));
+            NewAction action = new() { Count = elementCount };
+            Invoke(ref action);
+            return new Scope<StdStringArrayPtr, Destructor>(action.Result);
         }
 
-        public static Scope<StdStringArrayPtr, Destructor> CreateScope(string[] array)
+        private struct NewAction : IProxyAction
         {
-            return InvokeNoThrow(() => new Scope<StdStringArrayPtr, Destructor>(NewFromArray(array)));
+            public int Count;
+            public StdStringArrayPtr Result;
+
+            public void Invoke() => Result = StdStringArray_New(Count);
+        }
+
+        public static Scope<StdStringArrayPtr, Destructor> CreateScope(ReadOnlySpan<string> array)
+        {
+            NewFromArrayAction action = new() { Value = &array };
+            Invoke(ref action);
+            return new Scope<StdStringArrayPtr, Destructor>(action.Result);
+        }
+
+        private struct NewFromArrayAction : IProxyAction
+        {
+            public ReadOnlySpan<string>* Value;
+            public StdStringArrayPtr Result;
+
+            public void Invoke() => Result = NewFromArray(*Value);
         }
 
         public static int GetElementCount(StdStringArrayPtr pArray)
         {
-            return InvokeNoThrow(() => StdStringArray_GetElementCount(pArray));
+            GetElementCountAction action = new() { Ptr = pArray };
+            Invoke(ref action);
+            return action.Count;
+        }
+
+        private struct GetElementCountAction : IProxyAction
+        {
+            public StdStringArrayPtr Ptr;
+            public int Count;
+
+            public void Invoke() => Count = StdStringArray_GetElementCount(Ptr);
         }
 
         public static void SetElementCount(StdStringArrayPtr pArray, int elementCount)
         {
-            InvokeNoThrow(() => StdStringArray_SetElementCount(pArray, elementCount));
+            SetElementCountAction action = new() { Ptr = pArray, Count = elementCount };
+            Invoke(ref action);
+        }
+
+        private struct SetElementCountAction : IProxyAction
+        {
+            public StdStringArrayPtr Ptr;
+            public int Count;
+
+            public void Invoke() => StdStringArray_SetElementCount(Ptr, Count);
         }
 
         public static string[] ToArray(StdStringArrayPtr pArray)
         {
-            return InvokeNoThrow(() =>
-            {
-                var elementCount = StdStringArray_GetElementCount(pArray);
-                var array = new string[elementCount];
+            ToArrayAction action = new() { Ptr = pArray };
+            Invoke(ref action);
+            return action.Result;
+        }
 
+        private struct ToArrayAction : IProxyAction
+        {
+            public StdStringArrayPtr Ptr;
+            public string[] Result;
+
+            public void Invoke()
+            {
+                var elementCount = StdStringArray_GetElementCount(Ptr);
                 if (elementCount > 0)
                 {
-                    for (var index = 0; index < elementCount; index++)
+                    var array = new string[elementCount];
+                    for (var index = 0; index < array.Length; index++)
                     {
-                        array[index] = StdStringArray_GetElement(pArray, index);
+                        array[index] = StdStringArray_GetElement(Ptr, index).ToString();
                     }
+                    Result = array;
                 }
-
-                return array;
-            });
+                else
+                {
+                    Result = Array.Empty<string>();
+                }
+            }
         }
 
-        public static void CopyFromArray(StdStringArrayPtr pArray, string[] array)
+        public static void CopyFromArray(StdStringArrayPtr pArray, ReadOnlySpan<string> array)
         {
-            InvokeNoThrow(() =>
-            {
-                var elementCount = array?.Length ?? 0;
-                StdStringArray_SetElementCount(pArray, elementCount);
-
-                for (var index = 0; index < elementCount; index++)
-                {
-                    StdStringArray_SetElement(pArray, index, array[index]);
-                }
-            });
+            CopyFromArrayAction action = new() { Ptr = pArray, Array = &array };
+            Invoke(ref action);
         }
 
-        private static StdStringArrayPtr NewFromArray(string[] array)
+        private struct CopyFromArrayAction : IProxyAction
         {
-            var elementCount = array?.Length ?? 0;
-            var pArray = StdStringArray_New(elementCount);
+            public StdStringArrayPtr Ptr;
+            public ReadOnlySpan<string>* Array;
 
-            if (elementCount > 0)
+            public void Invoke()
             {
-                for (var index = 0; index < elementCount; index++)
+                ReadOnlySpan<string> array = *Array;
+                StdStringArray_SetElementCount(Ptr, array.Length);
+
+                for (var index = 0; index < array.Length; index++)
                 {
-                    StdStringArray_SetElement(pArray, index, array[index]);
+                    StdStringArray_SetElement(Ptr, index, array[index]);
                 }
+            }
+        }
+
+        private static StdStringArrayPtr NewFromArray(ReadOnlySpan<string> array)
+        {
+            var pArray = StdStringArray_New(array.Length);
+
+            for (var index = 0; index < array.Length; index++)
+            {
+                StdStringArray_SetElement(pArray, index, array[index]);
             }
 
             return pArray;
@@ -135,10 +225,7 @@ namespace Microsoft.ClearScript.V8
 
         public readonly struct Destructor : IScopeAction<StdStringArrayPtr>
         {
-            public void Invoke(StdStringArrayPtr value)
-            {
-                StdStringArray_Delete(value);
-            }
+            public void Invoke(StdStringArrayPtr value) => StdStringArray_Delete(value);
         }
     }
 
@@ -164,66 +251,125 @@ namespace Microsoft.ClearScript.V8
 
     #endregion
 
-    internal static class StdByteArray
+    internal static unsafe class StdByteArray
     {
         public static Scope<StdByteArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => new Scope<StdByteArrayPtr, Destructor>(StdByteArray_New(elementCount)));
+            NewAction action = new() { Count = elementCount };
+            Invoke(ref action);
+            return new Scope<StdByteArrayPtr, Destructor>(action.Result);
         }
 
-        public static Scope<StdByteArrayPtr, Destructor> CreateScope(byte[] array)
+        private struct NewAction : IProxyAction
         {
-            return InvokeNoThrow(() => new Scope<StdByteArrayPtr, Destructor>(NewFromArray(array)));
+            public int Count;
+            public StdByteArrayPtr Result;
+
+            public void Invoke() => Result = StdByteArray_New(Count);
+        }
+
+        public static Scope<StdByteArrayPtr, Destructor> CreateScope(ReadOnlySpan<byte> array)
+        {
+            NewFromArrayAction action = new() { Value = &array };
+            Invoke(ref action);
+            return new Scope<StdByteArrayPtr, Destructor>(action.Result);
+        }
+
+        private struct NewFromArrayAction : IProxyAction
+        {
+            public ReadOnlySpan<byte>* Value;
+            public StdByteArrayPtr Result;
+
+            public void Invoke() => Result = NewFromArray(*Value);
         }
 
         public static int GetElementCount(StdByteArrayPtr pArray)
         {
-            return InvokeNoThrow(() => StdByteArray_GetElementCount(pArray));
+            GetElementCountAction action = new() { Ptr = pArray };
+            Invoke(ref action);
+            return action.Count;
+        }
+
+        private struct GetElementCountAction : IProxyAction
+        {
+            public StdByteArrayPtr Ptr;
+            public int Count;
+
+            public void Invoke() => Count = StdByteArray_GetElementCount(Ptr);
         }
 
         public static void SetElementCount(StdByteArrayPtr pArray, int elementCount)
         {
-            InvokeNoThrow(() => StdByteArray_SetElementCount(pArray, elementCount));
+            SetElementCountAction action = new() { Ptr = pArray, Count = elementCount };
+            Invoke(ref action);
+        }
+
+        private struct SetElementCountAction : IProxyAction
+        {
+            public StdByteArrayPtr Ptr;
+            public int Count;
+
+            public void Invoke() => StdByteArray_SetElementCount(Ptr, Count);
+        }
+
+        public static Span<byte> GetSpan(StdByteArrayPtr pArray)
+        {
+            Span<byte> span = default;
+            GetSpanAction action = new() { Ptr = pArray, Result = &span };
+            Invoke(ref action);
+            return span;
+        }
+
+        private struct GetSpanAction : IProxyAction
+        {
+            public StdByteArrayPtr Ptr;
+            public Span<byte>* Result;
+
+            public void Invoke()
+            {
+                var elementCount = StdByteArray_GetElementCount(Ptr);
+                if (elementCount > 0)
+                {
+                    *Result = new Span<byte>((void*)StdByteArray_GetData(Ptr), elementCount);
+                }
+            }
         }
 
         public static byte[] ToArray(StdByteArrayPtr pArray)
         {
-            return InvokeNoThrow(() =>
-            {
-                var elementCount = StdByteArray_GetElementCount(pArray);
-                var array = new byte[elementCount];
-
-                if (elementCount > 0)
-                {
-                    Marshal.Copy(StdByteArray_GetData(pArray), array, 0, elementCount);
-                }
-
-                return array;
-            });
+            return GetSpan(pArray).ToArray();
         }
 
-        public static void CopyFromArray(StdByteArrayPtr pArray, byte[] array)
+        public static void CopyFromArray(StdByteArrayPtr pArray, ReadOnlySpan<byte> array)
         {
-            InvokeNoThrow(() =>
-            {
-                var elementCount = array?.Length ?? 0;
-                StdByteArray_SetElementCount(pArray, elementCount);
-
-                if (elementCount > 0)
-                {
-                    Marshal.Copy(array, 0, StdByteArray_GetData(pArray), elementCount);
-                }
-            });
+            CopyFromArrayAction action = new() { Ptr = pArray, Array = &array };
+            Invoke(ref action);
         }
 
-        private static StdByteArrayPtr NewFromArray(byte[] array)
+        private struct CopyFromArrayAction : IProxyAction
         {
-            var elementCount = array?.Length ?? 0;
-            var pArray = StdByteArray_New(elementCount);
+            public StdByteArrayPtr Ptr;
+            public ReadOnlySpan<byte>* Array;
 
-            if (elementCount > 0)
+            public void Invoke()
             {
-                Marshal.Copy(array, 0, StdByteArray_GetData(pArray), elementCount);
+                ReadOnlySpan<byte> array = *Array;
+                StdByteArray_SetElementCount(Ptr, array.Length);
+
+                if (array.Length > 0)
+                {
+                    array.CopyTo(new Span<byte>((void*)StdByteArray_GetData(Ptr), array.Length));
+                }
+            }
+        }
+
+        private static StdByteArrayPtr NewFromArray(ReadOnlySpan<byte> array)
+        {
+            var pArray = StdByteArray_New(array.Length);
+
+            if (array.Length > 0)
+            {
+                array.CopyTo(new Span<byte>((void*)StdByteArray_GetData(pArray), array.Length));
             }
 
             return pArray;
@@ -231,10 +377,7 @@ namespace Microsoft.ClearScript.V8
 
         public readonly struct Destructor : IScopeAction<StdByteArrayPtr>
         {
-            public void Invoke(StdByteArrayPtr value)
-            {
-                StdByteArray_Delete(value);
-            }
+            public void Invoke(StdByteArrayPtr value) => StdByteArray_Delete(value);
         }
     }
 
@@ -246,13 +389,13 @@ namespace Microsoft.ClearScript.V8
 
         private StdByteArrayPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdByteArrayPtr Null = new StdByteArrayPtr(IntPtr.Zero);
+        public static readonly StdByteArrayPtr Null = new(IntPtr.Zero);
 
         public static bool operator ==(StdByteArrayPtr left, StdByteArrayPtr right) => left.bits == right.bits;
         public static bool operator !=(StdByteArrayPtr left, StdByteArrayPtr right) => left.bits != right.bits;
 
         public static explicit operator IntPtr(StdByteArrayPtr ptr) => ptr.bits;
-        public static explicit operator StdByteArrayPtr(IntPtr bits) => new StdByteArrayPtr(bits);
+        public static explicit operator StdByteArrayPtr(IntPtr bits) => new(bits);
 
         public override bool Equals(object? obj) => obj is StdByteArrayPtr ptr && this == ptr;
         public override int GetHashCode() => bits.GetHashCode();
@@ -260,66 +403,125 @@ namespace Microsoft.ClearScript.V8
 
     #endregion
 
-    internal static class StdInt32Array
+    internal static unsafe class StdInt32Array
     {
         public static Scope<StdInt32ArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => new Scope<StdInt32ArrayPtr, Destructor>(StdInt32Array_New(elementCount)));
+            NewAction action = new() { Count = elementCount };
+            Invoke(ref action);
+            return new Scope<StdInt32ArrayPtr, Destructor>(action.Result);
         }
 
-        public static Scope<StdInt32ArrayPtr, Destructor> CreateScope(int[] array)
+        private struct NewAction : IProxyAction
         {
-            return InvokeNoThrow(() => new Scope<StdInt32ArrayPtr, Destructor>(NewFromArray(array)));
+            public int Count;
+            public StdInt32ArrayPtr Result;
+
+            public void Invoke() => Result = StdInt32Array_New(Count);
+        }
+
+        public static Scope<StdInt32ArrayPtr, Destructor> CreateScope(ReadOnlySpan<int> array)
+        {
+            NewFromArrayAction action = new() { Array = &array };
+            Invoke(ref action);
+            return new Scope<StdInt32ArrayPtr, Destructor>(action.Result);
+        }
+
+        private struct NewFromArrayAction : IProxyAction
+        {
+            public ReadOnlySpan<int>* Array;
+            public StdInt32ArrayPtr Result;
+
+            public void Invoke() => Result = NewFromArray(*Array);
         }
 
         public static int GetElementCount(StdInt32ArrayPtr pArray)
         {
-            return InvokeNoThrow(() => StdInt32Array_GetElementCount(pArray));
+            GetElementCountAction action = new() { Ptr = pArray };
+            Invoke(ref action);
+            return action.Count;
+        }
+
+        private struct GetElementCountAction : IProxyAction
+        {
+            public StdInt32ArrayPtr Ptr;
+            public int Count;
+
+            public void Invoke() => Count = StdInt32Array_GetElementCount(Ptr);
         }
 
         public static void SetElementCount(StdInt32ArrayPtr pArray, int elementCount)
         {
-            InvokeNoThrow(() => StdInt32Array_SetElementCount(pArray, elementCount));
+            SetElementCountAction action = new() { Ptr = pArray, Count = elementCount };
+            Invoke(ref action);
+        }
+
+        private struct SetElementCountAction : IProxyAction
+        {
+            public StdInt32ArrayPtr Ptr;
+            public int Count;
+
+            public void Invoke() => StdInt32Array_SetElementCount(Ptr, Count);
+        }
+
+        public static Span<int> GetSpan(StdInt32ArrayPtr pArray)
+        {
+            Span<int> span = default;
+            GetSpanAction action = new() { Ptr = pArray, Result = &span };
+            Invoke(ref action);
+            return span;
+        }
+
+        private struct GetSpanAction : IProxyAction
+        {
+            public StdInt32ArrayPtr Ptr;
+            public Span<int>* Result;
+
+            public void Invoke()
+            {
+                var elementCount = StdInt32Array_GetElementCount(Ptr);
+                if (elementCount > 0)
+                {
+                    *Result = new Span<int>((void*)StdInt32Array_GetData(Ptr), elementCount);
+                }
+            }
         }
 
         public static int[] ToArray(StdInt32ArrayPtr pArray)
         {
-            return InvokeNoThrow(() =>
-            {
-                var elementCount = StdInt32Array_GetElementCount(pArray);
-                var array = new int[elementCount];
-
-                if (elementCount > 0)
-                {
-                    Marshal.Copy(StdInt32Array_GetData(pArray), array, 0, elementCount);
-                }
-
-                return array;
-            });
+            return GetSpan(pArray).ToArray();
         }
 
-        public static void CopyFromArray(StdInt32ArrayPtr pArray, int[] array)
+        public static void CopyFromArray(StdInt32ArrayPtr pArray, ReadOnlySpan<int> array)
         {
-            InvokeNoThrow(() =>
-            {
-                var elementCount = array?.Length ?? 0;
-                StdInt32Array_SetElementCount(pArray, elementCount);
-
-                if (elementCount > 0)
-                {
-                    Marshal.Copy(array, 0, StdInt32Array_GetData(pArray), elementCount);
-                }
-            });
+            CopyFromArrayAction action = new() { Ptr = pArray, Array = &array };
+            Invoke(ref action);
         }
 
-        private static StdInt32ArrayPtr NewFromArray(int[] array)
+        private struct CopyFromArrayAction : IProxyAction
         {
-            var elementCount = array?.Length ?? 0;
-            var pArray = StdInt32Array_New(elementCount);
+            public StdInt32ArrayPtr Ptr;
+            public ReadOnlySpan<int>* Array;
 
-            if (elementCount > 0)
+            public void Invoke()
             {
-                Marshal.Copy(array, 0, StdInt32Array_GetData(pArray), elementCount);
+                ReadOnlySpan<int> array = *Array;
+                StdInt32Array_SetElementCount(Ptr, array.Length);
+
+                if (array.Length > 0)
+                {
+                    array.CopyTo(new Span<int>((void*)StdInt32Array_GetData(Ptr), array.Length));
+                }
+            }
+        }
+
+        private static StdInt32ArrayPtr NewFromArray(ReadOnlySpan<int> array)
+        {
+            var pArray = StdInt32Array_New(array.Length);
+
+            if (array.Length > 0)
+            {
+                array.CopyTo(new Span<int>((void*)StdInt32Array_GetData(pArray), array.Length));
             }
 
             return pArray;
@@ -327,10 +529,7 @@ namespace Microsoft.ClearScript.V8
 
         public readonly struct Destructor : IScopeAction<StdInt32ArrayPtr>
         {
-            public void Invoke(StdInt32ArrayPtr value)
-            {
-                StdInt32Array_Delete(value);
-            }
+            public void Invoke(StdInt32ArrayPtr value) => StdInt32Array_Delete(value);
         }
     }
 
@@ -423,10 +622,7 @@ namespace Microsoft.ClearScript.V8
 
         public readonly struct Destructor : IScopeAction<StdUInt32ArrayPtr>
         {
-            public void Invoke(StdUInt32ArrayPtr value)
-            {
-                StdUInt32Array_Delete(value);
-            }
+            public void Invoke(StdUInt32ArrayPtr value) => StdUInt32Array_Delete(value);
         }
     }
 
@@ -519,10 +715,7 @@ namespace Microsoft.ClearScript.V8
 
         public readonly struct Destructor : IScopeAction<StdUInt64ArrayPtr>
         {
-            public void Invoke(StdUInt64ArrayPtr value)
-            {
-                StdUInt64Array_Delete(value);
-            }
+            public void Invoke(StdUInt64ArrayPtr value) => StdUInt64Array_Delete(value);
         }
     }
 
@@ -615,10 +808,7 @@ namespace Microsoft.ClearScript.V8
 
         public readonly struct Destructor : IScopeAction<StdPtrArrayPtr>
         {
-            public void Invoke(StdPtrArrayPtr value)
-            {
-                StdPtrArray_Delete(value);
-            }
+            public void Invoke(StdPtrArrayPtr value) => StdPtrArray_Delete(value);
         }
     }
 
@@ -630,13 +820,13 @@ namespace Microsoft.ClearScript.V8
 
         private StdPtrArrayPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdPtrArrayPtr Null = new StdPtrArrayPtr(IntPtr.Zero);
+        public static readonly StdPtrArrayPtr Null = new(IntPtr.Zero);
 
         public static bool operator ==(StdPtrArrayPtr left, StdPtrArrayPtr right) => left.bits == right.bits;
         public static bool operator !=(StdPtrArrayPtr left, StdPtrArrayPtr right) => left.bits != right.bits;
 
         public static explicit operator IntPtr(StdPtrArrayPtr ptr) => ptr.bits;
-        public static explicit operator StdPtrArrayPtr(IntPtr bits) => new StdPtrArrayPtr(bits);
+        public static explicit operator StdPtrArrayPtr(IntPtr bits) => new(bits);
 
         public override bool Equals(object? obj) => obj is StdPtrArrayPtr ptr && this == ptr;
         public override int GetHashCode() => bits.GetHashCode();
@@ -644,73 +834,132 @@ namespace Microsoft.ClearScript.V8
 
     #endregion
 
-    internal static class StdV8ValueArray
+    internal static unsafe class StdV8ValueArray
     {
         public static Scope<StdV8ValueArrayPtr, Destructor> CreateScope(int elementCount = 0)
         {
-            return InvokeNoThrow(() => new Scope<StdV8ValueArrayPtr, Destructor>(StdV8ValueArray_New(elementCount)));
+            NewAction action = new() { Count = elementCount };
+            Invoke(ref action);
+            return new Scope<StdV8ValueArrayPtr, Destructor>(action.Result);
         }
 
-        public static Scope<StdV8ValueArrayPtr, Destructor> CreateScope(object[] array)
+        private struct NewAction : IProxyAction
         {
-            return InvokeNoThrow(() => new Scope<StdV8ValueArrayPtr, Destructor>(NewFromArray(array)));
+            public int Count;
+            public StdV8ValueArrayPtr Result;
+
+            public void Invoke() => Result = StdV8ValueArray_New(Count);
+        }
+
+        public static Scope<StdV8ValueArrayPtr, Destructor> CreateScope(ReadOnlySpan<object> array)
+        {
+            NewFromArrayAction action = new() { Array = &array };
+            Invoke(ref action);
+            return new Scope<StdV8ValueArrayPtr, Destructor>(action.Result);
+        }
+
+        private struct NewFromArrayAction : IProxyAction
+        {
+            public ReadOnlySpan<object>* Array;
+            public StdV8ValueArrayPtr Result;
+
+            public void Invoke() => Result = NewFromArray(*Array);
         }
 
         public static int GetElementCount(StdV8ValueArrayPtr pArray)
         {
-            return InvokeNoThrow(() => StdV8ValueArray_GetElementCount(pArray));
+            GetElementCountAction action = new() { Ptr = pArray };
+            Invoke(ref action);
+            return action.Count;
+        }
+
+        private struct GetElementCountAction : IProxyAction
+        {
+            public StdV8ValueArrayPtr Ptr;
+            public int Count;
+
+            public void Invoke() => Count = StdV8ValueArray_GetElementCount(Ptr);
         }
 
         public static void SetElementCount(StdV8ValueArrayPtr pArray, int elementCount)
         {
-            InvokeNoThrow(() => StdV8ValueArray_SetElementCount(pArray, elementCount));
+            SetElementCountAction action = new() { Ptr = pArray, Count = elementCount };
+            Invoke(ref action);
+        }
+
+        private struct SetElementCountAction : IProxyAction
+        {
+            public StdV8ValueArrayPtr Ptr;
+            public int Count;
+
+            public void Invoke() => StdV8ValueArray_SetElementCount(Ptr, Count);
         }
 
         public static object[] ToArray(StdV8ValueArrayPtr pArray)
         {
-            return InvokeNoThrow(() =>
-            {
-                var elementCount = StdV8ValueArray_GetElementCount(pArray);
-                var array = new object[elementCount];
+            ToArrayAction action = new() { Ptr = pArray };
+            Invoke(ref action);
+            return action.Result;
+        }
 
+        private struct ToArrayAction : IProxyAction
+        {
+            public StdV8ValueArrayPtr Ptr;
+            public object[] Result;
+
+            public void Invoke()
+            {
+                var elementCount = StdV8ValueArray_GetElementCount(Ptr);
                 if (elementCount > 0)
                 {
-                    var pElements = StdV8ValueArray_GetData(pArray);
-                    for (var index = 0; index < elementCount; index++)
+                    var array = new object[elementCount];
+                    var pElements = StdV8ValueArray_GetData(Ptr);
+                    for (var index = 0; index < array.Length; index++)
                     {
                         array[index] = V8Value.Get(GetElementPtr(pElements, index));
                     }
+                    Result = array;
                 }
-
-                return array;
-            });
+                else
+                {
+                    Result = Array.Empty<object>();
+                }
+            }
         }
 
-        public static void CopyFromArray(StdV8ValueArrayPtr pArray, object[] array)
+        public static void CopyFromArray(StdV8ValueArrayPtr pArray, ReadOnlySpan<object> array)
         {
-            InvokeNoThrow(() =>
-            {
-                var elementCount = array?.Length ?? 0;
-                StdV8ValueArray_SetElementCount(pArray, elementCount);
+            CopyFromArrayAction action = new() { Ptr = pArray, Array = &array };
+            Invoke(ref action);
+        }
 
-                if (elementCount > 0)
+        private struct CopyFromArrayAction : IProxyAction
+        {
+            public StdV8ValueArrayPtr Ptr;
+            public ReadOnlySpan<object>* Array;
+
+            public void Invoke()
+            {
+                ReadOnlySpan<object> array = *Array;
+                StdV8ValueArray_SetElementCount(Ptr, array.Length);
+
+                if (array.Length > 0)
                 {
-                    var pElements = StdV8ValueArray_GetData(pArray);
-                    for (var index = 0; index < elementCount; index++)
+                    var pElements = StdV8ValueArray_GetData(Ptr);
+                    for (var index = 0; index < array.Length; index++)
                     {
                         V8Value.Set(GetElementPtr(pElements, index), array[index]);
                     }
                 }
-            });
+            }
         }
 
-        private static StdV8ValueArrayPtr NewFromArray(object[] array)
+        private static StdV8ValueArrayPtr NewFromArray(ReadOnlySpan<object> array)
         {
-            var elementCount = array?.Length ?? 0;
-            var pArray = StdV8ValueArray_New(elementCount);
+            var pArray = StdV8ValueArray_New(array.Length);
 
             var pData = StdV8ValueArray_GetData(pArray);
-            for (var index = 0; index < elementCount; index++)
+            for (var index = 0; index < array.Length; index++)
             {
                 V8Value.Set(GetElementPtr(pData, index), array[index]);
             }
@@ -725,10 +974,7 @@ namespace Microsoft.ClearScript.V8
 
         public readonly struct Destructor : IScopeAction<StdV8ValueArrayPtr>
         {
-            public void Invoke(StdV8ValueArrayPtr value)
-            {
-                StdV8ValueArray_Delete(value);
-            }
+            public void Invoke(StdV8ValueArrayPtr value) => StdV8ValueArray_Delete(value);
         }
     }
 
@@ -754,13 +1000,29 @@ namespace Microsoft.ClearScript.V8
 
     #endregion
 
-    public static class V8Value
+    public static unsafe class V8Value
     {
         public const int Size = 16;
 
         public static Scope<V8ValuePtr, Destructor> CreateScope()
         {
-            return InvokeNoThrow(() => new Scope<V8ValuePtr, Destructor>(V8Value_New()));
+            NewAction action = new();
+            Invoke(ref action);
+            return new Scope<V8ValuePtr, Destructor>(action.Value);
+        }
+
+        private struct NewAction : IProxyAction
+        {
+            public V8ValuePtr Value;
+
+            public void Invoke() => Value = V8Value_New();
+        }
+
+        public static Scope<V8ValuePtr, Destructor> CreateScope<T>(T obj)
+        {
+            var scope = CreateScope();
+            Set(scope.Value, obj);
+            return scope;
         }
 
         public static Scope<V8ValuePtr, Destructor> CreateScope(object obj)
@@ -770,23 +1032,115 @@ namespace Microsoft.ClearScript.V8
             return scope;
         }
 
-        public static void Set(V8ValuePtr pV8Value, object obj)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Set<T>(V8ValuePtr pV8Value, T obj)
         {
-            if (obj is Nonexistent)
-            {
-                SetNonexistent(pV8Value);
-                return;
-            }
-
             if (obj == null)
             {
                 SetUndefined(pV8Value);
                 return;
             }
 
-            if (obj is DBNull)
+            Type t = typeof(T);
+
+            if (t == typeof(bool))
             {
-                SetNull(pV8Value);
+                SetBoolean(pV8Value, (bool)(object)obj);
+                return;
+            }
+
+            if (t == typeof(char))
+            {
+                SetNumeric(pV8Value, (char)(object)obj);
+                return;
+            }
+
+            if (t == typeof(sbyte))
+            {
+                SetNumeric(pV8Value, (sbyte)(object)obj);
+                return;
+            }
+
+            if (t == typeof(byte))
+            {
+                SetNumeric(pV8Value, (byte)(object)obj);
+                return;
+            }
+
+            if (t == typeof(short))
+            {
+                SetNumeric(pV8Value, (short)(object)obj);
+                return;
+            }
+
+            if (t == typeof(ushort))
+            {
+                SetNumeric(pV8Value, (ushort)(object)obj);
+                return;
+            }
+
+            if (t == typeof(int))
+            {
+                SetNumeric(pV8Value, (int)(object)obj);
+                return;
+            }
+
+            if (t == typeof(uint))
+            {
+                SetNumeric(pV8Value, (uint)(object)obj);
+                return;
+            }
+
+            if (t == typeof(long))
+            {
+                SetNumeric(pV8Value, (long)(object)obj);
+                return;
+            }
+
+            if (t == typeof(ulong))
+            {
+                SetNumeric(pV8Value, (ulong)(object)obj);
+                return;
+            }
+
+            if (t == typeof(float))
+            {
+                SetNumeric(pV8Value, (float)(object)obj);
+                return;
+            }
+
+            if (t == typeof(double))
+            {
+                SetNumeric(pV8Value, (double)(object)obj);
+                return;
+            }
+
+            if (t == typeof(decimal))
+            {
+                SetNumeric(pV8Value, (double)(decimal)(object)obj);
+                return;
+            }
+
+            if (t == typeof(DateTime))
+            {
+                SetDateTime(pV8Value, (DateTime)(object)obj);
+                return;
+            }
+
+            if (t == typeof(BigInteger))
+            {
+                SetBigInt(pV8Value, (BigInteger)(object)obj);
+                return;
+            }
+
+            SetObject(pV8Value, obj);
+        }
+
+        public static void Set(V8ValuePtr pV8Value, object obj)
+        {
+            if (obj == null)
+            {
+                SetUndefined(pV8Value);
                 return;
             }
 
@@ -895,14 +1249,6 @@ namespace Microsoft.ClearScript.V8
             }
 
             {
-                if (obj is string value)
-                {
-                    SetString(pV8Value, value);
-                    return;
-                }
-            }
-
-            {
                 if (obj is DateTime value)
                 {
                     SetDateTime(pV8Value, value);
@@ -918,12 +1264,33 @@ namespace Microsoft.ClearScript.V8
                 }
             }
 
+            SetObject(pV8Value, obj);
+        }
+
+        private static void SetObject(V8ValuePtr pV8Value, object obj)
+        {
+            if (obj is string str)
             {
-                if (obj is V8Object v8ObjectImpl)
-                {
-                    SetV8Object(pV8Value, v8ObjectImpl);
-                    return;
-                }
+                SetString(pV8Value, str);
+                return;
+            }
+
+            if (obj is V8Object v8Obj)
+            {
+                SetV8Object(pV8Value, v8Obj);
+                return;
+            }
+
+            if (obj is Nonexistent)
+            {
+                SetNonexistent(pV8Value);
+                return;
+            }
+
+            if (obj is DBNull)
+            {
+                SetNull(pV8Value);
+                return;
             }
 
             SetHostObject(pV8Value, obj);
@@ -931,13 +1298,10 @@ namespace Microsoft.ClearScript.V8
 
         public static object Get(V8ValuePtr pV8Value)
         {
-            var intValue = 0;
-            var uintValue = 0U;
-            var doubleValue = 0D;
-            var ptrOrHandle = IntPtr.Zero;
+            DecodeAction action = new() { pV8Value = pV8Value };
+            Invoke(ref action);
 
-            var valueType = InvokeNoThrow(() => V8Value_Decode(pV8Value, out intValue, out uintValue, out doubleValue, out ptrOrHandle));
-            switch (valueType)
+            switch (action.Type)
             {
                 case V8ValueType.Nonexistent:
                     return Nonexistent.Value;
@@ -946,35 +1310,54 @@ namespace Microsoft.ClearScript.V8
                     return DBNull.Value;
 
                 case V8ValueType.Boolean:
-                    return intValue != 0;
+                    return action.intValue != 0;
 
                 case V8ValueType.Number:
-                    return doubleValue;
+                    return action.doubleValue;
 
                 case V8ValueType.Int32:
-                    return intValue;
+                    return action.intValue;
 
                 case V8ValueType.UInt32:
-                    return uintValue;
+                    return action.uintValue;
 
                 case V8ValueType.String:
-                    return Marshal.PtrToStringUni(ptrOrHandle, intValue);
+                    return Marshal.PtrToStringUni(action.ptrOrHandle, action.intValue);
 
                 case V8ValueType.DateTime:
-                    return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) + TimeSpan.FromMilliseconds(doubleValue);
+                    return new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc) + TimeSpan.FromMilliseconds(action.doubleValue);
 
                 case V8ValueType.BigInt:
-                    return TryGetBigInteger(intValue, (int)uintValue, ptrOrHandle, out var result) ? result : null;
+                    return TryGetBigInteger(
+                        action.intValue, (int)action.uintValue, action.ptrOrHandle, out var result) ? result : null;
 
                 case V8ValueType.V8Object:
                     return new V8Object(
-                        (V8ObjectHandle)ptrOrHandle, (V8ValueSubtype)(uintValue & 0xFFFFU), (V8ValueFlags)(uintValue >> 16), intValue);
+                        (V8ObjectHandle)action.ptrOrHandle,
+                        (V8ValueSubtype)(action.uintValue & 0xFFFFU),
+                        (V8ValueFlags)(action.uintValue >> 16),
+                        action.intValue);
 
                 case V8ValueType.HostObject:
-                    return V8ProxyHelpers.GetHostObject(ptrOrHandle);
+                    return V8ProxyHelpers.GetHostObject(action.ptrOrHandle);
 
                 default:
                     return null;
+            }
+        }
+
+        private struct DecodeAction : IProxyAction
+        {
+            public V8ValuePtr pV8Value;
+            public int intValue;
+            public uint uintValue;
+            public double doubleValue;
+            public IntPtr ptrOrHandle;
+            public V8ValueType Type;
+
+            public void Invoke()
+            {
+                Type = V8Value_Decode(pV8Value, out intValue, out uintValue, out doubleValue, out ptrOrHandle);
             }
         }
 
@@ -1007,70 +1390,179 @@ namespace Microsoft.ClearScript.V8
 
         private static void SetNonexistent(V8ValuePtr pV8Value)
         {
-            InvokeNoThrow(() => V8Value_SetNonexistent(pV8Value));
+            SetNonexistentAction action = new() { Ptr = pV8Value };
+            Invoke(ref action);
+        }
+
+        private struct SetNonexistentAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+
+            public void Invoke() => V8Value_SetNonexistent(Ptr);
         }
 
         private static void SetUndefined(V8ValuePtr pV8Value)
         {
-            InvokeNoThrow(() => V8Value_SetUndefined(pV8Value));
+            SetUndefinedAction action = new() { Ptr = pV8Value };
+            Invoke(ref action);
+        }
+
+        private struct SetUndefinedAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+
+            public void Invoke() => V8Value_SetUndefined(Ptr);
         }
 
         private static void SetNull(V8ValuePtr pV8Value)
         {
-            InvokeNoThrow(() => V8Value_SetNull(pV8Value));
+            SetNullAction action = new() { Ptr = pV8Value };
+            Invoke(ref action);
+        }
+
+        private struct SetNullAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+
+            public void Invoke() => V8Value_SetNull(Ptr);
         }
 
         private static void SetBoolean(V8ValuePtr pV8Value, bool value)
         {
-            InvokeNoThrow(() => V8Value_SetBoolean(pV8Value, value));
+            SetBooleanAction action = new() { Ptr = pV8Value, Value = value };
+            Invoke(ref action);
+        }
+
+        private struct SetBooleanAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+            public bool Value;
+
+            public void Invoke() => V8Value_SetBoolean(Ptr, Value);
         }
 
         private static void SetNumeric(V8ValuePtr pV8Value, double value)
         {
-            InvokeNoThrow(() => V8Value_SetNumber(pV8Value, value));
+            SetNumberAction action = new() { Ptr = pV8Value, Value = value };
+            Invoke(ref action);
+        }
+
+        private struct SetNumberAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+            public double Value;
+
+            public void Invoke() => V8Value_SetNumber(Ptr, Value);
         }
 
         private static void SetNumeric(V8ValuePtr pV8Value, int value)
         {
-            InvokeNoThrow(() => V8Value_SetInt32(pV8Value, value));
+            SetInt32Action action = new() { Ptr = pV8Value, Value = value };
+            Invoke(ref action);
+        }
+
+        private struct SetInt32Action : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+            public int Value;
+
+            public void Invoke() => V8Value_SetInt32(Ptr, Value);
         }
 
         private static void SetNumeric(V8ValuePtr pV8Value, uint value)
         {
-            InvokeNoThrow(() => V8Value_SetUInt32(pV8Value, value));
+            SetUInt32Action action = new() { Ptr = pV8Value, Value = value };
+            Invoke(ref action);
         }
 
-        private static void SetString(V8ValuePtr pV8Value, string value)
+        private struct SetUInt32Action : IProxyAction
         {
-            InvokeNoThrow(() => V8Value_SetString(pV8Value, value));
+            public V8ValuePtr Ptr;
+            public uint Value;
+
+            public void Invoke() => V8Value_SetUInt32(Ptr, Value);
+        }
+
+        private static void SetString(V8ValuePtr pV8Value, ReadOnlySpan<char> value)
+        {
+            SetStringAction action = new() { Ptr = pV8Value, Value = &value };
+            Invoke(ref action);
+        }
+
+        private struct SetStringAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+            public ReadOnlySpan<char>* Value;
+
+            public void Invoke() => V8Value_SetString(Ptr, *Value);
         }
 
         private static void SetDateTime(V8ValuePtr pV8Value, DateTime value)
         {
-            InvokeNoThrow(() => V8Value_SetDateTime(pV8Value, (value.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds));
+            double millis = (value.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+            SetDateTimeAction action = new() { Ptr = pV8Value, Value = millis };
+            Invoke(ref action);
+        }
+
+        private struct SetDateTimeAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+            public double Value;
+
+            public void Invoke() => V8Value_SetDateTime(Ptr, Value);
         }
 
         private static void SetBigInt(V8ValuePtr pV8Value, BigInteger value)
         {
-            var signBit = 0;
+            int signBit = 0;
             if (value.Sign < 0)
             {
                 signBit = 1;
                 value = BigInteger.Negate(value);
             }
 
-            var bytes = value.ToByteArray();
-            InvokeNoThrow(() => V8Value_SetBigInt(pV8Value, signBit, bytes));
+            byte[] bytes = value.ToByteArray();
+            ReadOnlySpan<byte> span = bytes;
+
+            SetBigIntAction action = new() { Ptr = pV8Value, SignBit = signBit, Value = &span };
+            Invoke(ref action);
+        }
+
+        private struct SetBigIntAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+            public int SignBit;
+            public ReadOnlySpan<byte>* Value;
+
+            public void Invoke() => V8Value_SetBigInt(Ptr, SignBit, *Value);
         }
 
         private static void SetV8Object(V8ValuePtr pV8Value, V8Object v8ObjectImpl)
         {
-            InvokeNoThrow(() => V8Value_SetV8Object(pV8Value, v8ObjectImpl.Handle, v8ObjectImpl.Subtype, v8ObjectImpl.Flags));
+            SetV8ObjectAction action = new() { Ptr = pV8Value, Value = v8ObjectImpl };
+            Invoke(ref action);
+        }
+
+        private struct SetV8ObjectAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+            public V8Object Value;
+
+            public void Invoke() => V8Value_SetV8Object(Ptr, Value.Handle, Value.Subtype, Value.Flags);
         }
 
         private static void SetHostObject(V8ValuePtr pV8Value, object obj)
         {
-            InvokeNoThrow(() => V8Value_SetHostObject(pV8Value, V8ProxyHelpers.AddRefHostObject(obj)));
+            SetHostObjectAction action = new() { Ptr = pV8Value, Value = V8ProxyHelpers.AddRefHostObject(obj) };
+            Invoke(ref action);
+        }
+
+        private struct SetHostObjectAction : IProxyAction
+        {
+            public V8ValuePtr Ptr;
+            public nint Value;
+
+            public void Invoke() => V8Value_SetHostObject(Ptr, Value);
         }
 
         public readonly struct Destructor : IScopeAction<V8ValuePtr>

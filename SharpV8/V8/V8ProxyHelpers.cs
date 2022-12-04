@@ -34,10 +34,7 @@ namespace Microsoft.ClearScript.V8
 
         public readonly struct HostObjectReleaseAction : IScopeAction<IntPtr>
         {
-            public void Invoke(IntPtr obj)
-            {
-                ReleaseHostObject(obj);
-            }
+            public void Invoke(IntPtr obj) => ReleaseHostObject(obj);
         }
 
         #endregion
@@ -54,44 +51,44 @@ namespace Microsoft.ClearScript.V8
             return (T)GetHostObject(pObject);
         }
 
-        public static object GetHostObjectProperty(IntPtr pObject, string name)
+        public static object GetHostObjectProperty(IntPtr pObject, ReadOnlySpan<char> name)
         {
             return GetHostObjectProperty(GetHostObject(pObject), name);
         }
 
-        public static object GetHostObjectProperty(object obj, string name)
+        public static object GetHostObjectProperty(object obj, ReadOnlySpan<char> name)
         {
-            return ((IDynamic)obj).GetProperty(name);
+            return ((IDynamic)obj).GetProperty(name.ToString());
         }
 
-        public static object GetHostObjectProperty(IntPtr pObject, string name, out bool isCacheable)
+        public static object GetHostObjectProperty(IntPtr pObject, ReadOnlySpan<char> name, out bool isCacheable)
         {
             return GetHostObjectProperty(GetHostObject(pObject), name, out isCacheable);
         }
 
-        public static object GetHostObjectProperty(object obj, string name, out bool isCacheable)
+        public static object GetHostObjectProperty(object obj, ReadOnlySpan<char> name, out bool isCacheable)
         {
-            return ((IDynamic)obj).GetProperty(name, out isCacheable);
+            return ((IDynamic)obj).GetProperty(name.ToString(), out isCacheable);
         }
 
-        public static void SetHostObjectProperty(IntPtr pObject, string name, object value)
+        public static void SetHostObjectProperty(IntPtr pObject, ReadOnlySpan<char> name, object value)
         {
             SetHostObjectProperty(GetHostObject(pObject), name, value);
         }
 
-        public static void SetHostObjectProperty(object obj, string name, object value)
+        public static void SetHostObjectProperty(object obj, ReadOnlySpan<char> name, object value)
         {
-            ((IDynamic)obj).SetProperty(name, value);
+            ((IDynamic)obj).SetProperty(name.ToString(), value);
         }
 
-        public static bool DeleteHostObjectProperty(IntPtr pObject, string name)
+        public static bool DeleteHostObjectProperty(IntPtr pObject, ReadOnlySpan<char> name)
         {
             return DeleteHostObjectProperty(GetHostObject(pObject), name);
         }
 
-        public static bool DeleteHostObjectProperty(object obj, string name)
+        public static bool DeleteHostObjectProperty(object obj, ReadOnlySpan<char> name)
         {
-            return ((IDynamic)obj).DeleteProperty(name);
+            return ((IDynamic)obj).DeleteProperty(name.ToString());
         }
 
         public static string[] GetHostObjectPropertyNames(IntPtr pObject)
@@ -154,14 +151,14 @@ namespace Microsoft.ClearScript.V8
             return ((IDynamic)obj).Invoke(asConstructor, args);
         }
 
-        public static object InvokeHostObjectMethod(IntPtr pObject, string name, object[] args)
+        public static object InvokeHostObjectMethod(IntPtr pObject, ReadOnlySpan<char> name, object[] args)
         {
             return InvokeHostObjectMethod(GetHostObject(pObject), name, args);
         }
 
-        public static object InvokeHostObjectMethod(object obj, string name, object[] args)
+        public static object InvokeHostObjectMethod(object obj, ReadOnlySpan<char> name, object[] args)
         {
-            return ((IDynamic)obj).InvokeMethod(name, args);
+            return ((IDynamic)obj).InvokeMethod(name.ToString(), args);
         }
 
         public static Invocability GetHostObjectInvocability(IntPtr pObject)
