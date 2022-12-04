@@ -30,7 +30,7 @@ namespace Microsoft.ClearScript.Util
             // ReSharper restore StringLiteralTypo
         };
 
-        private static readonly ConcurrentDictionary<Tuple<Type, BindingFlags, Type, ScriptAccess, bool>, Invocability> invocabilityMap = new ConcurrentDictionary<Tuple<Type, BindingFlags, Type, ScriptAccess, bool>, Invocability>();
+        private static readonly ConcurrentDictionary<Tuple<Type, BindingFlags, Type, ScriptAccess, bool>, Invocability> invocabilityMap = new();
 
         private static readonly NumericTypes[] numericConversions =
         {
@@ -1029,7 +1029,7 @@ namespace Microsoft.ClearScript.Util
 
         private sealed class TypeNode
         {
-            private static readonly ConcurrentDictionary<Type, TypeNode> typeNodeMap = new ConcurrentDictionary<Type, TypeNode>();
+            private static readonly ConcurrentDictionary<Type, TypeNode> typeNodeMap = new();
 
             private readonly Type type;
 
@@ -1204,7 +1204,7 @@ namespace Microsoft.ClearScript.Util
         private sealed class BindCandidate<T> : IComparable<BindCandidate<T>> where T : MemberInfo
         {
             private bool paramArray;
-            private readonly List<BindArgCost> argCosts = new List<BindArgCost>();
+            private readonly List<BindArgCost> argCosts = new();
 
             public T Candidate { get; }
 

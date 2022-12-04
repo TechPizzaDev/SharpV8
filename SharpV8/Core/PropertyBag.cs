@@ -36,7 +36,7 @@ namespace Microsoft.ClearScript
         private readonly Dictionary<string, object> dictionary;
         private readonly ICollection<KeyValuePair<string, object>> collection;
         private readonly bool isReadOnly;
-        private readonly ConcurrentWeakSet<ScriptEngine> engineSet = new ConcurrentWeakSet<ScriptEngine>();
+        private readonly ConcurrentWeakSet<ScriptEngine> engineSet = new();
 
         #endregion
 

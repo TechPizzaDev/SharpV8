@@ -9,7 +9,7 @@ namespace Microsoft.ClearScript
     public static class HostSettings
     {
         private static CustomAttributeLoader customAttributeLoader;
-        private static readonly CustomAttributeLoader defaultCustomAttributeLoader = new CustomAttributeLoader();
+        private static readonly CustomAttributeLoader defaultCustomAttributeLoader = new();
 
         /// <summary>
         /// Enables or disables assembly table usage.

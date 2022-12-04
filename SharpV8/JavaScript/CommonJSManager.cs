@@ -12,8 +12,8 @@ namespace Microsoft.ClearScript.JavaScript
     {
         private readonly ScriptEngine engine;
         private readonly ScriptObject createModule;
-        private readonly List<Module> moduleCache = new List<Module>();
-        private static readonly DocumentInfo createModuleInfo = new DocumentInfo("CommonJS-createModule [internal]");
+        private readonly List<Module> moduleCache = new();
+        private static readonly DocumentInfo createModuleInfo = new("CommonJS-createModule [internal]");
 
         public CommonJSManager(ScriptEngine engine)
         {

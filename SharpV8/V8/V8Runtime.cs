@@ -18,10 +18,10 @@ namespace Microsoft.ClearScript.V8
         private static readonly IUniqueNameManager nameManager = new UniqueNameManager();
 
         private DocumentSettings documentSettings;
-        private readonly DocumentSettings defaultDocumentSettings = new DocumentSettings();
+        private readonly DocumentSettings defaultDocumentSettings = new();
 
         private readonly V8IsolateProxy proxy;
-        private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag disposedFlag = new();
 
         #endregion
 

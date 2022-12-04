@@ -9,7 +9,7 @@ namespace Microsoft.ClearScript.Util
         where THolder : class
         where TValue : class
     {
-        private readonly ConditionalWeakTable<THolder, TValue> table = new ConditionalWeakTable<THolder, TValue>();
+        private readonly ConditionalWeakTable<THolder, TValue> table = new();
 
         public TValue Get(THolder holder)
         {

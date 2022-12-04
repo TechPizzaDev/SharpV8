@@ -40,7 +40,7 @@ namespace Microsoft.ClearScript
 
         private sealed class ScriptDocument : DocumentCategory
         {
-            public static readonly ScriptDocument Instance = new ScriptDocument();
+            public static readonly ScriptDocument Instance = new();
 
             private ScriptDocument()
             {

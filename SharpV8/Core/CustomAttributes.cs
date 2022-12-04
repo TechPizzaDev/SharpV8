@@ -11,8 +11,8 @@ namespace Microsoft.ClearScript
 {
     internal static partial class CustomAttributes
     {
-        private static readonly ConcurrentDictionary<(ICustomAttributeProvider, Type), object> keyCache = new ConcurrentDictionary<(ICustomAttributeProvider, Type), object>();
-        private static readonly ConditionalWeakTable<object, object> attributeCache = new ConditionalWeakTable<object, object>();
+        private static readonly ConcurrentDictionary<(ICustomAttributeProvider, Type), object> keyCache = new();
+        private static readonly ConditionalWeakTable<object, object> attributeCache = new();
 
         public static T[] GetOrLoad<T>(ICustomAttributeProvider resource, bool inherit) where T : Attribute
         {

@@ -32,7 +32,7 @@ namespace Microsoft.ClearScript.V8
     {
         #region data
 
-        private static readonly DocumentInfo initScriptInfo = new DocumentInfo(MiscHelpers.FormatInvariant("{0} [internal]", nameof(V8ScriptEngine)));
+        private static readonly DocumentInfo initScriptInfo = new(MiscHelpers.FormatInvariant("{0} [internal]", nameof(V8ScriptEngine)));
 
         private readonly V8Runtime runtime;
         private readonly bool usingPrivateRuntime;
@@ -40,7 +40,7 @@ namespace Microsoft.ClearScript.V8
         private readonly V8ScriptEngineFlags engineFlags;
         private readonly V8ContextProxy proxy;
         private readonly V8ScriptItem script;
-        private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag disposedFlag = new();
 
         private const int continuationInterval = 2000;
         private bool inContinuationTimerScope;
@@ -1691,7 +1691,7 @@ namespace Microsoft.ClearScript.V8
         public sealed class JsonHelper : JsonConverter
         {
             private readonly ScriptObject stringify;
-            private readonly HashSet<object> cycleDetectionSet = new HashSet<object>();
+            private readonly HashSet<object> cycleDetectionSet = new();
 
             /// <exclude/>
             public JsonHelper(V8ScriptEngine engine)

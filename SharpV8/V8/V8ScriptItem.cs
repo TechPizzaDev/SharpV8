@@ -15,7 +15,7 @@ namespace Microsoft.ClearScript.V8
         private readonly V8ScriptEngine engine;
         private readonly V8Object target;
         private V8ScriptItem holder;
-        private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag disposedFlag = new();
 
         private V8ScriptItem(V8ScriptEngine engine, V8Object target)
         {

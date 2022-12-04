@@ -24,10 +24,10 @@ namespace Microsoft.ClearScript
         private bool exposeHostObjectStaticMembers;
 
         private DocumentSettings documentSettings;
-        private readonly DocumentSettings defaultDocumentSettings = new DocumentSettings();
+        private readonly DocumentSettings defaultDocumentSettings = new();
 
         private static readonly IUniqueNameManager nameManager = new UniqueNameManager();
-        private static readonly object nullHostObjectProxy = new object();
+        private static readonly object nullHostObjectProxy = new();
         [ThreadStatic] private static ScriptEngine currentEngine;
 
         #endregion
@@ -1446,7 +1446,7 @@ namespace Microsoft.ClearScript
 
         #region extension method table
 
-        private static readonly ExtensionMethodTable emptyExtensionMethodTable = new ExtensionMethodTable();
+        private static readonly ExtensionMethodTable emptyExtensionMethodTable = new();
 
         private readonly ExtensionMethodTable realExtensionMethodTable;
         private ExtensionMethodTable extensionMethodTable;
@@ -1476,7 +1476,7 @@ namespace Microsoft.ClearScript
 
         #region bind cache
 
-        private readonly Dictionary<BindSignature, object> bindCache = new Dictionary<BindSignature, object>();
+        private readonly Dictionary<BindSignature, object> bindCache = new();
 
         internal void CacheBindResult(BindSignature signature, object result)
         {
@@ -1492,8 +1492,8 @@ namespace Microsoft.ClearScript
 
         #region host item cache
 
-        private readonly ConditionalWeakTable<object, List<WeakReference>> hostObjectHostItemCache = new ConditionalWeakTable<object, List<WeakReference>>();
-        private readonly ConditionalWeakTable<Type, List<WeakReference>> hostTypeHostItemCache = new ConditionalWeakTable<Type, List<WeakReference>>();
+        private readonly ConditionalWeakTable<object, List<WeakReference>> hostObjectHostItemCache = new();
+        private readonly ConditionalWeakTable<Type, List<WeakReference>> hostTypeHostItemCache = new();
 
         internal HostItem GetOrCreateHostItem(HostTarget target, HostItemFlags flags, HostItem.CreateFunc createHostItem)
         {
@@ -1643,11 +1643,11 @@ namespace Microsoft.ClearScript
 
         #region shared host target member data
 
-        internal readonly HostTargetMemberData SharedHostMethodMemberData = new HostTargetMemberData();
-        internal readonly HostTargetMemberData SharedHostIndexedPropertyMemberData = new HostTargetMemberData();
-        internal readonly HostTargetMemberData SharedScriptMethodMemberData = new HostTargetMemberData();
+        internal readonly HostTargetMemberData SharedHostMethodMemberData = new();
+        internal readonly HostTargetMemberData SharedHostIndexedPropertyMemberData = new();
+        internal readonly HostTargetMemberData SharedScriptMethodMemberData = new();
 
-        private readonly ConditionalWeakTable<Type, List<WeakReference>> sharedHostObjectMemberDataCache = new ConditionalWeakTable<Type, List<WeakReference>>();
+        private readonly ConditionalWeakTable<Type, List<WeakReference>> sharedHostObjectMemberDataCache = new();
 
         internal HostTargetMemberData GetSharedHostObjectMemberData(HostObject target, Type targetAccessContext, ScriptAccess targetDefaultAccess, HostTargetFlags targetFlags)
         {
@@ -1698,7 +1698,7 @@ namespace Microsoft.ClearScript
 
         #region event connections
 
-        private readonly EventConnectionMap eventConnectionMap = new EventConnectionMap();
+        private readonly EventConnectionMap eventConnectionMap = new();
 
         internal EventConnection CreateEventConnection(Type handlerType, object source, EventInfo eventInfo, Delegate handler)
         {
@@ -1793,8 +1793,8 @@ namespace Microsoft.ClearScript
 
         private sealed class EventConnectionMap : IDisposable
         {
-            private readonly HashSet<EventConnection> map = new HashSet<EventConnection>();
-            private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+            private readonly HashSet<EventConnection> map = new();
+            private InterlockedOneWayFlag disposedFlag = new();
 
             internal EventConnection Create(ScriptEngine engine, Type handlerType, object source, EventInfo eventInfo, Delegate handler)
             {

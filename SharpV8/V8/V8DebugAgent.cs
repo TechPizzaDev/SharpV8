@@ -29,7 +29,7 @@ namespace Microsoft.ClearScript.V8
         private TcpListener tcpListener;
         private V8DebugClient activeClient;
 
-        private InterlockedOneWayFlag disposedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag disposedFlag = new();
 
         #endregion
 

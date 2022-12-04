@@ -13,7 +13,7 @@ namespace Microsoft.ClearScript.Util
 
     internal sealed class UniqueNameManager : IUniqueNameManager
     {
-        private readonly Dictionary<string, uint> map = new Dictionary<string, uint>();
+        private readonly Dictionary<string, uint> map = new();
 
         #region IUniqueNameManager implementation
 
@@ -35,7 +35,7 @@ namespace Microsoft.ClearScript.Util
 
     internal sealed class UniqueFileNameManager : IUniqueNameManager
     {
-        private readonly Dictionary<string, uint> map = new Dictionary<string, uint>();
+        private readonly Dictionary<string, uint> map = new();
 
         #region IUniqueNameManager implementation
 

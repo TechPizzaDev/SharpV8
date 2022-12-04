@@ -25,7 +25,7 @@ namespace Microsoft.ClearScript
     public class HostTypeCollection : PropertyBag
     {
         private static readonly Predicate<Type> defaultFilter = type => true;
-        private static readonly TypeComparer typeComparer = new TypeComparer();
+        private static readonly TypeComparer typeComparer = new();
 
         /// <summary>
         /// Initializes a new host type collection.

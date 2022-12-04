@@ -8,8 +8,8 @@ namespace Microsoft.ClearScript.Util
 {
     internal sealed class ConcurrentWeakSet<T> where T : class
     {
-        private readonly object dataLock = new object();
-        private List<WeakReference> weakRefs = new List<WeakReference>();
+        private readonly object dataLock = new();
+        private List<WeakReference> weakRefs = new();
 
         public int Count => GetItems().Count;
 

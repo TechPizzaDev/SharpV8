@@ -20,7 +20,7 @@ namespace Microsoft.ClearScript
     {
         #region data
 
-        private static readonly ConcurrentDictionary<BindSignature, object> coreBindCache = new ConcurrentDictionary<BindSignature, object>();
+        private static readonly ConcurrentDictionary<BindSignature, object> coreBindCache = new();
         private static long coreBindCount;
 
         #endregion
@@ -558,7 +558,7 @@ namespace Microsoft.ClearScript
         {
             private readonly object target;
             private readonly string name;
-            private readonly List<object> results = new List<object>();
+            private readonly List<object> results = new();
 
             public MethodBindingVisitor(object target, string name, Expression expression)
             {

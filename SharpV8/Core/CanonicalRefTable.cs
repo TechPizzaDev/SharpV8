@@ -10,7 +10,7 @@ namespace Microsoft.ClearScript
 {
     internal static class CanonicalRefTable
     {
-        private static readonly Dictionary<Type, ICanonicalRefMap> table = new Dictionary<Type, ICanonicalRefMap>();
+        private static readonly Dictionary<Type, ICanonicalRefMap> table = new();
 
         public static object GetCanonicalRef(object obj)
         {
@@ -82,7 +82,7 @@ namespace Microsoft.ClearScript
 
         private sealed class CanonicalRefMap<T> : CanonicalRefMapBase
         {
-            private readonly Dictionary<T, WeakReference> map = new Dictionary<T, WeakReference>();
+            private readonly Dictionary<T, WeakReference> map = new();
             private DateTime lastCompactionTime = DateTime.MinValue;
 
             private object GetRefInternal(object obj)

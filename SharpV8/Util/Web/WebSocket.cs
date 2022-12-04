@@ -22,10 +22,10 @@ namespace Microsoft.ClearScript.Util.Web
         private readonly bool isServerSocket;
 
         private readonly Random random = MiscHelpers.CreateSeededRandom();
-        private readonly SemaphoreSlim receiveSemaphore = new SemaphoreSlim(1);
-        private readonly SemaphoreSlim sendSemaphore = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim receiveSemaphore = new(1);
+        private readonly SemaphoreSlim sendSemaphore = new(1);
 
-        private InterlockedOneWayFlag closedFlag = new InterlockedOneWayFlag();
+        private InterlockedOneWayFlag closedFlag = new();
 
         #endregion
 

@@ -26,7 +26,7 @@ namespace Microsoft.ClearScript
             ".." + Path.AltDirectorySeparatorChar,
         };
 
-        private readonly List<Document> cache = new List<Document>();
+        private readonly List<Document> cache = new();
         private long fileCheckCount;
         private long webCheckCount;
 

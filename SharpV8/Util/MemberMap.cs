@@ -11,9 +11,9 @@ namespace Microsoft.ClearScript.Util
 {
     internal static class MemberMap
     {
-        private static readonly MemberMapImpl<Field> fieldMap = new MemberMapImpl<Field>();
-        private static readonly MemberMapImpl<Method> methodMap = new MemberMapImpl<Method>();
-        private static readonly MemberMapImpl<Property> propertyMap = new MemberMapImpl<Property>();
+        private static readonly MemberMapImpl<Field> fieldMap = new();
+        private static readonly MemberMapImpl<Method> methodMap = new();
+        private static readonly MemberMapImpl<Property> propertyMap = new();
 
         public static FieldInfo GetField(string name)
         {
@@ -293,7 +293,7 @@ namespace Microsoft.ClearScript.Util
 
         private sealed class MemberMapImpl<T> : MemberMapBase where T : MemberInfo
         {
-            private readonly Dictionary<string, WeakReference> map = new Dictionary<string, WeakReference>();
+            private readonly Dictionary<string, WeakReference> map = new();
             private DateTime lastCompactionTime = DateTime.MinValue;
 
             public T GetMember(string name)
