@@ -2,28 +2,26 @@
 // Licensed under the MIT license.
 
 using System.Numerics;
+using System.Threading;
 using BenchmarkDotNet.Attributes;
+using Microsoft.ClearScript.V8;
 
 namespace SharpV8.Benchmarks
 {
     public class CallMethodWithVector : V8ScriptEngineBench
     {
-        [Params(1, 1000)]
-        public object Count { get; set; }
+        [Params(/*1,*/ 1000)]
+        public object Count { get; set; } = new();
 
         public override void Setup()
         {
             base.Setup();
+        }
 
-            Engine.AddHostObject("entity", new Entity());
-            Engine.AddHostType(typeof(Vector2));
-            Engine.AddHostType(typeof(Vector3));
-            Engine.AddHostType(typeof(Vector4));
-
-            Engine.Execute(
-                @"function runVec2(count) { let v = new Vector2(1, 2);       for(let i = 0; i < count; i++) entity.SetPosition(v); }" +
-                @"function runVec3(count) { let v = new Vector3(1, 2, 3);    for(let i = 0; i < count; i++) entity.SetPosition(v); }" +
-                @"function runVec4(count) { let v = new Vector4(1, 2, 3, 4); for(let i = 0; i < count; i++) entity.SetPosition(v); }");
+        [Benchmark]
+        public void Vec1()
+        {
+            Engine.Invoke("runVec1", Count, 1.234);
         }
 
         [Benchmark]
@@ -42,21 +40,6 @@ namespace SharpV8.Benchmarks
         public void Vec4()
         {
             Engine.Invoke("runVec4", Count);
-        }
-
-        public class Entity
-        {
-            public void SetPosition(Vector2 vec)
-            {
-            }
-
-            public void SetPosition(Vector3 vec)
-            {
-            }
-
-            public void SetPosition(Vector4 vec)
-            {
-            }
         }
     }
 }
