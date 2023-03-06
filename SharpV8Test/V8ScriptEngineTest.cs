@@ -2686,43 +2686,43 @@ namespace Microsoft.ClearScript.Test
             Assert.IsTrue((bool)engine.Evaluate("typeof foo.ToString === 'function'"));
 
             engine.Script.foo = Enumerable.Range(0, 5).ToArray();
-            Assert.AreEqual("object", engine.Evaluate("typeof foo"));
-            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'object'"));
+            Assert.AreEqual("function", engine.Evaluate("typeof foo"));
+            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'function'"));
 
             engine.Script.foo = new ArrayList();
-            Assert.AreEqual("object", engine.Evaluate("typeof foo"));
-            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'object'"));
+            Assert.AreEqual("function", engine.Evaluate("typeof foo"));
+            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'function'"));
 
             engine.Script.foo = new BitArray(100);
-            Assert.AreEqual("object", engine.Evaluate("typeof foo"));
-            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'object'"));
+            Assert.AreEqual("function", engine.Evaluate("typeof foo"));
+            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'function'"));
 
             engine.Script.foo = new Hashtable();
-            Assert.AreEqual("object", engine.Evaluate("typeof foo"));
-            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'object'"));
+            Assert.AreEqual("function", engine.Evaluate("typeof foo"));
+            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'function'"));
 
             engine.Script.foo = new Queue();
             Assert.AreEqual("object", engine.Evaluate("typeof foo"));
             Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'object'"));
 
             engine.Script.foo = new SortedList();
-            Assert.AreEqual("object", engine.Evaluate("typeof foo"));
-            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'object'"));
+            Assert.AreEqual("function", engine.Evaluate("typeof foo"));
+            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'function'"));
 
             engine.Script.foo = new Stack();
             Assert.AreEqual("object", engine.Evaluate("typeof foo"));
             Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'object'"));
 
             engine.Script.foo = new List<string>();
-            Assert.AreEqual("object", engine.Evaluate("typeof foo"));
-            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'object'"));
+            Assert.AreEqual("function", engine.Evaluate("typeof foo"));
+            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'function'"));
             Assert.AreEqual("function", engine.Evaluate("typeof foo.Item"));
             Assert.IsTrue((bool)engine.Evaluate("typeof foo.Item === 'function'"));
 
             engine.Script.foo = new ExpandoObject();
             engine.Script.host = new HostFunctions();
-            Assert.AreEqual("object", engine.Evaluate("typeof foo"));
-            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'object'"));
+            Assert.AreEqual("function", engine.Evaluate("typeof foo"));
+            Assert.IsTrue((bool)engine.Evaluate("typeof foo === 'function'"));
             Assert.AreEqual("object", engine.Evaluate("typeof host.toStaticType(foo)"));
             Assert.IsTrue((bool)engine.Evaluate("typeof host.toStaticType(foo) === 'object'"));
         }
@@ -3423,7 +3423,7 @@ namespace Microsoft.ClearScript.Test
                 using (var foreignEngine = runtime.CreateScriptEngine())
                 {
                     engine.Script.foreignFunction = foreignEngine.Script.Function;
-                    Assert.AreEqual("object", engine.Evaluate("typeof foreignFunction"));
+                    Assert.AreEqual("function", engine.Evaluate("typeof foreignFunction"));
                     Assert.AreEqual("function Function() { [native code] }", engine.Evaluate("foreignFunction.toString()"));
 
                     engine.Dispose();

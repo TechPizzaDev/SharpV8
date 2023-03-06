@@ -36,57 +36,11 @@ index d3e35d6ec5..2d2fb458fe 100644
  
    /**
     * Initialize the ICU library bundled with V8. The embedder should only
-diff --git a/include/v8-template.h b/include/v8-template.h
-index 669012a981..b19ea9c824 100644
---- a/include/v8-template.h
-+++ b/include/v8-template.h
-@@ -937,6 +937,9 @@ class V8_EXPORT ObjectTemplate : public Template {
-    */
-   void SetImmutableProto();
- 
-+  bool IsHostDelegate() const;
-+  void SetHostDelegate();
-+
-   /**
-    * Support for TC39 "dynamic code brand checks" proposal.
-    *
-diff --git a/src/api/api-natives.cc b/src/api/api-natives.cc
-index 8624c279d6..69bc20b334 100644
---- a/src/api/api-natives.cc
-+++ b/src/api/api-natives.cc
-@@ -443,6 +443,9 @@ MaybeHandle<JSObject> InstantiateObject(Isolate* isolate,
-   if (info->immutable_proto()) {
-     JSObject::SetImmutableProto(object);
-   }
-+  else if (info->host_delegate()) {
-+    JSObject::SetHostDelegate(object);
-+  }
-   if (!is_prototype) {
-     // Keep prototypes in slow-mode. Let them be lazily turned fast later on.
-     // TODO(dcarney): is this necessary?
 diff --git a/src/api/api.cc b/src/api/api.cc
-index 14b7c541b3..8cc455d41c 100644
+index 14b7c541b3..662b95e30a 100644
 --- a/src/api/api.cc
 +++ b/src/api/api.cc
-@@ -1923,6 +1923,17 @@ void ObjectTemplate::SetImmutableProto() {
-   self->set_immutable_proto(true);
- }
- 
-+bool ObjectTemplate::IsHostDelegate() const {
-+  return Utils::OpenHandle(this)->host_delegate();
-+}
-+
-+void ObjectTemplate::SetHostDelegate() {
-+  auto self = Utils::OpenHandle(this);
-+  i::Isolate* isolate = self->GetIsolate();
-+  ENTER_V8_NO_SCRIPT_NO_EXCEPTION(isolate);
-+  self->set_host_delegate(true);
-+}
-+
- bool ObjectTemplate::IsCodeLike() const {
-   return Utils::OpenHandle(this)->code_like();
- }
-@@ -6308,6 +6319,10 @@ bool v8::V8::InitializeICU(const char* icu_data_file) {
+@@ -6308,6 +6308,10 @@ bool v8::V8::InitializeICU(const char* icu_data_file) {
    return i::InitializeICU(icu_data_file);
  }
  
@@ -97,22 +51,6 @@ index 14b7c541b3..8cc455d41c 100644
  bool v8::V8::InitializeICUDefaultLocation(const char* exec_path,
                                            const char* icu_data_file) {
    return i::InitializeICUDefaultLocation(exec_path, icu_data_file);
-diff --git a/src/ast/ast.cc b/src/ast/ast.cc
-index 34a26d9c26..f995a2fc64 100644
---- a/src/ast/ast.cc
-+++ b/src/ast/ast.cc
-@@ -883,8 +883,11 @@ static bool MatchLiteralCompareTypeof(Expression* left, Token::Value op,
-   return false;
- }
- 
-+static bool disable_literal_compare_typeof_detection = true;
-+
- bool CompareOperation::IsLiteralCompareTypeof(Expression** expr,
-                                               Literal** literal) {
-+  if (disable_literal_compare_typeof_detection) return false;
-   return MatchLiteralCompareTypeof(left_, op(), right_, expr, literal) ||
-          MatchLiteralCompareTypeof(right_, op(), left_, expr, literal);
- }
 diff --git a/src/base/platform/platform.h b/src/base/platform/platform.h
 index 88d35540b1..20863d6f5b 100644
 --- a/src/base/platform/platform.h
@@ -140,46 +78,6 @@ index 417e6f1dfa..108dc20972 100644
            .IsNothing()) {
      // The evaluation of async module can not throwing a JavaScript observable
      // exception.
-diff --git a/src/codegen/code-stub-assembler.cc b/src/codegen/code-stub-assembler.cc
-index a069126f94..51df105d7c 100644
---- a/src/codegen/code-stub-assembler.cc
-+++ b/src/codegen/code-stub-assembler.cc
-@@ -1874,6 +1874,10 @@ TNode<Uint32T> CodeStubAssembler::LoadMapBitField3(TNode<Map> map) {
-   return LoadObjectField<Uint32T>(map, Map::kBitField3Offset);
- }
- 
-+TNode<Uint32T> CodeStubAssembler::LoadMapHostBitField(TNode<Map> map) {
-+  return LoadObjectField<Uint32T>(map, Map::kHostBitFieldOffset);
-+}
-+
- TNode<Uint16T> CodeStubAssembler::LoadMapInstanceType(TNode<Map> map) {
-   return LoadObjectField<Uint16T>(map, Map::kInstanceTypeOffset);
- }
-@@ -13832,6 +13836,11 @@ TNode<String> CodeStubAssembler::Typeof(TNode<Object> value) {
- 
-   GotoIf(InstanceTypeEqual(instance_type, ODDBALL_TYPE), &if_oddball);
- 
-+  Label resume_default(this);
-+  GotoIfNot(Word32And(LoadMapBitField(map), Int32Constant(Map::Bits1::HasNamedInterceptorBit::kMask)), &resume_default);
-+  Branch(Word32And(LoadMapHostBitField(map), Int32Constant(Map::HostBits::IsHostDelegateBit::kMask)), &return_function, &return_object);
-+  BIND(&resume_default);
-+
-   TNode<Int32T> callable_or_undetectable_mask =
-       Word32And(LoadMapBitField(map),
-                 Int32Constant(Map::Bits1::IsCallableBit::kMask |
-diff --git a/src/codegen/code-stub-assembler.h b/src/codegen/code-stub-assembler.h
-index 6d654b5d5f..27cc45dded 100644
---- a/src/codegen/code-stub-assembler.h
-+++ b/src/codegen/code-stub-assembler.h
-@@ -1437,6 +1437,8 @@ class V8_EXPORT_PRIVATE CodeStubAssembler
-   TNode<Int32T> LoadMapBitField2(TNode<Map> map);
-   // Load bit field 3 of a map.
-   TNode<Uint32T> LoadMapBitField3(TNode<Map> map);
-+  // Load host bit field of a map.
-+  TNode<Uint32T> LoadMapHostBitField(TNode<Map> map);
-   // Load the instance type of a map.
-   TNode<Uint16T> LoadMapInstanceType(TNode<Map> map);
-   // Load the ElementsKind of a map.
 diff --git a/src/common/globals.h b/src/common/globals.h
 index 4e6994294a..9be7a385c1 100644
 --- a/src/common/globals.h
@@ -300,18 +198,6 @@ index 2b4af70bc0..2607f22922 100644
    real_jslimit_ = SimulatorStack::JsLimitFromCLimit(isolate, limit);
    set_jslimit(SimulatorStack::JsLimitFromCLimit(isolate, limit));
    real_climit_ = limit;
-diff --git a/src/heap/factory.cc b/src/heap/factory.cc
-index bcb2f6475e..67d911bc84 100644
---- a/src/heap/factory.cc
-+++ b/src/heap/factory.cc
-@@ -2068,6 +2068,7 @@ Map Factory::InitializeMap(Map map, InstanceType type, int instance_size,
-       Map::Bits3::ConstructionCounterBits::encode(Map::kNoSlackTracking) |
-       Map::Bits3::IsExtensibleBit::encode(true);
-   map.set_bit_field3(bit_field3);
-+  map.set_host_bit_field(0);
-   map.set_instance_type(type);
-   ReadOnlyRoots ro_roots(roots);
-   HeapObject raw_null_value = ro_roots.null_value();
 diff --git a/src/heap/memory-chunk-layout.h b/src/heap/memory-chunk-layout.h
 index 2e1d0e52bb..3161707e1e 100644
 --- a/src/heap/memory-chunk-layout.h
@@ -341,18 +227,6 @@ index 906ff6a23e..d805577f9d 100644
   private:
    friend class ConcurrentMarkingState;
    friend class MarkingState;
-diff --git a/src/heap/setup-heap-internal.cc b/src/heap/setup-heap-internal.cc
-index 601d1b8322..1659784b4b 100644
---- a/src/heap/setup-heap-internal.cc
-+++ b/src/heap/setup-heap-internal.cc
-@@ -188,6 +188,7 @@ AllocationResult Heap::AllocatePartialMap(InstanceType instance_type,
-       Map::Bits3::OwnsDescriptorsBit::encode(true) |
-       Map::Bits3::ConstructionCounterBits::encode(Map::kNoSlackTracking);
-   map.set_bit_field3(bit_field3);
-+  map.set_host_bit_field(0);
-   DCHECK(!map.is_in_retained_map_list());
-   map.clear_padding();
-   map.set_elements_kind(TERMINAL_FAST_ELEMENTS_KIND);
 diff --git a/src/init/icu_util.cc b/src/init/icu_util.cc
 index 67d349557c..49ffb52386 100644
 --- a/src/init/icu_util.cc
@@ -463,153 +337,6 @@ index 6e6298e274..09ff972e98 100644
        locale_matcher, relevant_extension_keys);
    if (maybe_resolve_locale.IsNothing()) {
      THROW_NEW_ERROR(isolate, NewRangeError(MessageTemplate::kIcuError),
-diff --git a/src/objects/js-objects.cc b/src/objects/js-objects.cc
-index 15356b6c58..5f249b3313 100644
---- a/src/objects/js-objects.cc
-+++ b/src/objects/js-objects.cc
-@@ -5183,6 +5183,13 @@ void JSObject::SetImmutableProto(Handle<JSObject> object) {
-   object->set_map(*new_map, kReleaseStore);
- }
- 
-+void JSObject::SetHostDelegate(Handle<JSObject> object) {
-+  Handle<Map> map(object->map(), object->GetIsolate());
-+  if (map->is_host_delegate()) return;
-+  Handle<Map> new_map = Map::TransitionToHostDelegate(object->GetIsolate(), map);
-+  object->set_map(*new_map, kReleaseStore);
-+}
-+
- void JSObject::EnsureCanContainElements(Handle<JSObject> object,
-                                         JavaScriptArguments* args,
-                                         uint32_t arg_count,
-diff --git a/src/objects/js-objects.h b/src/objects/js-objects.h
-index 06489c2b7b..927d68d926 100644
---- a/src/objects/js-objects.h
-+++ b/src/objects/js-objects.h
-@@ -740,6 +740,8 @@ class JSObject : public TorqueGeneratedJSObject<JSObject, JSReceiver> {
-   // Never called from JavaScript
-   static void SetImmutableProto(Handle<JSObject> object);
- 
-+  static void SetHostDelegate(Handle<JSObject> object);
-+
-   // Initializes the body starting at |start_offset|. It is responsibility of
-   // the caller to initialize object header. Fill the pre-allocated fields with
-   // undefined_value and the rest with filler_map.
-diff --git a/src/objects/map-inl.h b/src/objects/map-inl.h
-index 04cdb99e10..e481f07e4f 100644
---- a/src/objects/map-inl.h
-+++ b/src/objects/map-inl.h
-@@ -115,6 +115,9 @@ BIT_FIELD_ACCESSORS(Map, bit_field3, may_have_interesting_symbols,
- BIT_FIELD_ACCESSORS(Map, relaxed_bit_field3, construction_counter,
-                     Map::Bits3::ConstructionCounterBits)
- 
-+// |host_bit_field| fields.
-+BIT_FIELD_ACCESSORS(Map, host_bit_field, is_host_delegate, Map::HostBits::IsHostDelegateBit)
-+
- DEF_GETTER(Map, GetNamedInterceptor, InterceptorInfo) {
-   DCHECK(has_named_interceptor());
-   FunctionTemplateInfo info = GetFunctionTemplateInfo(cage_base);
-diff --git a/src/objects/map.cc b/src/objects/map.cc
-index c065533248..c160854bec 100644
---- a/src/objects/map.cc
-+++ b/src/objects/map.cc
-@@ -1179,6 +1179,7 @@ Handle<Map> Map::RawCopy(Isolate* isolate, Handle<Map> src_handle,
-     }
-     // Same as bit_field comment above.
-     raw.set_bit_field3(new_bit_field3);
-+    raw.set_host_bit_field(src.host_bit_field());
-     raw.clear_padding();
-   }
-   Handle<HeapObject> prototype(src_handle->prototype(), isolate);
-@@ -1305,6 +1306,12 @@ Handle<Map> Map::TransitionToImmutableProto(Isolate* isolate, Handle<Map> map) {
-   return new_map;
- }
- 
-+Handle<Map> Map::TransitionToHostDelegate(Isolate* isolate, Handle<Map> map) {
-+  Handle<Map> new_map = Map::Copy(isolate, map, "HostDelegate");
-+  new_map->set_is_host_delegate(true);
-+  return new_map;
-+}
-+
- namespace {
- void EnsureInitialMap(Isolate* isolate, Handle<Map> map) {
- #ifdef DEBUG
-diff --git a/src/objects/map.h b/src/objects/map.h
-index 6914a51150..b16a0a7cc9 100644
---- a/src/objects/map.h
-+++ b/src/objects/map.h
-@@ -319,6 +319,11 @@ class Map : public TorqueGeneratedMap<Map, HeapObject> {
-   static_assert(kSlackTrackingCounterStart <=
-                 Bits3::ConstructionCounterBits::kMax);
- 
-+  // Bit positions for |host_bits|.
-+  struct HostBits {
-+    DEFINE_TORQUE_GENERATED_MAP_HOST_BIT_FIELDS()
-+  };
-+
-   // Inobject slack tracking is the way to reclaim unused inobject space.
-   //
-   // The instance size is initially determined by adding some slack to
-@@ -657,6 +662,8 @@ class Map : public TorqueGeneratedMap<Map, HeapObject> {
- 
-   DECL_BOOLEAN_ACCESSORS(is_immutable_proto)
- 
-+  DECL_BOOLEAN_ACCESSORS(is_host_delegate)
-+
-   // This counter is used for in-object slack tracking.
-   // The in-object slack tracking is considered enabled when the counter is
-   // non zero. The counter only has a valid count for initial maps. For
-@@ -825,6 +832,8 @@ class Map : public TorqueGeneratedMap<Map, HeapObject> {
-   static Handle<Map> TransitionToImmutableProto(Isolate* isolate,
-                                                 Handle<Map> map);
- 
-+  static Handle<Map> TransitionToHostDelegate(Isolate* isolate, Handle<Map> map);
-+
-   static const int kMaxPreAllocatedPropertyFields = 255;
- 
-   static_assert(kInstanceTypeOffset == Internals::kMapInstanceTypeOffset);
-diff --git a/src/objects/map.tq b/src/objects/map.tq
-index a8b367ff82..98637087ee 100644
---- a/src/objects/map.tq
-+++ b/src/objects/map.tq
-@@ -34,6 +34,10 @@ bitfield struct MapBitFields3 extends uint32 {
-   construction_counter: int32: 3 bit;
- }
- 
-+bitfield struct MapHostBitFields extends uint32 {
-+  is_host_delegate: bool: 1 bit;
-+}
-+
- extern class Map extends HeapObject {
-   macro PrototypeInfo(): PrototypeInfo labels HasNoPrototypeInfo {
-     typeswitch (this.transitions_or_prototype_info) {
-@@ -65,8 +69,8 @@ extern class Map extends HeapObject {
-   bit_field2: MapBitFields2;
-   bit_field3: MapBitFields3;
- 
--  @if(TAGGED_SIZE_8_BYTES) optional_padding: uint32;
--  @ifnot(TAGGED_SIZE_8_BYTES) optional_padding: void;
-+  host_bit_field: MapHostBitFields;
-+  optional_padding: void;
- 
-   prototype: JSReceiver|Null;
-   constructor_or_back_pointer_or_native_context: Object;
-diff --git a/src/objects/objects.cc b/src/objects/objects.cc
-index c15ac8656a..927e21a94a 100644
---- a/src/objects/objects.cc
-+++ b/src/objects/objects.cc
-@@ -889,6 +889,12 @@ Handle<String> Object::TypeOf(Isolate* isolate, Handle<Object> object) {
-   if (object->IsString()) return isolate->factory()->string_string();
-   if (object->IsSymbol()) return isolate->factory()->symbol_string();
-   if (object->IsBigInt()) return isolate->factory()->bigint_string();
-+  if (object->IsJSObject()) {
-+    Handle<JSObject> obj = Handle<JSObject>::cast(object);
-+    if (obj->HasNamedInterceptor()) {
-+      return obj->map().is_host_delegate() ? isolate->factory()->function_string() : isolate->factory()->object_string();
-+    }
-+  }
-   if (object->IsCallable()) return isolate->factory()->function_string();
-   return isolate->factory()->object_string();
- }
 diff --git a/src/objects/source-text-module.cc b/src/objects/source-text-module.cc
 index fbb89b4617..915d4a450c 100644
 --- a/src/objects/source-text-module.cc
@@ -663,48 +390,3 @@ index 05a1cef551..9b58cc8385 100644
    static void AsyncModuleExecutionRejected(Isolate* isolate,
                                             Handle<SourceTextModule> module,
                                             Handle<Object> exception);
-diff --git a/src/objects/templates-inl.h b/src/objects/templates-inl.h
-index bb0d6a8dc6..338e11f1e1 100644
---- a/src/objects/templates-inl.h
-+++ b/src/objects/templates-inl.h
-@@ -170,6 +170,14 @@ void ObjectTemplateInfo::set_code_like(bool is_code_like) {
-   return set_data(IsCodeKindBit::update(data(), is_code_like));
- }
- 
-+bool ObjectTemplateInfo::host_delegate() const {
-+  return IsHostDelegateBit::decode(data());
-+}
-+
-+void ObjectTemplateInfo::set_host_delegate(bool value) {
-+  return set_data(IsHostDelegateBit::update(data(), value));
-+}
-+
- bool FunctionTemplateInfo::IsTemplateFor(JSObject object) {
-   return IsTemplateFor(object.map());
- }
-diff --git a/src/objects/templates.h b/src/objects/templates.h
-index 8ab006ab97..82e8ccfa86 100644
---- a/src/objects/templates.h
-+++ b/src/objects/templates.h
-@@ -202,6 +202,7 @@ class ObjectTemplateInfo
-   DECL_INT_ACCESSORS(embedder_field_count)
-   DECL_BOOLEAN_ACCESSORS(immutable_proto)
-   DECL_BOOLEAN_ACCESSORS(code_like)
-+  DECL_BOOLEAN_ACCESSORS(host_delegate)
- 
-   // Dispatched behavior.
-   DECL_PRINTER(ObjectTemplateInfo)
-diff --git a/src/objects/templates.tq b/src/objects/templates.tq
-index a3bb7a9e35..2cf7869ab4 100644
---- a/src/objects/templates.tq
-+++ b/src/objects/templates.tq
-@@ -71,7 +71,8 @@ extern class FunctionTemplateInfo extends TemplateInfo {
- bitfield struct ObjectTemplateInfoFlags extends uint31 {
-   is_immutable_prototype: bool: 1 bit;
-   is_code_kind: bool: 1 bit;
--  embedder_field_count: int32: 28 bit;
-+  is_host_delegate: bool: 1 bit;
-+  embedder_field_count: int32: 27 bit;
- }
- 
- extern class ObjectTemplateInfo extends TemplateInfo {

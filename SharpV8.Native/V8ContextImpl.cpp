@@ -322,7 +322,6 @@ V8ContextImpl::V8ContextImpl(SharedPtr<V8IsolateImpl>&& spIsolateImpl, const Std
         m_hHostDelegateTemplate->PrototypeTemplate()->Set(GetAsyncIteratorSymbol(), hGetAsyncIteratorFunction);
         m_hHostDelegateTemplate->PrototypeTemplate()->Set(hToJSON, hGetJsonFunction);
         m_hHostDelegateTemplate->InstanceTemplate()->SetCallAsFunctionHandler(InvokeHostObject, hContextImpl);
-        m_hHostDelegateTemplate->InstanceTemplate()->SetHostDelegate(); // instructs our patched V8 typeof implementation to return "function" 
         m_hHostDelegateTemplate->PrototypeTemplate()->Set(CreateString("toFunction"), hToFunctionFunction);
 
         m_pvV8ObjectCache = HostObjectUtil::GetInstance().CreateV8ObjectCache();
