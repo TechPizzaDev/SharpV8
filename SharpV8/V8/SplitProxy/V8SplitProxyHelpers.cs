@@ -140,7 +140,7 @@ namespace Microsoft.ClearScript.V8
 
         private StdStringArrayPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdStringArrayPtr Null = new(IntPtr.Zero);
+        public static StdStringArrayPtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(StdStringArrayPtr left, StdStringArrayPtr right) => left.bits == right.bits;
         public static bool operator !=(StdStringArrayPtr left, StdStringArrayPtr right) => left.bits != right.bits;
@@ -227,7 +227,7 @@ namespace Microsoft.ClearScript.V8
 
         private StdByteArrayPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdByteArrayPtr Null = new(IntPtr.Zero);
+        public static StdByteArrayPtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(StdByteArrayPtr left, StdByteArrayPtr right) => left.bits == right.bits;
         public static bool operator !=(StdByteArrayPtr left, StdByteArrayPtr right) => left.bits != right.bits;
@@ -314,7 +314,7 @@ namespace Microsoft.ClearScript.V8
 
         private StdInt32ArrayPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdInt32ArrayPtr Null = new(IntPtr.Zero);
+        public static StdInt32ArrayPtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(StdInt32ArrayPtr left, StdInt32ArrayPtr right) => left.bits == right.bits;
         public static bool operator !=(StdInt32ArrayPtr left, StdInt32ArrayPtr right) => left.bits != right.bits;
@@ -401,7 +401,7 @@ namespace Microsoft.ClearScript.V8
 
         private StdUInt32ArrayPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdUInt32ArrayPtr Null = new(IntPtr.Zero);
+        public static StdUInt32ArrayPtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(StdUInt32ArrayPtr left, StdUInt32ArrayPtr right) => left.bits == right.bits;
         public static bool operator !=(StdUInt32ArrayPtr left, StdUInt32ArrayPtr right) => left.bits != right.bits;
@@ -488,7 +488,7 @@ namespace Microsoft.ClearScript.V8
 
         private StdUInt64ArrayPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdUInt64ArrayPtr Null = new(IntPtr.Zero);
+        public static StdUInt64ArrayPtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(StdUInt64ArrayPtr left, StdUInt64ArrayPtr right) => left.bits == right.bits;
         public static bool operator !=(StdUInt64ArrayPtr left, StdUInt64ArrayPtr right) => left.bits != right.bits;
@@ -575,7 +575,7 @@ namespace Microsoft.ClearScript.V8
 
         private StdPtrArrayPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdPtrArrayPtr Null = new(IntPtr.Zero);
+        public static StdPtrArrayPtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(StdPtrArrayPtr left, StdPtrArrayPtr right) => left.bits == right.bits;
         public static bool operator !=(StdPtrArrayPtr left, StdPtrArrayPtr right) => left.bits != right.bits;
@@ -674,7 +674,7 @@ namespace Microsoft.ClearScript.V8
 
         private StdV8ValueArrayPtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly StdV8ValueArrayPtr Null = new(IntPtr.Zero);
+        public static StdV8ValueArrayPtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(StdV8ValueArrayPtr left, StdV8ValueArrayPtr right) => left.bits == right.bits;
         public static bool operator !=(StdV8ValueArrayPtr left, StdV8ValueArrayPtr right) => left.bits != right.bits;
@@ -975,7 +975,7 @@ namespace Microsoft.ClearScript.V8
             SetHostObject(pV8Value, obj);
         }
 
-        public static object Get(V8ValuePtr pV8Value)
+        public static object? Get(V8ValuePtr pV8Value)
         {
             V8ValueType Type = V8Value_Decode(pV8Value, out var intValue, out var uintValue, out var doubleValue, out var ptrOrHandle);
 
@@ -1212,12 +1212,7 @@ namespace Microsoft.ClearScript.V8
     {
         public static void ProcessProfile(V8Entity hEntity, V8CpuProfilePtr pProfile, V8CpuProfile profile)
         {
-            string name = null;
-            var startTimestamp = 0UL;
-            var endTimestamp = 0UL;
-            var sampleCount = 0;
-            var pRootNode = NodePtr.Null;
-            V8CpuProfile_GetInfo(pProfile, hEntity, out name, out startTimestamp, out endTimestamp, out sampleCount, out pRootNode);
+            V8CpuProfile_GetInfo(pProfile, hEntity, out string name, out var startTimestamp, out var endTimestamp, out var sampleCount, out var pRootNode);
 
             profile.Name = name;
             profile.StartTimestamp = startTimestamp;
@@ -1234,40 +1229,31 @@ namespace Microsoft.ClearScript.V8
 
                 for (var index = 0; index < sampleCount; index++)
                 {
-                    var nodeId = 0UL;
-                    var timestamp = 0UL;
                     var sampleIndex = index;
-                    var found = V8CpuProfile_GetSample(pProfile, sampleIndex, out nodeId, out timestamp);
+                    var found = V8CpuProfile_GetSample(pProfile, sampleIndex, out ulong nodeId, out ulong timestamp);
                     if (found)
                     {
                         var node = profile.FindNode(nodeId);
                         if (node != null)
                         {
-                            samples.Add(new V8CpuProfile.Sample { Node = node, Timestamp = timestamp });
+                            samples.Add(new V8CpuProfile.Sample(node, timestamp));
                         }
                     }
                 }
 
                 if (samples.Count > 0)
                 {
-                    profile.Samples = new ReadOnlyCollection<V8CpuProfile.Sample>(samples);
+                    profile.Samples = samples;
                 }
             }
         }
 
         private static V8CpuProfile.Node CreateNode(V8Entity hEntity, NodePtr pNode)
         {
-            var nodeId = 0UL;
-            var scriptId = 0L;
-            string scriptName = null;
-            string functionName = null;
-            string bailoutReason = null;
-            var lineNumber = 0L;
-            var columnNumber = 0L;
-            var hitCount = 0UL;
-            var hitLineCount = 0U;
-            var childCount = 0;
-            V8CpuProfileNode_GetInfo(pNode, hEntity, out nodeId, out scriptId, out scriptName, out functionName, out bailoutReason, out lineNumber, out columnNumber, out hitCount, out hitLineCount, out childCount);
+            V8CpuProfileNode_GetInfo(
+                pNode, hEntity, 
+                out ulong nodeId, out long scriptId, out string scriptName, out string functionName, out string bailoutReason, 
+                out long lineNumber, out long columnNumber, out ulong hitCount, out uint hitLineCount, out int childCount);
 
             var node = new V8CpuProfile.Node
             {
@@ -1283,9 +1269,7 @@ namespace Microsoft.ClearScript.V8
 
             if (hitLineCount > 0)
             {
-                int[] lineNumbers = null;
-                uint[] hitCounts = null;
-                if (V8CpuProfileNode_GetHitLines(pNode, out lineNumbers, out hitCounts))
+                if (V8CpuProfileNode_GetHitLines(pNode, out int[] lineNumbers, out uint[] hitCounts))
                 {
                     var actualHitLineCount = Math.Min(lineNumbers.Length, hitCounts.Length);
                     if (actualHitLineCount > 0)
@@ -1294,11 +1278,12 @@ namespace Microsoft.ClearScript.V8
 
                         for (var index = 0; index < actualHitLineCount; index++)
                         {
-                            hitLines[index].LineNumber = lineNumbers[index];
-                            hitLines[index].HitCount = hitCounts[index];
+                            hitLines[index] = new V8CpuProfile.Node.HitLine(
+                                lineNumbers[index],
+                                hitCounts[index]);
                         }
 
-                        node.HitLines = new ReadOnlyCollection<V8CpuProfile.Node.HitLine>(hitLines);
+                        node.HitLines = hitLines;
                     }
                 }
             }
@@ -1319,7 +1304,7 @@ namespace Microsoft.ClearScript.V8
 
                 if (childNodes.Count > 0)
                 {
-                    node.ChildNodes = new ReadOnlyCollection<V8CpuProfile.Node>(childNodes);
+                    node.ChildNodes = childNodes;
                 }
             }
 
@@ -1332,7 +1317,7 @@ namespace Microsoft.ClearScript.V8
 
             private NodePtr(IntPtr bits) => this.bits = bits;
 
-            public static readonly NodePtr Null = new(IntPtr.Zero);
+            public static NodePtr Null => new(IntPtr.Zero);
 
             public static bool operator ==(NodePtr left, NodePtr right) => left.bits == right.bits;
             public static bool operator !=(NodePtr left, NodePtr right) => left.bits != right.bits;
@@ -1353,7 +1338,7 @@ namespace Microsoft.ClearScript.V8
 
         private V8CpuProfilePtr(IntPtr bits) => this.bits = bits;
 
-        public static readonly V8CpuProfilePtr Null = new(IntPtr.Zero);
+        public static V8CpuProfilePtr Null => new(IntPtr.Zero);
 
         public static bool operator ==(V8CpuProfilePtr left, V8CpuProfilePtr right) => left.bits == right.bits;
         public static bool operator !=(V8CpuProfilePtr left, V8CpuProfilePtr right) => left.bits != right.bits;
@@ -1361,7 +1346,7 @@ namespace Microsoft.ClearScript.V8
         public static explicit operator IntPtr(V8CpuProfilePtr ptr) => ptr.bits;
         public static explicit operator V8CpuProfilePtr(IntPtr bits) => new(bits);
 
-        public override bool Equals(object obj) => obj is V8CpuProfilePtr ptr && this == ptr;
+        public override bool Equals(object? obj) => obj is V8CpuProfilePtr ptr && this == ptr;
         public override int GetHashCode() => bits.GetHashCode();
     }
 
@@ -1379,7 +1364,7 @@ namespace Microsoft.ClearScript.V8
 
         private V8Entity(IntPtr guts) => this.guts = guts;
 
-        public static readonly V8Entity Empty = new(IntPtr.Zero);
+        public static V8Entity Empty => new(IntPtr.Zero);
 
         public static bool operator ==(V8Entity left, V8Entity right) => left.guts == right.guts;
         public static bool operator !=(V8Entity left, V8Entity right) => left.guts != right.guts;
@@ -1401,7 +1386,7 @@ namespace Microsoft.ClearScript.V8
 
         private V8DebugCallbackHandle(IntPtr guts) => this.guts = guts;
 
-        public static readonly V8DebugCallbackHandle Empty = new(IntPtr.Zero);
+        public static V8DebugCallbackHandle Empty => new(IntPtr.Zero);
 
         public static bool operator ==(V8DebugCallbackHandle left, V8DebugCallbackHandle right) => left.guts == right.guts;
         public static bool operator !=(V8DebugCallbackHandle left, V8DebugCallbackHandle right) => left.guts != right.guts;

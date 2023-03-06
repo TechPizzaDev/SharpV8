@@ -50,7 +50,7 @@ namespace Microsoft.ClearScript.V8
         /// <remarks>
         /// This property returns <c>null</c> if the profile contains no samples.
         /// </remarks>
-        public IReadOnlyList<Sample> Samples { get; internal set; }
+        public List<Sample> Samples { get; internal set; }
 
         /// <summary>
         /// Returns a JSON representation of the profile.
@@ -229,7 +229,7 @@ namespace Microsoft.ClearScript.V8
             /// <remarks>
             /// This property returns <c>null</c> if the node contains no hit lines.
             /// </remarks>
-            public IReadOnlyList<HitLine> HitLines { get; internal set; }
+            public HitLine[] HitLines { get; internal set; }
 
             /// <summary>
             /// Gets the node's child node collection.
@@ -237,9 +237,9 @@ namespace Microsoft.ClearScript.V8
             /// <remarks>
             /// This property returns <c>null</c> if the node has no child nodes.
             /// </remarks>
-            public IReadOnlyList<Node> ChildNodes { get; internal set; }
+            public List<Node> ChildNodes { get; internal set; }
 
-            internal Node FindNode(ulong nodeId)
+            internal Node? FindNode(ulong nodeId)
             {
                 if (NodeId == nodeId)
                 {
@@ -313,12 +313,12 @@ namespace Microsoft.ClearScript.V8
             {
                 // V8 Inspector JSON Protocol 1.3: https://github.com/v8/v8/blob/4b9b23521e6fd42373ebbcb20ebe03bf445494f9/src/inspector/js_protocol-1.3.json
 
-                if ((HitLines != null) && (HitLines.Count > 0))
+                if ((HitLines != null) && (HitLines.Length > 0))
                 {
                     writer.Write(",\"positionTicks\":[");
                     {
                         HitLines[0].WriteJson(writer);
-                        for (var index = 1; index < HitLines.Count; index++)
+                        for (var index = 1; index < HitLines.Length; index++)
                         {
                             writer.Write(',');
                             HitLines[index].WriteJson(writer);
@@ -333,12 +333,12 @@ namespace Microsoft.ClearScript.V8
             /// <summary>
             /// Represents a script line observed by the V8 CPU profiler.
             /// </summary>
-            public struct HitLine
+            public readonly struct HitLine
             {
                 /// <summary>
                 /// Gets the 1-based line number.
                 /// </summary>
-                public long LineNumber;
+                public long LineNumber { get; }
 
                 /// <summary>
                 /// Gets the hit count for the script line.
@@ -347,7 +347,13 @@ namespace Microsoft.ClearScript.V8
                 /// This value represents the number of times the CPU profiler observed the current
                 /// script line at the top of the call stack.
                 /// </remarks>
-                public ulong HitCount;
+                public ulong HitCount { get; }
+
+                public HitLine(long lineNumber, ulong hitCount)
+                {
+                    LineNumber = lineNumber;
+                    HitCount = hitCount;
+                }
 
                 internal void WriteJson(TextWriter writer)
                 {
@@ -367,17 +373,12 @@ namespace Microsoft.ClearScript.V8
         /// <summary>
         /// Represents a V8 CPU profile sample.
         /// </summary>
-        public sealed class Sample
+        public readonly struct Sample
         {
-            internal Sample()
-            {
-                // the help file builder (SHFB) insists on an empty constructor here
-            }
-
             /// <summary>
             /// Gets the sample's node within the profile's call tree.
             /// </summary>
-            public Node Node { get; internal set; }
+            public Node Node { get; }
 
             /// <summary>
             /// Gets the sample's timestamp in microseconds.
@@ -386,7 +387,13 @@ namespace Microsoft.ClearScript.V8
             /// The timestamp specifies an offset relative to an unspecified moment in the past. All
             /// timestamps within the profile are relative to the same moment.
             /// </remarks>
-            public ulong Timestamp { get; internal set; }
+            public ulong Timestamp { get; }
+
+            public Sample(Node node, ulong timestamp)
+            {
+                Node = node;
+                Timestamp = timestamp;
+            }
         }
 
         #endregion

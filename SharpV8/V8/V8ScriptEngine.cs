@@ -41,7 +41,7 @@ namespace Microsoft.ClearScript.V8
         private readonly bool usingPrivateRuntime;
 
         private readonly V8ScriptEngineFlags engineFlags;
-        private readonly V8ContextProxy proxy;
+        private readonly V8ContextProxyImpl proxy;
         private readonly V8ScriptItem script;
         private InterlockedOneWayFlag disposedFlag = new();
 

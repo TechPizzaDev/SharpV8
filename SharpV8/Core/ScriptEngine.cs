@@ -1293,18 +1293,6 @@ namespace Microsoft.ClearScript
             return result.ToString();
         }
 
-        internal void RequestInterrupt()
-        {
-            // Some script engines don't support IActiveScript::InterruptScriptThread(). This
-            // method provides an alternate mechanism based on IActiveScriptSiteInterruptPoll.
-
-            var tempScriptFrame = CurrentScriptFrame;
-            if (tempScriptFrame != null)
-            {
-                tempScriptFrame.InterruptRequested = true;
-            }
-        }
-
         internal void CheckReflection()
         {
             if (!AllowReflection)
@@ -1764,13 +1752,7 @@ namespace Microsoft.ClearScript
 
         internal sealed class ScriptFrame
         {
-            public Exception HostException { get; set; }
-
             public IScriptEngineException ScriptError { get; set; }
-
-            public IScriptEngineException PendingScriptError { get; set; }
-
-            public bool InterruptRequested { get; set; }
         }
 
         #endregion

@@ -1848,6 +1848,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
             [LibraryImport(DllName)]
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
+            [SuppressGCTransition]
             [return: MarshalAs(UnmanagedType.I1)]
             public static partial bool V8CpuProfile_GetSample(
                 V8CpuProfilePtr pProfile,

@@ -8,7 +8,7 @@ namespace Microsoft.ClearScript.V8
 {
     internal abstract unsafe class V8ContextProxy : V8Proxy
     {
-        public static V8ContextProxy Create(V8IsolateProxy isolateProxy, string name, V8ScriptEngineFlags flags, int debugPort)
+        public static V8ContextProxyImpl Create(V8IsolateProxy isolateProxy, string name, V8ScriptEngineFlags flags, int debugPort)
         {
             return new V8ContextProxyImpl(isolateProxy, name, flags, debugPort);
         }
