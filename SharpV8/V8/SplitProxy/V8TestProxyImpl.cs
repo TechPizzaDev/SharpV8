@@ -10,13 +10,13 @@ namespace Microsoft.ClearScript.V8
     {
         public override UIntPtr GetNativeDigest(string value)
         {
-            return V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.V8UnitTestSupport_GetTextDigest(value));
+            return V8SplitProxyNative.V8UnitTestSupport_GetTextDigest(value);
         }
 
         public override Statistics GetStatistics()
         {
             var statistics = new Statistics();
-            V8SplitProxyNative.InvokeNoThrow(() => V8SplitProxyNative.V8UnitTestSupport_GetStatistics(out statistics.IsolateCount, out statistics.ContextCount));
+            V8SplitProxyNative.V8UnitTestSupport_GetStatistics(out statistics.IsolateCount, out statistics.ContextCount);
             return statistics;
         }
 

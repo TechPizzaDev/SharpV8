@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Microsoft.ClearScript.JavaScript;
 using Microsoft.ClearScript.Properties;
@@ -27,6 +26,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         static V8SplitProxyManaged()
         {
             (DelegateTable, MethodTable, MethodCount) = Initialize();
+
+            V8SplitProxyNative.V8SplitProxyManaged_SetMethodTable(MethodTable);
         }
 
         private static (IntPtr delegatePtrs, IntPtr functionPtrs, int methodCount) Initialize()
@@ -49,30 +50,16 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         private static void ScheduleHostException(IntPtr pObject, Exception exception)
         {
-            ScheduleHostExceptionAction action = new()
-            {
-                Message = exception.GetBaseException().Message,
-                Exception = V8ProxyHelpers.MarshalExceptionToScript(pObject, exception)
-            };
-            V8SplitProxyNative.Invoke(ref action);
+            var Message = exception.GetBaseException().Message;
+            var Exception = V8ProxyHelpers.MarshalExceptionToScript(pObject, exception);
+            V8SplitProxyNative.HostException_Schedule(Message, Exception);
         }
 
         private static void ScheduleHostException(Exception exception)
         {
-            ScheduleHostExceptionAction action = new()
-            {
-                Message = exception.GetBaseException().Message,
-                Exception = ScriptEngine.Current?.MarshalToScript(exception)
-            };
-            V8SplitProxyNative.Invoke(ref action);
-        }
-
-        private struct ScheduleHostExceptionAction : IProxyAction
-        {
-            public string Message;
-            public object? Exception;
-
-            public void Invoke() => V8SplitProxyNative.HostException_Schedule(Message, Exception);
+            var Message = exception.GetBaseException().Message;
+            var Exception = ScriptEngine.Current?.MarshalToScript(exception);
+            V8SplitProxyNative.HostException_Schedule(Message, Exception);
         }
 
         private static uint GetMaxCacheSizeForCategory(DocumentCategory category)
@@ -637,10 +624,10 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         private static IntPtr CreateDebugAgent(StdStringPtr pName, StdStringPtr pVersion, int port, sbyte remote, V8DebugCallbackHandle hCallback)
         {
             return V8ProxyHelpers.AddRefHostObject(new V8DebugAgent(
-                StdString.GetValue(pName), 
+                StdString.GetValue(pName),
                 StdString.GetValue(pVersion),
-                port, 
-                remote.ToBool(), 
+                port,
+                remote.ToBool(),
                 new V8DebugListener(hCallback)));
         }
 
@@ -877,13 +864,13 @@ namespace Microsoft.ClearScript.V8.SplitProxy
         }
 
         private static void LoadModule(
-            IntPtr pSourceDocumentInfo, 
-            StdStringPtr pSpecifier, 
-            StdStringPtr pResourceName, 
-            StdStringPtr pSourceMapUrl, 
+            IntPtr pSourceDocumentInfo,
+            StdStringPtr pSpecifier,
+            StdStringPtr pResourceName,
+            StdStringPtr pSourceMapUrl,
             ulong* uniqueId,
             sbyte* isModule,
-            StdStringPtr pCode, 
+            StdStringPtr pCode,
             IntPtr* pDocumentInfo)
         {
             string code;
@@ -892,9 +879,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             try
             {
                 code = V8ProxyHelpers.LoadModule(
-                    pSourceDocumentInfo, 
-                    StdString.GetValue(pSpecifier), 
-                    ModuleCategory.Standard, 
+                    pSourceDocumentInfo,
+                    StdString.GetValue(pSpecifier),
+                    ModuleCategory.Standard,
                     out documentInfo);
             }
             catch (Exception exception)

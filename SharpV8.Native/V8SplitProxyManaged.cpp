@@ -7,7 +7,7 @@
 // V8SplitProxyManaged implementation
 //-----------------------------------------------------------------------------
 
-thread_local void** V8SplitProxyManaged::ms_pMethodTable = nullptr;
+void** V8SplitProxyManaged::ms_pMethodTable = nullptr;
 thread_local HostException* V8SplitProxyManaged::ms_pHostException = nullptr;
 
 //-----------------------------------------------------------------------------

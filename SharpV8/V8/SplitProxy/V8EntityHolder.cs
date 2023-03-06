@@ -32,16 +32,8 @@ namespace Microsoft.ClearScript.V8
             var tempHandle = handle;
             if (tempHandle != V8Entity.Empty)
             {
-                ReleaseAction action = new() { Handle = tempHandle };
-                V8SplitProxyNative.Invoke(ref action);
+                V8SplitProxyNative.V8Entity_Release(tempHandle);
             }
-        }
-
-        private struct ReleaseAction : IProxyAction
-        {
-            public V8Entity Handle;
-
-            public void Invoke() => V8SplitProxyNative.V8Entity_Release(Handle);
         }
 
         public static void Destroy(ref V8EntityHolder holder)
@@ -49,18 +41,10 @@ namespace Microsoft.ClearScript.V8
             var tempHandle = holder.handle;
             if (tempHandle != V8Entity.Empty)
             {
-                DestroyAction action = new() { Handle = tempHandle };
-                V8SplitProxyNative.Invoke(ref action);
+                V8SplitProxyNative.V8Entity_DestroyHandle(tempHandle);
             }
 
             holder = new V8EntityHolder(holder.name);
-        }
-
-        private struct DestroyAction : IProxyAction
-        {
-            public V8Entity Handle;
-
-            public void Invoke() => V8SplitProxyNative.V8Entity_DestroyHandle(Handle);
         }
     }
 }

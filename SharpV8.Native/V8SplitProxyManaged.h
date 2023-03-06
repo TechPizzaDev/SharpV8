@@ -136,7 +136,7 @@ private:
 
     static void ThrowHostException();
 
-    static thread_local void** ms_pMethodTable;
+    static void** ms_pMethodTable;
     static thread_local HostException* ms_pHostException;
 };
 
