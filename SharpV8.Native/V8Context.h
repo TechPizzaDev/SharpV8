@@ -54,7 +54,7 @@ public:
     virtual size_t GetMaxIsolateStackUsage() = 0;
     virtual void SetMaxIsolateStackUsage(size_t value) = 0;
 
-    typedef void CallWithLockCallback(void* pvArg);
+    typedef MANAGED_METHOD(void) CallWithLockCallback(void* pvArg);
     virtual void CallWithLock(CallWithLockCallback* pCallback, void* pvArg) = 0;
 
     virtual V8Value GetRootObject() = 0;

@@ -475,6 +475,13 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Debug.Assert(ScheduledException == null);
 
             var exception = V8ProxyHelpers.MarshalExceptionToHost(V8Value.Get(pException));
+            ScheduleForwardingException(exception);
+        }
+
+        public static void ScheduleForwardingException(Exception exception)
+        {
+            Debug.Assert(ScheduledException == null);
+
             if (exception is ScriptEngineException scriptEngineException)
             {
                 ScheduledException = new ScriptEngineException(

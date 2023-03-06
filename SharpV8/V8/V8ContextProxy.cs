@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Microsoft.ClearScript.V8
 {
-    internal abstract class V8ContextProxy : V8Proxy
+    internal abstract unsafe class V8ContextProxy : V8Proxy
     {
         public static V8ContextProxy Create(V8IsolateProxy isolateProxy, string name, V8ScriptEngineFlags flags, int debugPort)
         {
@@ -19,7 +19,7 @@ namespace Microsoft.ClearScript.V8
 
         public abstract UIntPtr MaxIsolateStackUsage { get; set; }
 
-        public abstract void InvokeWithLock(Action action);
+        public abstract void InvokeWithLock(delegate* unmanaged[Stdcall]<void*, void> action, void* state);
 
         public abstract object GetRootItem();
 

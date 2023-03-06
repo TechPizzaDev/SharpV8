@@ -40,12 +40,26 @@ namespace Microsoft.ClearScript.V8
             set => V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_SetMaxIsolateStackUsage(Handle, value));
         }
 
-        public override void InvokeWithLock(Action action)
+        public override void InvokeWithLock(delegate* unmanaged[Stdcall]<void*, void> action, void* state)
         {
-            using (var actionScope = V8ProxyHelpers.CreateAddRefHostObjectScope(action))
+            InvokeWithLockAction proxy = new()
             {
-                var pAction = actionScope.Value;
-                V8SplitProxyNative.Invoke(() => V8SplitProxyNative.V8Context_InvokeWithLock(Handle, pAction));
+                Context = Handle,
+                Action = action,
+                State = state,
+            };
+            V8SplitProxyNative.InvokeThrowing(ref proxy);
+        }
+
+        private struct InvokeWithLockAction : IProxyAction
+        {
+            public V8ContextHandle Context;
+            public delegate* unmanaged[Stdcall]<void*, void> Action;
+            public void* State;
+
+            public void Invoke()
+            {
+                V8SplitProxyNative.V8Context_InvokeWithLock(Context, Action, State);
             }
         }
 

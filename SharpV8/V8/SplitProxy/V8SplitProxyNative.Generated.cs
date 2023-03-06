@@ -777,9 +777,9 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             Imports.V8Context_SetMaxIsolateStackUsage(hContext, size);
         }
 
-        public static void V8Context_InvokeWithLock(V8ContextHandle hContext, IntPtr pAction)
+        public static void V8Context_InvokeWithLock(V8ContextHandle hContext, delegate* unmanaged[Stdcall]<void*, void> pAction, void* pState)
         {
-            Imports.V8Context_InvokeWithLock(hContext, pAction);
+            Imports.V8Context_InvokeWithLock(hContext, pAction, pState);
         }
 
         public static object V8Context_GetRootItem(V8ContextHandle hContext)
@@ -2155,7 +2155,8 @@ namespace Microsoft.ClearScript.V8.SplitProxy
             [UnmanagedCallConv(CallConvs = new[] { typeof(CallConvStdcall) })]
             public static partial void V8Context_InvokeWithLock(
                 V8ContextHandle hContext,
-                IntPtr pAction
+                delegate* unmanaged[Stdcall]<void*, void> pAction,
+                void* pState
             );
 
             [LibraryImport(DllName)]

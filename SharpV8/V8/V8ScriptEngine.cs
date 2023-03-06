@@ -8,10 +8,13 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.ClearScript.JavaScript;
 using Microsoft.ClearScript.Util;
+using Microsoft.ClearScript.V8.SplitProxy;
 using Newtonsoft.Json;
 
 namespace Microsoft.ClearScript.V8
@@ -28,7 +31,7 @@ namespace Microsoft.ClearScript.V8
     /// instance. Script delegates and event handlers are invoked on the calling thread without
     /// marshaling.
     /// </remarks>
-    public sealed partial class V8ScriptEngine : ScriptEngine, IJavaScriptEngine
+    public sealed unsafe partial class V8ScriptEngine : ScriptEngine, IJavaScriptEngine
     {
         #region data
 
@@ -1561,25 +1564,86 @@ namespace Microsoft.ClearScript.V8
 
         #region ScriptEngine overrides (script-side invocation)
 
+#pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
+
         internal override void ScriptInvoke(Action action)
         {
             VerifyNotDisposed();
             using (CreateEngineScope())
             {
-                proxy.InvokeWithLock(() => ScriptInvokeInternal(action));
+                InvokeWithLockState state = new()
+                {
+                    Engine = this,
+                    Func = action,
+                };
+                proxy.InvokeWithLock(&NativeScriptProxyInvoker, &state);
+            }
+        }
+
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+        private static void NativeScriptProxyInvoker(void* pState)
+        {
+            try
+            {
+                InvokeWithLockState* state = (InvokeWithLockState*)pState;
+                Action func = Unsafe.As<Action>(state->Func);
+                state->Engine.ScriptInvokeInternal(func);
+            }
+            catch (Exception exception)
+            {
+                V8SplitProxyManaged.ScheduleForwardingException(exception);
             }
         }
 
         internal override T ScriptInvoke<T>(Func<T> func)
         {
+            static void GenericInvoker(void* pState)
+            {
+                try
+                {
+                    InvokeWithLockState* state = (InvokeWithLockState*)pState;
+                    Func<T> func = Unsafe.As<Func<T>>(state->Func);
+                    T* result = (T*)state->Result;
+                    *result = state->Engine.ScriptInvokeInternal(func);
+                }
+                catch (Exception exception)
+                {
+                    V8SplitProxyManaged.ScheduleForwardingException(exception);
+                }
+            }
+
             VerifyNotDisposed();
             using (CreateEngineScope())
             {
-                var result = default(T);
-                proxy.InvokeWithLock(() => result = ScriptInvokeInternal(func));
+                T result;
+                InvokeWithLockState state = new()
+                {
+                    Engine = this,
+                    Func = func,
+                    Result = &result,
+                    GenericInvoker = &GenericInvoker
+                };
+                proxy.InvokeWithLock(&NativeGenericScriptProxyInvoker, &state);
                 return result;
             }
         }
+
+        [UnmanagedCallersOnly(CallConvs = new[] { typeof(CallConvStdcall) })]
+        private static void NativeGenericScriptProxyInvoker(void* pState)
+        {
+            InvokeWithLockState* state = (InvokeWithLockState*)pState;
+            state->GenericInvoker(state);
+        }
+
+        private struct InvokeWithLockState
+        {
+            public V8ScriptEngine Engine;
+            public Delegate Func;
+            public void* Result;
+            public delegate* managed<void*, void> GenericInvoker;
+        }
+
+#pragma warning restore CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
 
         #endregion
 

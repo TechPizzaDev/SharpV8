@@ -25,20 +25,6 @@ static size_t AdjustConstraint(int value) noexcept
 
 //-------------------------------------------------------------------------
 
-static void InvokeHostAction(void* pvAction) noexcept
-{
-    try
-    {
-        V8_SPLIT_PROXY_MANAGED_INVOKE_VOID(InvokeHostAction, pvAction);
-    }
-    catch (const HostException& exception)
-    {
-        V8_SPLIT_PROXY_MANAGED_INVOKE_VOID(ScheduleForwardingException, exception.GetException());
-    }
-}
-
-//-------------------------------------------------------------------------
-
 static void ProcessArrayBufferOrViewData(void* pvData, void* pvAction)
 {
     try
@@ -1157,14 +1143,14 @@ NATIVE_ENTRY_POINT(void) V8Context_SetMaxIsolateStackUsage(const V8ContextHandle
 
 //-----------------------------------------------------------------------------
 
-NATIVE_ENTRY_POINT(void) V8Context_InvokeWithLock(const V8ContextHandle& handle, void* pvAction) noexcept
+NATIVE_ENTRY_POINT(void) V8Context_InvokeWithLock(const V8ContextHandle& handle, void* pvAction, void* pvState) noexcept
 {
     auto spContext = handle.GetEntity();
     if (!spContext.IsEmpty())
     {
         try
         {
-            spContext->CallWithLock(InvokeHostAction, pvAction);
+            spContext->CallWithLock((V8Context::CallWithLockCallback*)pvAction, pvState);
         }
         catch (const V8Exception& exception)
         {

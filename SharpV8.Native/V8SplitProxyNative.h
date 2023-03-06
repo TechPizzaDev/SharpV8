@@ -263,7 +263,7 @@ NATIVE_ENTRY_POINT(double) V8Context_GetIsolateHeapSizeSampleInterval(const V8Co
 NATIVE_ENTRY_POINT(void) V8Context_SetIsolateHeapSizeSampleInterval(const V8ContextHandle& handle, double milliseconds) noexcept;
 NATIVE_ENTRY_POINT(size_t) V8Context_GetMaxIsolateStackUsage(const V8ContextHandle& handle) noexcept;
 NATIVE_ENTRY_POINT(void) V8Context_SetMaxIsolateStackUsage(const V8ContextHandle& handle, size_t size) noexcept;
-NATIVE_ENTRY_POINT(void) V8Context_InvokeWithLock(const V8ContextHandle& handle, void* pvAction) noexcept;
+NATIVE_ENTRY_POINT(void) V8Context_InvokeWithLock(const V8ContextHandle& handle, void* pvAction, void* pvState) noexcept;
 NATIVE_ENTRY_POINT(void) V8Context_GetRootItem(const V8ContextHandle& handle, V8Value& item) noexcept;
 NATIVE_ENTRY_POINT(void) V8Context_AddGlobalItem(const V8ContextHandle& handle, const StdString& name, const V8Value& value, StdBool globalMembers) noexcept;
 NATIVE_ENTRY_POINT(void) V8Context_AwaitDebuggerAndPause(const V8ContextHandle& handle) noexcept;
