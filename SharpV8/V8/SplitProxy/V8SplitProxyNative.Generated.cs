@@ -1288,7 +1288,7 @@ namespace Microsoft.ClearScript.V8.SplitProxy
 
         public static unsafe partial class Imports
         {
-            public const string DllName = "ClearScriptV8";
+            public const string DllName = "SharpV8.Native";
 
             public static event DllImportResolver? ResolveLibrary;
 

@@ -5,11 +5,11 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <Version>7.3.5</Version>
+        <Version>7.3.6</Version>
     </PropertyGroup>
 
     <ItemGroup>
-        <EmbeddedResource Include="icudtl.dat" />
+        <EmbeddedResource Include="..\V8\icudtl.dat" />
     </ItemGroup>
 
 </Project>

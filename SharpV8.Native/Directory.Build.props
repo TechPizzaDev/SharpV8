@@ -1,0 +1,12 @@
+<Project>
+
+    <PropertyGroup>
+        <ArtifactDirectory>$(SolutionDir)Artifacts\</ArtifactDirectory>
+        
+		<CodeAnalysisRuleSet>MixedRecommendedRules.ruleset</CodeAnalysisRuleSet>
+		
+		<OutDir>$(ArtifactDirectory)bin\$(MSBuildProjectName)\$(Configuration)\</OutDir>
+		<IntDir>$(ArtifactDirectory)obj\$(MSBuildProjectName)\$(Configuration)\</IntDir>
+    </PropertyGroup>
+    
+</Project>

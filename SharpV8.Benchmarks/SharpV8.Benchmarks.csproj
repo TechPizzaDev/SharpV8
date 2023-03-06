@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
-    <PackageReference Include="Microsoft.ClearScript.V8.Native.win-x64" Version="7.3.5" />
   </ItemGroup>
     
   <ItemGroup>

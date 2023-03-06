@@ -4,54 +4,20 @@
         <TargetFrameworks>net7.0</TargetFrameworks>
         <RootNamespace>Microsoft.ClearScript.Test</RootNamespace>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <NoWarn>CA1416</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
         <DefineConstants>DEBUG;TRACE</DefineConstants>
-        <NoWarn>CA1416</NoWarn>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <OutputPath>..\..\bin\Debug</OutputPath>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
         <DefineConstants>TRACE</DefineConstants>
-        <NoWarn>CA1416</NoWarn>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-        <OutputPath>..\..\bin\Release</OutputPath>
     </PropertyGroup>
-
+    
     <ItemGroup>
-        <COMReference Include="Scripting.dll">
-            <Guid>420b2830-e718-11cf-893d-00a0c9054228</Guid>
-            <VersionMajor>1</VersionMajor>
-            <VersionMinor>0</VersionMinor>
-            <WrapperTool>tlbimp</WrapperTool>
-            <Lcid>0</Lcid>
-            <Isolated>false</Isolated>
-            <EmbedInteropTypes>false</EmbedInteropTypes>
-        </COMReference>
-        <COMReference Include="ADODB.dll">
-            <Guid>b691e011-1797-432e-907a-4d8c69339129</Guid>
-            <VersionMajor>6</VersionMajor>
-            <VersionMinor>0</VersionMinor>
-            <WrapperTool>tlbimp</WrapperTool>
-            <Lcid>0</Lcid>
-            <Isolated>false</Isolated>
-            <EmbedInteropTypes>false</EmbedInteropTypes>
-        </COMReference>
-        <COMReference Include="UIAutomationClient.dll">
-            <Guid>944de083-8fb8-45cf-bcb7-c477acb2f897</Guid>
-            <VersionMajor>1</VersionMajor>
-            <VersionMinor>0</VersionMinor>
-            <WrapperTool>tlbimp</WrapperTool>
-            <Lcid>0</Lcid>
-            <Isolated>false</Isolated>
-            <EmbedInteropTypes>false</EmbedInteropTypes>
-        </COMReference>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.ClearScript.V8.Native.win-x64" Version="7.3.5" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
         <PackageReference Include="MSTest.TestAdapter" Version="2.2.10" />
         <PackageReference Include="MSTest.TestFramework" Version="2.2.10" />

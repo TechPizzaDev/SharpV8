@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\HighResolutionClock.Windows.cpp" />
+    <ClCompile Include="..\HostObjectHolderImpl.cpp" />
+    <ClCompile Include="..\HostObjectUtil.cpp" />
+    <ClCompile Include="..\Mutex.cpp" />
+    <ClCompile Include="..\RefCount.cpp" />
+    <ClCompile Include="..\V8SplitProxyManaged.cpp" />
+    <ClCompile Include="..\StdString.cpp" />
+    <ClCompile Include="..\V8Context.cpp" />
+    <ClCompile Include="..\V8ContextImpl.cpp" />
+    <ClCompile Include="..\V8Isolate.cpp" />
+    <ClCompile Include="..\V8IsolateImpl.cpp" />
+    <ClCompile Include="..\V8ObjectHelpers.cpp" />
+    <ClCompile Include="..\V8ObjectHolderImpl.cpp" />
+    <ClCompile Include="..\V8ScriptHolderImpl.cpp" />
+    <ClCompile Include="..\V8SplitProxyNative.cpp" />
+  </ItemGroup>
+</Project>

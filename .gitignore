@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+V8/build/
+V8/logs/
+V8/icudtl.dat
+
 # User-specific files
 *.rsuser
 *.suo

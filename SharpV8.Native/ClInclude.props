@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="..\ClearScriptV8Native.h" />
+    <ClInclude Include="..\CommonPlatform.h" />
+    <ClInclude Include="..\HighResolutionClock.h" />
+    <ClInclude Include="..\HostException.h" />
+    <ClInclude Include="..\HostObjectHolder.h" />
+    <ClInclude Include="..\HostObjectHolderImpl.h" />
+    <ClInclude Include="..\HostObjectUtil.h" />
+    <ClInclude Include="..\V8GlobalFlags.h" />
+    <ClInclude Include="..\V8SplitProxyManaged.h" />
+    <ClInclude Include="..\IV8Entity.h" />
+    <ClInclude Include="..\Mutex.h" />
+    <ClInclude Include="..\NativePlatform.h" />
+    <ClInclude Include="..\RefCount.h" />
+    <ClInclude Include="..\SharedPtr.h" />
+    <ClInclude Include="..\StdString.h" />
+    <ClInclude Include="..\Timer.h" />
+    <ClInclude Include="..\V8CacheType.h" />
+    <ClInclude Include="..\V8Context.h" />
+    <ClInclude Include="..\V8ContextImpl.h" />
+    <ClInclude Include="..\V8DocumentInfo.h" />
+    <ClInclude Include="..\V8Exception.h" />
+    <ClInclude Include="..\V8Isolate.h" />
+    <ClInclude Include="..\V8IsolateImpl.h" />
+    <ClInclude Include="..\V8ObjectHelpers.h" />
+    <ClInclude Include="..\V8ObjectHolder.h" />
+    <ClInclude Include="..\V8ObjectHolderImpl.h" />
+    <ClInclude Include="..\V8Platform.h" />
+    <ClInclude Include="..\V8ScriptHolder.h" />
+    <ClInclude Include="..\V8ScriptHolderImpl.h" />
+    <ClInclude Include="..\V8SplitProxyNative.h" />
+    <ClInclude Include="..\V8Value.h" />
+    <ClInclude Include="..\V8WeakContextBinding.h" />
+    <ClInclude Include="..\WeakRef.h" />
+  </ItemGroup>
+</Project>

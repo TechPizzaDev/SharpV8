@@ -14,7 +14,7 @@ namespace Microsoft.ClearScript.Properties
 {
     internal static class ClearScriptVersion
     {
-        public const string Triad = "7.3.5";
-        public const string Informational = "7.3.5";
+        public const string Triad = "7.3.6";
+        public const string Informational = "7.3.6";
     }
 }

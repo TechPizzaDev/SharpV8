@@ -6,11 +6,11 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("ClearScript Test Library")]
-[assembly: AssemblyProduct("ClearScript")]
+[assembly: AssemblyTitle("SharpV8 Test Library")]
+[assembly: AssemblyProduct("SharpV8")]
 [assembly: AssemblyCopyright("(c) Microsoft Corporation")]
 
 [assembly: ComVisible(false)]
-[assembly: AssemblyVersion("7.3.5")]
-[assembly: AssemblyFileVersion("7.3.5")]
-[assembly: AssemblyInformationalVersion("7.3.5")]
+[assembly: AssemblyVersion("7.3.6")]
+[assembly: AssemblyFileVersion("7.3.6")]
+[assembly: AssemblyInformationalVersion("7.3.6")]
